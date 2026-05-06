@@ -89,7 +89,11 @@ async function processBuild(jobId) {
                     splash_bg_color: job.splashBgColor || '#FFFFFF',
                     splash_text_color: job.splashTextColor || '#6C63FF',
                     splash_loading_text: job.splashLoadingText || 'Memuat...',
+                    splash_progress_bar_color: job.splashProgressBarColor || '#6C63FF',
+                    splash_use_logo_bg: String(job.splashUseLogoBg || false),
+                    hide_bottom_nav: String(job.hideBottomNav || false),
                     splash_image_type: job.splashImageType || 'none',
+
                     splash_image_data: job.splashImageData || '',
                     splash_bg_image_type: job.splashBgImageType || 'color',
                     splash_bg_image_data: job.splashBgImageData || ''

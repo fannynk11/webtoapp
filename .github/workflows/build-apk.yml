@@ -21,6 +21,15 @@ on:
       splash_loading_text:
         description: 'Teks Loading'
         default: 'Memuat...'
+      splash_progress_bar_color:
+        description: 'Warna Progress Bar'
+        default: '#6C63FF'
+      splash_use_logo_bg:
+        description: 'Pakai BG Logo'
+        default: 'false'
+      hide_bottom_nav:
+        description: 'Sembunyi Nav'
+        default: 'false'
       splash_image_type:
         description: 'Tipe Gambar'
         default: 'none'
@@ -70,6 +79,9 @@ jobs:
           sed -i "s|SPLASH_BG_COLOR_PLACEHOLDER|${{ github.event.inputs.splash_bg_color }}|g" lib/main.dart
           sed -i "s|SPLASH_TEXT_COLOR_PLACEHOLDER|${{ github.event.inputs.splash_text_color }}|g" lib/main.dart
           sed -i "s|SPLASH_LOADING_TEXT_PLACEHOLDER|${{ github.event.inputs.splash_loading_text }}|g" lib/main.dart
+          sed -i "s|SPLASH_PROGRESS_BAR_COLOR_PLACEHOLDER|${{ github.event.inputs.splash_progress_bar_color }}|g" lib/main.dart
+          sed -i "s|SPLASH_USE_LOGO_BG_PLACEHOLDER|${{ github.event.inputs.splash_use_logo_bg }}|g" lib/main.dart
+          sed -i "s|HIDE_BOTTOM_NAV_PLACEHOLDER|${{ github.event.inputs.hide_bottom_nav }}|g" lib/main.dart
           sed -i "s|SPLASH_IMAGE_TYPE_PLACEHOLDER|${{ github.event.inputs.splash_image_type }}|g" lib/main.dart
           sed -i "s|SPLASH_BG_IMAGE_TYPE_PLACEHOLDER|${{ github.event.inputs.splash_bg_image_type }}|g" lib/main.dart
           sed -i "s|SPLASH_IMAGE_DATA_PLACEHOLDER|${{ github.event.inputs.splash_image_data }}|g" lib/main.dart
@@ -86,4 +98,5 @@ jobs:
         with:
           name: ${{ github.event.inputs.app_name }}-apk
           path: build/app/outputs/flutter-apk/app-release.apk
+
 
