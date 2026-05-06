@@ -26,6 +26,7 @@ const jobSchema = new mongoose.Schema({
     jobId: { type: String, unique: true },
     appName: String,
     url: String,
+    email: String,
     status: { type: String, default: 'queued' },
     progress: { type: Number, default: 0 },
     message: { type: String, default: 'Menyiapkan...' },
@@ -34,6 +35,7 @@ const jobSchema = new mongoose.Schema({
     payload: Object,
     createdAt: { type: Date, default: Date.now }
 });
+
 
 const Job = mongoose.models.Job || mongoose.model('Job', jobSchema);
 
@@ -73,8 +75,16 @@ app.post('/api/webhook/github', async (req, res) => {
         if (error) updateData.errorLog = error;
         if (status === 'completed') updateData.progress = 100;
 
-        await Job.findOneAndUpdate({ jobId }, updateData);
+        const updatedJob = await Job.findOneAndUpdate({ jobId }, updateData, { new: true });
+        
+        // Kirim email otomatis jika selesai dan ada emailnya
+        if (status === 'completed' && updatedJob && updatedJob.email) {
+            console.log(`📧 Mengirim email otomatis ke ${updatedJob.email}...`);
+            sendEmailNotification(updatedJob);
+        }
+
         res.json({ success: true });
+
     } catch (err) {
         res.status(500).json({ error: err.message });
     }
@@ -85,7 +95,7 @@ app.post('/api/generate', async (req, res) => {
     try {
         await connectDB();
         const payload = req.body;
-        const { url, appName } = payload;
+        const { url, appName, email } = payload;
         
         if (!url || !appName) {
             return res.status(400).json({ error: 'URL dan Nama Aplikasi wajib diisi' });
@@ -98,6 +108,7 @@ app.post('/api/generate', async (req, res) => {
             jobId,
             appName,
             url,
+            email,
             status: 'processing',
             message: 'Menghubungkan ke GitHub...',
             progress: 10,
@@ -304,7 +315,62 @@ app.post('/send-to-email', async (req, res) => {
     }
 });
 
+// Fungsi bantuan untuk mengirim email notifikasi otomatis
+async function sendEmailNotification(job) {
+    try {
+        const transporter = nodemailer.createTransport({
+            service: process.env.EMAIL_SERVICE || 'gmail',
+            auth: {
+                user: process.env.EMAIL_USER,
+                pass: process.env.EMAIL_PASS
+            }
+        });
+
+        const mailOptions = {
+            from: `"WebToAPK Pro" <${process.env.EMAIL_USER}>`,
+            to: job.email,
+            subject: `🎁 Aplikasi ${job.appName} Kamu Sudah Siap!`,
+            html: `
+                <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e2e8f0; border-radius: 12px;">
+                    <div style="text-align: center; margin-bottom: 30px;">
+                        <h1 style="color: #2563eb; margin-bottom: 10px;">WebToAPK Pro</h1>
+                        <p style="color: #64748b;">Transformasi Website ke Aplikasi Android</p>
+                    </div>
+                    
+                    <div style="background-color: #f8fafc; padding: 30px; border-radius: 12px; text-align: center;">
+                        <h2 style="color: #1e293b; margin-top: 0;">Halo! 👋</h2>
+                        <p style="color: #475569; line-height: 1.6;">
+                            Kabar gembira! Aplikasi <strong>${job.appName}</strong> yang kamu buat sudah berhasil kami proses dan siap untuk diunduh.
+                        </p>
+                        
+                        <div style="margin: 30px 0;">
+                            <a href="${job.downloadUrl}" style="background-color: #2563eb; color: white; padding: 14px 28px; border-radius: 8px; text-decoration: none; font-weight: bold; display: inline-block;">
+                                Download APK Sekarang
+                            </a>
+                        </div>
+                        
+                        <p style="color: #94a3b8; font-size: 12px;">
+                            Jika tombol di atas tidak berfungsi, copy link berikut ke browser kamu:<br/>
+                            <span style="color: #3b82f6;">${job.downloadUrl}</span>
+                        </p>
+                    </div>
+                    
+                    <div style="text-align: center; margin-top: 30px; color: #94a3b8; font-size: 12px;">
+                        <p>&copy; 2026 WebToAPK. Dibuat dengan ❤️ untuk kemudahan transformasi digital.</p>
+                    </div>
+                </div>
+            `
+        };
+
+        await transporter.sendMail(mailOptions);
+        console.log(`✅ Email berhasil dikirim ke ${job.email}`);
+    } catch (error) {
+        console.error('❌ Gagal mengirim email otomatis:', error);
+    }
+}
+
 app.listen(PORT, () => {
+
 
         console.log(`🚀 Local Server running on http://localhost:${PORT}`);
     });
