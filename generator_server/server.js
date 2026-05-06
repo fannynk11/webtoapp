@@ -142,9 +142,11 @@ async function processBuild(jobId, payload) {
                     splash_image_type: payload.splashImageType || 'none',
                     splash_image_data: payload.splashImageData || '',
                     splash_bg_image_type: payload.splashBgImageType || 'color',
-                    splash_bg_image_data: payload.splashBgImageData || ''
+                    splash_bg_image_data: payload.splashBgImageData || '',
+                    app_icon_data: payload.appIconData || ''
                 }
             },
+
             {
                 headers: {
                     'Authorization': `token ${GITHUB_TOKEN}`,
