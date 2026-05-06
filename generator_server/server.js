@@ -21,15 +21,11 @@ app.use(express.static('public'));
 const PORT = process.env.PORT || 3000;
 const jobs = {};
 
-// Konstanta path
-const PROJECT_ROOT = path.resolve(__dirname, '..'); 
-const TEMP_DIR = path.join('/tmp', 'temp_builds'); // Gunakan /tmp untuk Vercel
-const DOWNLOADS_DIR = path.join(__dirname, 'public', 'downloads');
+// Pastikan variabel GITHUB ada
+if (!GITHUB_TOKEN || !GITHUB_OWNER || !GITHUB_REPO) {
+    console.error('PERINGATAN: Environment Variables GITHUB belum diatur!');
+}
 
-
-// Pastikan folder temp dan downloads ada
-fse.ensureDirSync(TEMP_DIR);
-fse.ensureDirSync(DOWNLOADS_DIR);
 
 app.post('/api/generate', async (req, res) => {
     const { url, appName, useCustomSplash, splashBgColor, splashTextColor, splashLoadingText, splashProgressBarColor, splashUseLogoBg, splashLogoBgColor, hideBottomNav, splashImageType, splashImageData, splashBgImageType, splashBgImageData } = req.body;
