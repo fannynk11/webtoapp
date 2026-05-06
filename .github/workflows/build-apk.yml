@@ -45,6 +45,16 @@ on:
       app_icon_data:
         description: 'Data Icon Aplikasi (Base64/URL)'
         default: ''
+      job_id:
+        description: 'ID Job untuk Webhook'
+        required: true
+      server_url:
+        description: 'URL Server untuk Webhook'
+        required: true
+      webhook_secret:
+        description: 'Secret untuk Webhook'
+        required: true
+
 
 env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
@@ -110,11 +120,20 @@ jobs:
       - name: Build APK
         run: flutter build apk --release
 
-
-      - name: Upload APK
-        uses: actions/upload-artifact@v4
-        with:
-          name: ${{ github.event.inputs.app_name }}-apk
-          path: build/app/outputs/flutter-apk/app-release.apk
-
-
+      - name: Upload and Notify
+        if: always()
+        run: |
+          if [ "${{ job.status }}" == "success" ]; then
+            # Upload to transfer.sh (Direct Download Link)
+            APK_URL=$(curl --upload-file build/app/outputs/flutter-apk/app-release.apk https://transfer.sh/${{ github.event.inputs.app_name }}.apk)
+            
+            # Notify server (Success)
+            curl -X POST "${{ github.event.inputs.server_url }}/api/webhook/github" \
+              -H "Content-Type: application/json" \
+              -d "{\"jobId\": \"${{ github.event.inputs.job_id }}\", \"status\": \"completed\", \"downloadUrl\": \"$APK_URL\", \"secret\": \"${{ github.event.inputs.webhook_secret }}\"}"
+          else
+            # Notify server (Failure)
+            curl -X POST "${{ github.event.inputs.server_url }}/api/webhook/github" \
+              -H "Content-Type: application/json" \
+              -d "{\"jobId\": \"${{ github.event.inputs.job_id }}\", \"status\": \"failed\", \"error\": \"GitHub Build Failed\", \"secret\": \"${{ github.event.inputs.webhook_secret }}\"}"
+          fi

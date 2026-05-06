@@ -18,6 +18,7 @@ app.use(express.urlencoded({ limit: '200mb', extended: true }));
 app.use(express.static('public'));
 
 const PORT = process.env.PORT || 3000;
+const WEBHOOK_SECRET = process.env.WEBHOOK_SECRET || 'webtoapp_secret_123';
 
 // -- MONGODB SETUP --
 const jobSchema = new mongoose.Schema({
@@ -54,10 +55,32 @@ async function connectDB() {
     }
 }
 
-
 // -- API ROUTES --
 
+// Webhook untuk menerima update dari GitHub Actions
+app.post('/api/webhook/github', async (req, res) => {
+    const { jobId, status, downloadUrl, error, secret } = req.body;
+
+    if (secret !== WEBHOOK_SECRET) {
+        return res.status(401).json({ error: 'Unauthorized' });
+    }
+
+    try {
+        await connectDB();
+        const updateData = { status, message: status === 'completed' ? 'Build Berhasil!' : 'Build Gagal' };
+        if (downloadUrl) updateData.downloadUrl = downloadUrl;
+        if (error) updateData.errorLog = error;
+        if (status === 'completed') updateData.progress = 100;
+
+        await Job.findOneAndUpdate({ jobId }, updateData);
+        res.json({ success: true });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
 app.post('/api/generate', async (req, res) => {
+
     try {
         await connectDB();
         const payload = req.body;
@@ -82,7 +105,7 @@ app.post('/api/generate', async (req, res) => {
         await newJob.save();
 
         // Trigger GitHub Action secara async (tidak menunggu build selesai)
-        processBuild(jobId, payload).catch(err => {
+        processBuild(jobId, payload, req.headers.host).catch(err => {
             console.error(`Async processBuild error for ${jobId}:`, err.message);
         });
 
@@ -92,6 +115,7 @@ app.post('/api/generate', async (req, res) => {
         res.status(500).json({ error: err.message });
     }
 });
+
 
 app.get('/api/status/:jobId', async (req, res) => {
     try {
@@ -117,12 +141,16 @@ app.get('/api/history', async (req, res) => {
     }
 });
 
-async function processBuild(jobId, payload) {
+async function processBuild(jobId, payload, host) {
     if (!GITHUB_TOKEN || !GITHUB_OWNER || !GITHUB_REPO) {
         const error = 'Konfigurasi GitHub belum lengkap di server.';
         await Job.findOneAndUpdate({ jobId }, { status: 'failed', message: error });
         return;
     }
+
+    // Gunakan HTTPS jika di production (Vercel)
+    const protocol = host.includes('localhost') ? 'http' : 'https';
+    const serverUrl = `${protocol}://${host}`;
 
     try {
         await axios.post(
@@ -130,6 +158,9 @@ async function processBuild(jobId, payload) {
             {
                 ref: 'main',
                 inputs: {
+                    job_id: jobId,
+                    server_url: serverUrl,
+                    webhook_secret: WEBHOOK_SECRET,
                     app_name: payload.appName,
                     target_url: payload.url,
                     use_custom_splash: String(payload.useCustomSplash || false),
@@ -146,7 +177,6 @@ async function processBuild(jobId, payload) {
                     app_icon_data: payload.appIconData || ''
                 }
             },
-
             {
                 headers: {
                     'Authorization': `token ${GITHUB_TOKEN}`,
@@ -155,15 +185,15 @@ async function processBuild(jobId, payload) {
             }
         );
 
-        // Update database setelah berhasil trigger
+        // Update database: Status tetap "processing" agar UI menunggu
         await Job.findOneAndUpdate({ jobId }, { 
-            status: 'completed', 
-            progress: 100,
-            message: 'Berhasil! Cek tab Actions di GitHub kamu.',
-            downloadUrl: `https://github.com/${GITHUB_OWNER}/${GITHUB_REPO}/actions`
+            status: 'processing', 
+            progress: 20,
+            message: 'Build sedang diproses di GitHub (2-5 menit)...'
         });
 
     } catch (error) {
+
         const detail = error.response?.data?.message || error.message;
         console.error(`Build failed:`, detail);
         await Job.findOneAndUpdate({ jobId }, { 
