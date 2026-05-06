@@ -124,20 +124,21 @@ jobs:
         if: always()
         run: |
           if [ "${{ job.status }}" == "success" ]; then
-            # Upload to bashupload.com (Lebih stabil)
-            UPLOAD_RES=$(curl https://bashupload.com/${{ github.event.inputs.app_name }}.apk --data-binary @build/app/outputs/flutter-apk/app-release.apk)
+            # Upload to bashupload.com (Tambahkan -k untuk bypass SSL)
+            UPLOAD_RES=$(curl -k https://bashupload.com/${{ github.event.inputs.app_name }}.apk --data-binary @build/app/outputs/flutter-apk/app-release.apk)
             
-            # Ambil URL dari hasil output (biasanya ada di baris terakhir)
+            # Ambil URL dari hasil output
             APK_URL=$(echo "$UPLOAD_RES" | grep -o 'https://bashupload.com/[^ ]*')
             
-            # Notify server (Success)
-            curl -X POST "${{ github.event.inputs.server_url }}/api/webhook/github" \
+            # Notify server (Success) - Tambahkan -k juga
+            curl -k -X POST "${{ github.event.inputs.server_url }}/api/webhook/github" \
               -H "Content-Type: application/json" \
               -d "{\"jobId\": \"${{ github.event.inputs.job_id }}\", \"status\": \"completed\", \"downloadUrl\": \"$APK_URL\", \"secret\": \"${{ github.event.inputs.webhook_secret }}\"}"
           else
-            # Notify server (Failure)
-            curl -X POST "${{ github.event.inputs.server_url }}/api/webhook/github" \
+            # Notify server (Failure) - Tambahkan -k juga
+            curl -k -X POST "${{ github.event.inputs.server_url }}/api/webhook/github" \
               -H "Content-Type: application/json" \
               -d "{\"jobId\": \"${{ github.event.inputs.job_id }}\", \"status\": \"failed\", \"error\": \"GitHub Build Failed\", \"secret\": \"${{ github.event.inputs.webhook_secret }}\"}"
           fi
+
 
