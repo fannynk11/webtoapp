@@ -6,11 +6,33 @@ on:
       app_name:
         description: 'Nama Aplikasi'
         required: true
-        default: 'WebToApp'
       target_url:
         description: 'URL Website'
         required: true
-        default: 'https://google.com'
+      use_custom_splash:
+        description: 'Pakai Splash'
+        default: 'false'
+      splash_bg_color:
+        description: 'Warna BG'
+        default: '#FFFFFF'
+      splash_text_color:
+        description: 'Warna Teks'
+        default: '#6C63FF'
+      splash_loading_text:
+        description: 'Teks Loading'
+        default: 'Memuat...'
+      splash_image_type:
+        description: 'Tipe Gambar'
+        default: 'none'
+      splash_image_data:
+        description: 'Data Gambar (URL/Base64)'
+        default: ''
+      splash_bg_image_type:
+        description: 'Tipe BG Image'
+        default: 'color'
+      splash_bg_image_data:
+        description: 'Data BG Image'
+        default: ''
 
 jobs:
   build:
@@ -29,20 +51,27 @@ jobs:
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: '3.19.0' # Sesuaikan dengan versi kamu
+          flutter-version: '3.19.0'
           channel: 'stable'
 
       - name: Install dependencies
         run: flutter pub get
 
-      - name: Customize App (Modify code)
+      - name: Customize App
         run: |
-          # Logika sederhana untuk mengganti placeholder di main.dart
-          # Kamu bisa mengembangkan ini lebih lanjut sesuai logika di server.js
+          # Replace Placeholders in lib/main.dart
           sed -i "s|TARGET_URL_PLACEHOLDER|${{ github.event.inputs.target_url }}|g" lib/main.dart
           sed -i "s|APP_NAME_PLACEHOLDER|${{ github.event.inputs.app_name }}|g" lib/main.dart
+          sed -i "s|USE_CUSTOM_SPLASH_PLACEHOLDER|${{ github.event.inputs.use_custom_splash }}|g" lib/main.dart
+          sed -i "s|SPLASH_BG_COLOR_PLACEHOLDER|${{ github.event.inputs.splash_bg_color }}|g" lib/main.dart
+          sed -i "s|SPLASH_TEXT_COLOR_PLACEHOLDER|${{ github.event.inputs.splash_text_color }}|g" lib/main.dart
+          sed -i "s|SPLASH_LOADING_TEXT_PLACEHOLDER|${{ github.event.inputs.splash_loading_text }}|g" lib/main.dart
+          sed -i "s|SPLASH_IMAGE_TYPE_PLACEHOLDER|${{ github.event.inputs.splash_image_type }}|g" lib/main.dart
+          sed -i "s|SPLASH_BG_IMAGE_TYPE_PLACEHOLDER|${{ github.event.inputs.splash_bg_image_type }}|g" lib/main.dart
+          sed -i "s|SPLASH_IMAGE_DATA_PLACEHOLDER|${{ github.event.inputs.splash_image_data }}|g" lib/main.dart
+          sed -i "s|SPLASH_BG_IMAGE_DATA_PLACEHOLDER|${{ github.event.inputs.splash_bg_image_data }}|g" lib/main.dart
           
-          # Ganti Nama Aplikasi di AndroidManifest
+          # Replace App Name in AndroidManifest.xml
           sed -i "s|android:label=.*|android:label=\"${{ github.event.inputs.app_name }}\"|g" android/app/src/main/AndroidManifest.xml
 
       - name: Build APK

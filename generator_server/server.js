@@ -29,7 +29,8 @@ if (!GITHUB_TOKEN || !GITHUB_OWNER || !GITHUB_REPO) {
 
 app.post('/api/generate', async (req, res) => {
     try {
-        const { url, appName } = req.body;
+        const payload = req.body;
+        const { url, appName } = payload;
         
         if (!url || !appName) {
             return res.status(400).json({ error: 'URL dan Nama Aplikasi wajib diisi' });
@@ -41,13 +42,13 @@ app.post('/api/generate', async (req, res) => {
             status: 'queued',
             progress: 0,
             message: 'Menyiapkan permintaan...',
-            url: url,
-            appName: appName,
+            ...payload,
             downloadUrl: null
         };
 
         // Tunggu sampai GitHub Actions ter-trigger baru kirim response
         await processBuild(jobId);
+
 
         res.json({ jobId });
     } catch (err) {
@@ -83,7 +84,15 @@ async function processBuild(jobId) {
                 ref: 'main',
                 inputs: {
                     app_name: appName,
-                    target_url: url
+                    target_url: url,
+                    use_custom_splash: String(job.useCustomSplash || false),
+                    splash_bg_color: job.splashBgColor || '#FFFFFF',
+                    splash_text_color: job.splashTextColor || '#6C63FF',
+                    splash_loading_text: job.splashLoadingText || 'Memuat...',
+                    splash_image_type: job.splashImageType || 'none',
+                    splash_image_data: job.splashImageData || '',
+                    splash_bg_image_type: job.splashBgImageType || 'color',
+                    splash_bg_image_data: job.splashBgImageData || ''
                 }
             },
             {
