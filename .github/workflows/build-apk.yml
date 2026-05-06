@@ -59,7 +59,11 @@ on:
 env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
+permissions:
+  contents: write
+
 jobs:
+
 
   build:
     runs-on: ubuntu-latest
@@ -126,19 +130,17 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           if [ "${{ job.status }}" == "success" ]; then
-            # Hapus tag lama jika ada (agar tidak menumpuk)
-            git tag -d "latest" || true
-            git push origin :refs/tags/latest || true
+            # Buat release baru menggunakan tag unik berdasarkan job_id
+            # Kita gunakan "v-" sebagai awalan tag agar standar GitHub
+            TAG_NAME="v-${{ github.event.inputs.job_id }}"
             
-            # Buat release baru (atau update) menggunakan CLI GitHub
-            # Kita gunakan nama aplikasi sebagai judul
-            gh release create "build-${{ github.event.inputs.job_id }}" \
+            gh release create "$TAG_NAME" \
               --title "Build: ${{ github.event.inputs.app_name }}" \
-              --notes "Otomatis dibuat oleh WebToAPK Generator" \
-              build/app/outputs/flutter-apk/app-release.apk#${{ github.event.inputs.app_name }}.apk
+              --notes "Otomatis dibuat oleh WebToAPK Generator. Klik link di bawah untuk download." \
+              "build/app/outputs/flutter-apk/app-release.apk#${{ github.event.inputs.app_name }}.apk"
             
             # URL Download langsung dari GitHub Release
-            APK_URL="https://github.com/${{ github.repository }}/releases/download/build-${{ github.event.inputs.job_id }}/${{ github.event.inputs.app_name }}.apk"
+            APK_URL="https://github.com/${{ github.repository }}/releases/download/$TAG_NAME/${{ github.event.inputs.app_name }}.apk"
             
             # Notify server (Success)
             curl -k -X POST "${{ github.event.inputs.server_url }}/api/webhook/github" \
@@ -150,6 +152,7 @@ jobs:
               -H "Content-Type: application/json" \
               -d "{\"jobId\": \"${{ github.event.inputs.job_id }}\", \"status\": \"failed\", \"error\": \"GitHub Build Failed\", \"secret\": \"${{ github.event.inputs.webhook_secret }}\"}"
           fi
+
 
 
 
