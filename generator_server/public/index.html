@@ -426,20 +426,40 @@
 
         <!-- Result Section -->
         <div id="resultSection" class="p-8 hidden text-center">
-            <div class="w-24 h-24 bg-gradient-to-br from-green-100 to-emerald-100 text-emerald-500 rounded-full flex items-center justify-center mx-auto mb-6 shadow-lg shadow-emerald-500/20">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
-                </svg>
+            <!-- Success State -->
+            <div id="successState" class="hidden text-center py-10 animate-fade-in">
+                <div class="w-20 h-20 bg-green-50 rounded-full flex items-center justify-center mx-auto mb-6 shadow-sm">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                    </svg>
+                </div>
+                <h3 class="text-2xl font-bold text-slate-800 mb-3">Aplikasi Siap!</h3>
+                <p class="text-slate-500 mb-8 max-w-md mx-auto">Build berhasil diselesaikan. Masukkan email Anda untuk menerima link download APK secara otomatis.</p>
+                
+                <div class="max-w-md mx-auto mb-6">
+                    <div class="relative group">
+                        <input type="email" id="deliveryEmail" placeholder="nama@email.com" 
+                            class="w-full px-6 py-4 bg-slate-50 border-2 border-slate-100 rounded-2xl focus:border-blue-500 focus:outline-none transition-all text-center text-lg font-medium shadow-inner">
+                        <div class="absolute inset-y-0 left-4 flex items-center pointer-events-none opacity-40">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                                <path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z" />
+                                <path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z" />
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex flex-col gap-3 max-w-md mx-auto">
+                    <button id="sendAndDownloadBtn" class="w-full px-8 py-4 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-2xl transition-all shadow-lg shadow-blue-200 flex items-center justify-center gap-3 active:scale-95 group">
+                        <span>Kirim ke Email & Download</span>
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                        </svg>
+                    </button>
+                    <p class="text-[10px] text-slate-400 uppercase tracking-widest font-bold mt-2">Atau download langsung tanpa email</p>
+                    <a id="directDownloadBtn" href="#" class="text-blue-600 text-sm font-bold hover:underline">Lewati & Download Langsung</a>
+                </div>
             </div>
-            <h3 class="text-2xl font-extrabold text-slate-800 mb-3">Selesai! 🎉</h3>
-            <p class="text-slate-600 mb-8 font-medium">Aplikasi Android Anda sudah siap digunakan.</p>
-            
-            <a id="downloadBtn" href="#" download class="w-full inline-flex justify-center items-center bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-4 px-6 rounded-xl shadow-[0_8px_20px_-6px_rgba(16,185,129,0.5)] transform hover:-translate-y-0.5 transition-all duration-200 gap-3">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
-                </svg>
-                Download APK
-            </a>
             
             <button onclick="resetForm()" class="mt-6 text-sm font-semibold text-slate-400 hover:text-slate-800 transition-colors flex items-center justify-center gap-1 mx-auto">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" /></svg>
@@ -952,8 +972,54 @@
 
                         if (job.status === 'completed') {
                             clearInterval(checkInterval);
-                            downloadBtn.href = job.downloadUrl;
-                            downloadBtn.download = job.downloadUrl.split('/').pop();
+                            
+                            const downloadUrl = job.downloadUrl;
+                            const appName = document.getElementById('heroAppName').value;
+                            
+                            // Setup Tombol Kirim & Download
+                            const sendBtn = document.getElementById('sendAndDownloadBtn');
+                            const directBtn = document.getElementById('directDownloadBtn');
+                            
+                            if (directBtn) {
+                                directBtn.href = downloadUrl;
+                                directBtn.onclick = () => { window.location.href = downloadUrl; };
+                            }
+
+                            if (sendBtn) {
+                                sendBtn.onclick = async () => {
+                                    const email = document.getElementById('deliveryEmail').value;
+                                    if (!email || !email.includes('@')) {
+                                        alert('Masukkan alamat email yang valid ya!');
+                                        return;
+                                    }
+
+                                    sendBtn.disabled = true;
+                                    sendBtn.textContent = 'Mengirim...';
+
+                                    try {
+                                        const res = await fetch('/send-to-email', {
+                                            method: 'POST',
+                                            headers: { 'Content-Type': 'application/json' },
+                                            body: JSON.stringify({ email, downloadUrl, appName })
+                                        });
+
+                                        if (res.ok) {
+                                            alert('Berhasil! Link download sudah dikirim ke email kamu.');
+                                            window.location.href = downloadUrl;
+                                        } else {
+                                            alert('Gagal mengirim email, tapi kamu bisa tetap download langsung.');
+                                            window.location.href = downloadUrl;
+                                        }
+                                    } catch (err) {
+                                        console.error(err);
+                                        window.location.href = downloadUrl;
+                                    } finally {
+                                        sendBtn.disabled = false;
+                                        sendBtn.textContent = 'Kirim ke Email & Download';
+                                    }
+                                };
+                            }
+                            
                             setTimeout(() => showSection(resultSection), 500);
                         } else if (job.status === 'failed') {
                             clearInterval(checkInterval);
