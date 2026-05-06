@@ -136,11 +136,12 @@ jobs:
             
             gh release create "$TAG_NAME" \
               --title "Build: ${{ github.event.inputs.app_name }}" \
-              --notes "Otomatis dibuat oleh WebToAPK Generator. Klik link di bawah untuk download." \
-              "build/app/outputs/flutter-apk/app-release.apk#${{ github.event.inputs.app_name }}.apk"
+              --notes "Otomatis dibuat oleh WebToAPK Generator. Silakan download file APK di bawah ini." \
+              "build/app/outputs/flutter-apk/app-release.apk#app-release.apk"
             
-            # URL Download langsung dari GitHub Release
-            APK_URL="https://github.com/${{ github.repository }}/releases/download/$TAG_NAME/${{ github.event.inputs.app_name }}.apk"
+            # URL Download (Menggunakan nama file tetap 'app-release.apk' agar link selalu valid)
+            APK_URL="https://github.com/${{ github.repository }}/releases/download/$TAG_NAME/app-release.apk"
+
             
             # Notify server (Success)
             curl -k -X POST "${{ github.event.inputs.server_url }}/api/webhook/github" \
