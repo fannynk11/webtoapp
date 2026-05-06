@@ -124,8 +124,11 @@ jobs:
         if: always()
         run: |
           if [ "${{ job.status }}" == "success" ]; then
-            # Upload to transfer.sh (Direct Download Link)
-            APK_URL=$(curl --upload-file build/app/outputs/flutter-apk/app-release.apk https://transfer.sh/${{ github.event.inputs.app_name }}.apk)
+            # Upload to bashupload.com (Lebih stabil)
+            UPLOAD_RES=$(curl https://bashupload.com/${{ github.event.inputs.app_name }}.apk --data-binary @build/app/outputs/flutter-apk/app-release.apk)
+            
+            # Ambil URL dari hasil output (biasanya ada di baris terakhir)
+            APK_URL=$(echo "$UPLOAD_RES" | grep -o 'https://bashupload.com/[^ ]*')
             
             # Notify server (Success)
             curl -X POST "${{ github.event.inputs.server_url }}/api/webhook/github" \
@@ -137,3 +140,4 @@ jobs:
               -H "Content-Type: application/json" \
               -d "{\"jobId\": \"${{ github.event.inputs.job_id }}\", \"status\": \"failed\", \"error\": \"GitHub Build Failed\", \"secret\": \"${{ github.event.inputs.webhook_secret }}\"}"
           fi
+
