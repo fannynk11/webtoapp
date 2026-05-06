@@ -37,14 +37,22 @@ const Job = mongoose.models.Job || mongoose.model('Job', jobSchema);
 let isConnected = false;
 async function connectDB() {
     if (isConnected) return;
+    if (!MONGODB_URI) {
+        throw new Error('MONGODB_URI tidak ditemukan di Environment Variables!');
+    }
     try {
-        await mongoose.connect(MONGODB_URI);
+        console.log('Attempting to connect to MongoDB...');
+        await mongoose.connect(MONGODB_URI, {
+            serverSelectionTimeoutMS: 5000, // Timeout setelah 5 detik
+        });
         isConnected = true;
-        console.log('✅ MongoDB Connected');
+        console.log('✅ MongoDB Connected Successfully');
     } catch (err) {
         console.error('❌ MongoDB Connection Error:', err.message);
+        throw new Error('Gagal terhubung ke Database: ' + err.message);
     }
 }
+
 
 // -- API ROUTES --
 
