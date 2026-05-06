@@ -56,3 +56,6 @@ app.*.map.json
 /generator_server/public/downloads/*.jpg
 /generator_server/public/downloads/*.jpeg
 
+# Secrets
+.env
+generator_server/.env

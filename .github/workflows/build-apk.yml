@@ -1,0 +1,55 @@
+name: Build Android APK
+
+on:
+  workflow_dispatch:
+    inputs:
+      app_name:
+        description: 'Nama Aplikasi'
+        required: true
+        default: 'WebToApp'
+      target_url:
+        description: 'URL Website'
+        required: true
+        default: 'https://google.com'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Setup Java
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'zulu'
+          java-version: '17'
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.19.0' # Sesuaikan dengan versi kamu
+          channel: 'stable'
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Customize App (Modify code)
+        run: |
+          # Logika sederhana untuk mengganti placeholder di main.dart
+          # Kamu bisa mengembangkan ini lebih lanjut sesuai logika di server.js
+          sed -i "s|TARGET_URL_PLACEHOLDER|${{ github.event.inputs.target_url }}|g" lib/main.dart
+          sed -i "s|APP_NAME_PLACEHOLDER|${{ github.event.inputs.app_name }}|g" lib/main.dart
+          
+          # Ganti Nama Aplikasi di AndroidManifest
+          sed -i "s|android:label=.*|android:label=\"${{ github.event.inputs.app_name }}\"|g" android/app/src/main/AndroidManifest.xml
+
+      - name: Build APK
+        run: flutter build apk --release
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v3
+        with:
+          name: ${{ github.event.inputs.app_name }}-apk
+          path: build/app/outputs/flutter-apk/app-release.apk

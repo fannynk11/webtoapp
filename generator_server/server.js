@@ -4,6 +4,13 @@ const { v4: uuidv4 } = require('uuid');
 const fse = require('fs-extra');
 const path = require('path');
 const { exec } = require('child_process');
+const axios = require('axios');
+require('dotenv').config();
+
+const GITHUB_TOKEN = process.env.GITHUB_TOKEN;
+const GITHUB_OWNER = process.env.GITHUB_OWNER;
+const GITHUB_REPO = process.env.GITHUB_REPO;
+
 
 const app = express();
 app.use(cors());
@@ -155,10 +162,45 @@ async function processBuild(jobId) {
         manifest = manifest.replace(/android:label="[^"]*"/, `android:label="${appName}"`);
         await fse.writeFile(manifestPath, manifest);
 
-        // 3. Run Build
-        job.message = 'Sedang membuat APK, ini memakan waktu 2-5 menit (3/4)...';
+        // 3. Run Build via GitHub Actions
+        job.message = 'Menghubungkan ke Build Server GitHub (3/4)...';
         job.progress = 50;
 
+        try {
+            const response = await axios.post(
+                `https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/actions/workflows/build-apk.yml/dispatches`,
+                {
+                    ref: 'main',
+                    inputs: {
+                        app_name: appName,
+                        target_url: url
+                    }
+                },
+                {
+                    headers: {
+                        'Authorization': `token ${GITHUB_TOKEN}`,
+                        'Accept': 'application/vnd.github.v3+json'
+                    }
+                }
+            );
+
+            job.message = 'GitHub sedang memproses APK, tunggu 3-5 menit...';
+            job.progress = 75;
+
+            // Di sini kita bisa menambahkan logika polling untuk mengecek status build di GitHub
+            // Tapi untuk sekarang, kita beri link ke halaman Actions GitHub user
+            job.status = 'completed';
+            job.progress = 100;
+            job.message = 'Permintaan Build terkirim! Cek tab Actions di GitHub kamu untuk mendownload APK.';
+            job.downloadUrl = `https://github.com/${GITHUB_OWNER}/${GITHUB_REPO}/actions`;
+
+        } catch (ghError) {
+            console.error('GitHub API Error:', ghError.response?.data || ghError.message);
+            throw new Error('Gagal terhubung ke GitHub Actions: ' + (ghError.response?.data?.message || ghError.message));
+        }
+
+        /* 
+        // Logic lama (local build) - Di-comment agar tidak menghabiskan RAM server
         await runCommand('flutter clean', jobDir);
         await runCommand('flutter pub get', jobDir);
         await runCommand('flutter build apk --release', jobDir);
@@ -179,6 +221,8 @@ async function processBuild(jobId) {
         job.progress = 100;
         job.message = 'APK berhasil dibuat!';
         job.downloadUrl = `/downloads/${apkFilename}`;
+        */
+
 
     } catch (error) {
         console.error(`Build failed for job ${jobId}:`, error);
