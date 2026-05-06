@@ -141,12 +141,41 @@ app.get('/api/history', async (req, res) => {
     }
 });
 
+// Helper untuk upload Base64 ke Transfer.sh agar tidak melebihi limit GitHub Inputs
+async function uploadToTemp(base64Data, filename) {
+    if (!base64Data || !base64Data.startsWith('data:')) return base64Data;
+    
+    try {
+        console.log(`Uploading ${filename} to temporary host...`);
+        const base64Content = base64Data.split(';base64,').pop();
+        const buffer = Buffer.from(base64Content, 'base64');
+        
+        const response = await axios.put(`https://transfer.sh/${filename}`, buffer, {
+            headers: { 'Content-Type': 'application/octet-stream' }
+        });
+        
+        console.log(`✅ Uploaded ${filename}: ${response.data}`);
+        return response.data.trim();
+    } catch (err) {
+        console.error(`❌ Failed to upload ${filename}:`, err.message);
+        return base64Data; // Fallback ke data asli jika gagal
+    }
+}
+
 async function processBuild(jobId, payload, host) {
     if (!GITHUB_TOKEN || !GITHUB_OWNER || !GITHUB_REPO) {
         const error = 'Konfigurasi GitHub belum lengkap di server.';
         await Job.findOneAndUpdate({ jobId }, { status: 'failed', message: error });
         return;
     }
+
+    // Update message: Kita sedang upload gambar dulu
+    await Job.findOneAndUpdate({ jobId }, { message: 'Sedang memproses gambar...' });
+
+    // Cek dan upload gambar jika berupa Base64
+    const splashImageUrl = await uploadToTemp(payload.splashImageData, `logo_${jobId}.png`);
+    const splashBgUrl = await uploadToTemp(payload.splashBgImageData, `bg_${jobId}.png`);
+    const appIconUrl = await uploadToTemp(payload.appIconData, `icon_${jobId}.png`);
 
     // Gunakan HTTPS jika di production (Vercel)
     const protocol = host.includes('localhost') ? 'http' : 'https';
@@ -171,10 +200,10 @@ async function processBuild(jobId, payload, host) {
                     splash_use_logo_bg: String(payload.splashUseLogoBg || false),
                     hide_bottom_nav: String(payload.hideBottomNav || false),
                     splash_image_type: payload.splashImageType || 'none',
-                    splash_image_data: payload.splashImageData || '',
+                    splash_image_data: splashImageUrl,
                     splash_bg_image_type: payload.splashBgImageType || 'color',
-                    splash_bg_image_data: payload.splashBgImageData || '',
-                    app_icon_data: payload.appIconData || ''
+                    splash_bg_image_data: splashBgUrl,
+                    app_icon_data: appIconUrl
                 }
             },
             {
@@ -193,6 +222,7 @@ async function processBuild(jobId, payload, host) {
         });
 
     } catch (error) {
+
 
         const detail = error.response?.data?.message || error.message;
         console.error(`Build failed:`, detail);
