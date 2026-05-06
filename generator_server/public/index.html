@@ -20,12 +20,19 @@
 
     <!-- Global Navigation -->
     <nav class="w-full px-6 py-4 flex items-center justify-between relative z-20 bg-white/80 backdrop-blur-md shadow-sm border-b border-slate-200">
-        <div class="flex items-center gap-2">
-            <div class="w-8 h-8 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-lg flex items-center justify-center shadow-lg">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-white" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 2a4 4 0 00-4 4v1H5a1 1 0 00-.994.89l-1 9A1 1 0 004 18h12a1 1 0 00.994-1.11l-1-9A1 1 0 0015 7h-1V6a4 4 0 00-4-4zm2 5V6a2 2 0 10-4 0v1h4zm-6 3a1 1 0 112 0 1 1 0 01-2 0zm7-1a1 1 0 100 2 1 1 0 000-2z" clip-rule="evenodd" /></svg>
+        <div class="flex items-center gap-3">
+            <div class="w-10 h-10 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-xl flex items-center justify-center shadow-lg shadow-blue-200">
+                <!-- Ikon Web to Mobile (Globe & Phone) -->
+                <svg viewBox="0 0 24 24" class="w-6 h-6 text-white" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <line x1="2" y1="12" x2="22" y2="12"></line>
+                    <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
+                    <rect x="16" y="14" width="6" height="9" rx="1" fill="white" stroke="none" />
+                </svg>
             </div>
-            <span class="text-xl font-bold tracking-tight text-slate-900">WebToApp<span class="text-blue-600"></span></span>
+            <span class="text-2xl font-extrabold tracking-tight text-slate-900">WebTo<span class="text-blue-600">APK</span></span>
         </div>
+
     </nav>
 
     <!-- LANDING PAGE (STEP 1) -->
@@ -125,9 +132,13 @@
                                 <div class="flex items-center gap-4 p-4 bg-slate-50 rounded-2xl border border-slate-100">
                                             <div class="w-16 h-16 bg-white rounded-2xl shadow-md border border-slate-200 overflow-hidden flex items-center justify-center p-2" id="iconPreview">
                                                 <div id="iconPreviewImgContainer" class="w-full h-full flex items-center justify-center">
-                                                    <svg viewBox="0 0 24 24" class="w-10 h-10 text-blue-500" fill="currentColor" xmlns="http://www.w3.org/2000/svg" id="iconPreviewSVG">
-                                                        <path d="M14.314 0L2.3 12L6 15.7L21.684 0.016L14.314 0ZM21.684 8.284L14.314 15.654L18.014 19.354L21.684 15.684V8.284ZM14.314 15.654L6.314 23.654L10.014 24L21.684 12.33L18.014 8.63L14.314 15.654Z"/>
+                                                    <svg viewBox="0 0 24 24" class="w-10 h-10 text-indigo-600" fill="none" stroke="currentColor" stroke-width="1.5" id="iconPreviewSVG">
+                                                        <rect x="5" y="2" width="14" height="20" rx="2" />
+                                                        <path d="M12 18h.01" />
+                                                        <circle cx="12" cy="10" r="3" stroke-dasharray="2 2" />
+                                                        <path d="M9 10a3 3 0 0 1 6 0" />
                                                     </svg>
+
                                                     <img src="" class="w-full h-full object-contain hidden" id="iconPreviewImg">
                                                 </div>
                                             </div>
