@@ -124,8 +124,14 @@
                                 <!-- Icon Preview Box (Badge Style) -->
                                 <div class="flex items-center gap-4 p-4 bg-slate-50 rounded-2xl border border-slate-100">
                                             <div class="w-16 h-16 bg-white rounded-2xl shadow-md border border-slate-200 overflow-hidden flex items-center justify-center p-2" id="iconPreview">
-                                                <img src="https://raw.githubusercontent.com/flutter/website/master/src/assets/images/shared/brand/flutter/logo/flutter-lockup.png" class="w-full h-full object-contain" id="iconPreviewImg">
+                                                <div id="iconPreviewImgContainer" class="w-full h-full flex items-center justify-center">
+                                                    <svg viewBox="0 0 24 24" class="w-10 h-10 text-blue-500" fill="currentColor" xmlns="http://www.w3.org/2000/svg" id="iconPreviewSVG">
+                                                        <path d="M14.314 0L2.3 12L6 15.7L21.684 0.016L14.314 0ZM21.684 8.284L14.314 15.654L18.014 19.354L21.684 15.684V8.284ZM14.314 15.654L6.314 23.654L10.014 24L21.684 12.33L18.014 8.63L14.314 15.654Z"/>
+                                                    </svg>
+                                                    <img src="" class="w-full h-full object-contain hidden" id="iconPreviewImg">
+                                                </div>
                                             </div>
+
 
                                     <div>
                                         <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Launcher Icon Preview</p>
@@ -649,38 +655,43 @@
         function updateIconPreview() {
             const selectedIconType = document.querySelector('input[name="iconType"]:checked').value;
             const iconPreviewImg = document.getElementById('iconPreviewImg');
+            const iconPreviewSVG = document.getElementById('iconPreviewSVG');
             const iconPreviewText = document.getElementById('iconPreviewText');
             
-            iconPreviewImg.classList.remove('hidden');
-
             if (selectedIconType === 'none') {
-                iconPreviewImg.src = 'https://raw.githubusercontent.com/flutter/website/master/src/assets/images/shared/brand/flutter/logo/flutter-lockup.png';
+                iconPreviewImg.classList.add('hidden');
+                iconPreviewSVG.classList.remove('hidden');
                 iconPreviewText.textContent = 'Standard Flutter';
             } else if (selectedIconType === 'url') {
-
                 const url = appIconUrlInput.value.trim();
                 if (url) {
+                    iconPreviewSVG.classList.add('hidden');
+                    iconPreviewImg.classList.remove('hidden');
                     iconPreviewImg.src = url;
                     iconPreviewText.textContent = 'Custom URL';
                 } else {
-                    iconPreviewImg.src = 'https://raw.githubusercontent.com/flutter/website/master/src/assets/images/shared/brand/flutter/logo/flutter-lockup.png';
+                    iconPreviewImg.classList.add('hidden');
+                    iconPreviewSVG.classList.remove('hidden');
                     iconPreviewText.textContent = 'Menunggu URL...';
                 }
             } else if (selectedIconType === 'upload') {
                 if (appIconFileInput.files.length > 0) {
                     const reader = new FileReader();
                     reader.onload = function(e) {
+                        iconPreviewSVG.classList.add('hidden');
+                        iconPreviewImg.classList.remove('hidden');
                         iconPreviewImg.src = e.target.result;
                         iconPreviewText.textContent = 'File Diupload';
                     }
                     reader.readAsDataURL(appIconFileInput.files[0]);
                 } else {
-                    iconPreviewImg.src = 'https://raw.githubusercontent.com/flutter/website/master/src/assets/images/shared/brand/flutter/logo/flutter-lockup.png';
+                    iconPreviewImg.classList.add('hidden');
+                    iconPreviewSVG.classList.remove('hidden');
                     iconPreviewText.textContent = 'Pilih file...';
                 }
             }
-
         }
+
 
         iconTypeRadios.forEach(radio => {
             radio.addEventListener('change', (e) => {
