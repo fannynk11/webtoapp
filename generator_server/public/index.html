@@ -867,9 +867,10 @@
                 }, 2000); // Check every 2 seconds
 
             } catch (err) {
-                errorMessage.textContent = err.message || 'Gagal terhubung ke server';
+                errorMessage.textContent = 'Terjadi kesalahan sistem saat memulai proses build. Silakan coba lagi beberapa saat lagi atau hubungi Tim IT jika kendala berlanjut.';
                 showSection(errorSection);
             }
+
         });
     </script>
 </body>

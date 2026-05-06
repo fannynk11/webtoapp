@@ -222,13 +222,19 @@ async function processBuild(jobId, payload, host) {
         });
 
     } catch (error) {
+        let detail = error.response?.data?.message || error.message;
+        let userFriendlyError = 'Terjadi kendala saat menghubungkan ke server build. Silakan hubungi Tim IT untuk bantuan.';
+        
+        if (detail.includes('inputs are too large')) {
+            userFriendlyError = 'Ukuran gambar yang diunggah terlalu besar untuk diproses. Silakan gunakan gambar dengan ukuran lebih kecil atau gunakan fitur URL.';
+        } else if (detail.includes('401') || detail.includes('Bad credentials')) {
+            userFriendlyError = 'Sistem mengalami kendala autentikasi. Silakan hubungi Tim IT untuk mengecek Token GitHub.';
+        }
 
-
-        const detail = error.response?.data?.message || error.message;
         console.error(`Build failed:`, detail);
         await Job.findOneAndUpdate({ jobId }, { 
             status: 'failed', 
-            message: 'Gagal: ' + detail,
+            message: `Gagal: ${userFriendlyError}`,
             errorLog: detail
         });
     }
