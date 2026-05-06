@@ -248,8 +248,10 @@
                                 <!-- Sim Content -->
                                 <div id="simContent" class="flex flex-col items-center justify-center w-full h-full p-4 text-center hidden relative z-0">
                                     <img id="simImage" src="" class="w-24 h-24 object-contain mb-4 hidden drop-shadow-md" />
+                                    <div id="simSpinner" class="hidden w-12 h-12 border-4 border-slate-200 border-t-slate-800 rounded-full animate-spin mb-4"></div>
                                     <div id="simText" class="text-sm font-semibold transition-colors duration-300" style="color: #6C63FF">Memuat halaman...</div>
                                 </div>
+
                                 
                                 <div id="simDefaultContent" class="flex flex-col items-center justify-center text-center opacity-30">
                                     <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-slate-600 mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" /></svg>
@@ -395,17 +397,21 @@
                 simText.style.color = splashTextColorInput.value;
                 simText.textContent = splashLoadingTextInput.value || 'Memuat halaman...';
 
-                // Update Logo Image
+                // Update Logo Image / Spinner
                 const selectedImageType = document.querySelector('input[name="imageType"]:checked').value;
-                if (selectedImageType === 'none') {
-                    simImage.classList.add('hidden');
+                const simSpinner = document.getElementById('simSpinner');
+                
+                simImage.classList.add('hidden');
+                simSpinner.classList.add('hidden');
+
+                if (selectedImageType === 'spinner') {
+                    simSpinner.classList.remove('hidden');
+                    simSpinner.style.borderTopColor = splashProgressBarColorInput.value;
                 } else if (selectedImageType === 'url') {
                     const url = document.getElementById('splashImageUrl').value.trim();
                     if (url) {
                         simImage.src = url;
                         simImage.classList.remove('hidden');
-                    } else {
-                        simImage.classList.add('hidden');
                     }
                 } else if (selectedImageType === 'upload') {
                     const fileInput = document.getElementById('splashImageFile');
@@ -416,19 +422,18 @@
                             simImage.classList.remove('hidden');
                         }
                         reader.readAsDataURL(fileInput.files[0]);
-                    } else {
-                        simImage.classList.add('hidden');
                     }
                 }
 
                 // Apply Logo Background if checked
-                if (splashUseLogoBgCheckbox.checked) {
+                if (splashUseLogoBgCheckbox.checked && selectedImageType !== 'spinner' && selectedImageType !== 'none') {
                     simImage.style.backgroundColor = splashLogoBgColorInput.value;
                     simImage.classList.add('p-2', 'rounded-2xl');
                 } else {
                     simImage.style.backgroundColor = 'transparent';
                     simImage.classList.remove('p-2', 'rounded-2xl');
                 }
+
 
             } else {
                 simDefaultContent.classList.remove('hidden');
@@ -498,8 +503,9 @@
         });
         splashProgressBarColorInput.addEventListener('input', (e) => {
             document.getElementById('splashProgressBarColorHex').textContent = e.target.value.toUpperCase();
-            // We don't currently preview progress bar color in the static sim, but could in the future.
+            updateSimulator();
         });
+
 
         splashUseLogoBgCheckbox.addEventListener('change', (e) => {
             if (e.target.checked) {
