@@ -28,39 +28,32 @@ if (!GITHUB_TOKEN || !GITHUB_OWNER || !GITHUB_REPO) {
 
 
 app.post('/api/generate', async (req, res) => {
-    const { url, appName, useCustomSplash, splashBgColor, splashTextColor, splashLoadingText, splashProgressBarColor, splashUseLogoBg, splashLogoBgColor, hideBottomNav, splashImageType, splashImageData, splashBgImageType, splashBgImageData } = req.body;
-    
-    if (!url || !appName) {
-        return res.status(400).json({ error: 'URL dan Nama Aplikasi wajib diisi' });
+    try {
+        const { url, appName } = req.body;
+        
+        if (!url || !appName) {
+            return res.status(400).json({ error: 'URL dan Nama Aplikasi wajib diisi' });
+        }
+
+        const jobId = uuidv4();
+        jobs[jobId] = {
+            id: jobId,
+            status: 'queued',
+            progress: 0,
+            message: 'Menyiapkan permintaan...',
+            url: url,
+            appName: appName,
+            downloadUrl: null
+        };
+
+        // Tunggu sampai GitHub Actions ter-trigger baru kirim response
+        await processBuild(jobId);
+
+        res.json({ jobId });
+    } catch (err) {
+        console.error('API Error:', err.message);
+        res.status(500).json({ error: err.message });
     }
-
-    const jobId = uuidv4();
-    jobs[jobId] = {
-        id: jobId,
-        status: 'queued',
-        progress: 0,
-        message: 'Menyiapkan ruang kerja...',
-        url: url,
-        appName: appName,
-        useCustomSplash: useCustomSplash || false,
-        splashBgColor: splashBgColor || '#FFFFFF',
-        splashTextColor: splashTextColor || '#6C63FF',
-        splashLoadingText: splashLoadingText || 'Memuat halaman...',
-        splashProgressBarColor: splashProgressBarColor || '#6C63FF',
-        splashUseLogoBg: splashUseLogoBg || false,
-        splashLogoBgColor: splashLogoBgColor || '#FFFFFF',
-        hideBottomNav: hideBottomNav || false,
-        splashImageType: splashImageType || 'none',
-        splashImageData: splashImageData || '',
-        splashBgImageType: splashBgImageType || 'color',
-        splashBgImageData: splashBgImageData || '',
-        downloadUrl: null
-    };
-
-    res.json({ jobId });
-
-    // Mulai proses build di background
-    processBuild(jobId);
 });
 
 app.get('/api/status/:jobId', (req, res) => {
@@ -75,14 +68,16 @@ async function processBuild(jobId) {
     const job = jobs[jobId];
     const { url, appName } = job;
 
+    if (!GITHUB_TOKEN || !GITHUB_OWNER || !GITHUB_REPO) {
+        throw new Error('Konfigurasi GitHub (Token/Owner/Repo) belum diatur di Environment Variables Vercel.');
+    }
+
     try {
         job.status = 'processing';
-        
-        // 1. Trigger GitHub Action
-        job.message = 'Menghubungkan ke Build Server GitHub...';
-        job.progress = 30;
+        job.message = 'Menghubungkan ke GitHub...';
+        job.progress = 50;
 
-        const response = await axios.post(
+        await axios.post(
             `https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/actions/workflows/build-apk.yml/dispatches`,
             {
                 ref: 'main',
@@ -99,28 +94,28 @@ async function processBuild(jobId) {
             }
         );
 
-        // 2. Selesai
         job.status = 'completed';
         job.progress = 100;
-        job.message = 'Permintaan Build terkirim! Klik tombol di bawah untuk memantau proses dan download APK di GitHub.';
+        job.message = 'Berhasil! Cek tab Actions di GitHub kamu.';
         job.downloadUrl = `https://github.com/${GITHUB_OWNER}/${GITHUB_REPO}/actions`;
 
     } catch (error) {
-        console.error(`Build failed for job ${jobId}:`, error.response?.data || error.message);
+        const detail = error.response?.data?.message || error.message;
+        console.error(`Build failed:`, detail);
         job.status = 'failed';
-        job.message = 'Gagal terhubung ke GitHub: ' + (error.response?.data?.message || error.message);
+        job.message = 'Gagal terhubung ke GitHub: ' + detail;
+        throw new Error(detail);
     }
 }
 
-function runCommand(command, cwd) {
-    // Fungsi ini sudah tidak digunakan lagi
-    return Promise.resolve();
+// Hanya jalankan listen jika tidak di Vercel
+if (process.env.NODE_ENV !== 'production') {
+    app.listen(PORT, () => {
+        console.log(`🚀 Local Server running on http://localhost:${PORT}`);
+    });
 }
 
-app.listen(PORT, () => {
-    console.log(`🚀 Generator Server berjalan di http://localhost:${PORT}`);
-});
-
 module.exports = app;
+
 
 
