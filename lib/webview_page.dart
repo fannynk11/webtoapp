@@ -377,23 +377,41 @@ class _WebViewPageState extends State<WebViewPage> {
   }
 
   Widget _buildSplashImage() {
+    // Default fallback spinner
+    Widget spinner = SizedBox(
+      width: 45,
+      height: 45,
+      child: CircularProgressIndicator(
+        strokeWidth: 3,
+        valueColor: AlwaysStoppedAnimation<Color>(
+          useCustomSplash ? _hexToColor(splashProgressBarColor) : const Color(0xFF6C63FF),
+        ),
+      ),
+    );
+
+    if (splashImageType == 'spinner') return spinner;
+
     Widget imageWidget = const SizedBox.shrink();
 
     if (splashImageType == 'url' && splashImageData.isNotEmpty) {
       imageWidget = Image.network(
         splashImageData,
-        width: 60,
-        height: 60,
+        width: 80,
+        height: 80,
         fit: BoxFit.contain,
-        errorBuilder: (context, error, stackTrace) => const Icon(Icons.image_not_supported_rounded, color: Colors.grey, size: 32),
+        errorBuilder: (context, error, stackTrace) => spinner,
+        loadingBuilder: (context, child, loadingProgress) {
+          if (loadingProgress == null) return child;
+          return spinner;
+        },
       );
     } else if (splashImageType == 'asset' && splashImageData.isNotEmpty) {
       imageWidget = Image.asset(
         splashImageData,
-        width: 60,
-        height: 60,
+        width: 80,
+        height: 80,
         fit: BoxFit.contain,
-        errorBuilder: (context, error, stackTrace) => const Icon(Icons.image_not_supported_rounded, color: Colors.grey, size: 32),
+        errorBuilder: (context, error, stackTrace) => spinner,
       );
     }
 
@@ -401,10 +419,17 @@ class _WebViewPageState extends State<WebViewPage> {
 
     if (splashUseLogoBg) {
       return Container(
-        padding: const EdgeInsets.all(12),
+        padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
           color: _hexToColor(splashLogoBgColor),
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(20),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.05),
+              blurRadius: 10,
+              offset: const Offset(0, 4),
+            ),
+          ],
         ),
         child: imageWidget,
       );
@@ -412,4 +437,5 @@ class _WebViewPageState extends State<WebViewPage> {
 
     return imageWidget;
   }
+
 }
