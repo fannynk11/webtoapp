@@ -6,8 +6,9 @@ const mongoose = require('mongoose');
 require('dotenv').config();
 
 const GITHUB_TOKEN = process.env.GITHUB_TOKEN;
-const GITHUB_OWNER = process.env.GITHUB_REPO_OWNER;
-const GITHUB_REPO = process.env.GITHUB_REPO_NAME;
+const GITHUB_OWNER = process.env.GITHUB_OWNER;
+const GITHUB_REPO = process.env.GITHUB_REPO;
+
 const MONGODB_URI = process.env.MONGODB_URI;
 
 const app = express();
