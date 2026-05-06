@@ -23,8 +23,9 @@ const jobs = {};
 
 // Konstanta path
 const PROJECT_ROOT = path.resolve(__dirname, '..'); 
-const TEMP_DIR = path.join(__dirname, 'temp_builds');
+const TEMP_DIR = path.join('/tmp', 'temp_builds'); // Gunakan /tmp untuk Vercel
 const DOWNLOADS_DIR = path.join(__dirname, 'public', 'downloads');
+
 
 // Pastikan folder temp dan downloads ada
 fse.ensureDirSync(TEMP_DIR);
@@ -123,4 +124,7 @@ function runCommand(command, cwd) {
 app.listen(PORT, () => {
     console.log(`🚀 Generator Server berjalan di http://localhost:${PORT}`);
 });
+
+module.exports = app;
+
 

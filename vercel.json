@@ -1,0 +1,28 @@
+{
+  "version": 2,
+  "name": "web-to-apk-generator",
+  "builds": [
+    {
+      "src": "generator_server/server.js",
+      "use": "@vercel/node"
+    },
+    {
+      "src": "generator_server/public/**",
+      "use": "@vercel/static"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/api/(.*)",
+      "dest": "generator_server/server.js"
+    },
+    {
+      "src": "/downloads/(.*)",
+      "dest": "generator_server/public/downloads/$1"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "generator_server/public/$1"
+    }
+  ]
+}
