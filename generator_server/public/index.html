@@ -246,36 +246,11 @@
                                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                                         <!-- Background Section -->
                                         <div class="space-y-4">
-                                            <label class="block text-sm font-bold text-slate-700">Background Layar</label>
-                                            <div class="flex gap-1 p-1 bg-slate-100 rounded-xl w-full">
-                                                <label class="flex-1 cursor-pointer">
-                                                    <input type="radio" name="bgType" value="color" checked class="peer sr-only">
-                                                    <span class="block text-center py-2 text-[10px] font-bold text-slate-500 rounded-lg peer-checked:bg-white peer-checked:text-blue-600 peer-checked:shadow-sm">WARNA</span>
-                                                </label>
-                                                <label class="flex-1 cursor-pointer">
-                                                    <input type="radio" name="bgType" value="url" class="peer sr-only">
-                                                    <span class="block text-center py-2 text-[10px] font-bold text-slate-500 rounded-lg peer-checked:bg-white peer-checked:text-blue-600 peer-checked:shadow-sm">URL</span>
-                                                </label>
-                                                <label class="flex-1 cursor-pointer">
-                                                    <input type="radio" name="bgType" value="upload" class="peer sr-only">
-                                                    <span class="block text-center py-2 text-[10px] font-bold text-slate-500 rounded-lg peer-checked:bg-white peer-checked:text-blue-600 peer-checked:shadow-sm">FILE</span>
-                                                </label>
-                                            </div>
+                                            <label class="block text-sm font-bold text-slate-700">Warna Background</label>
                                             
                                             <div id="bgColorInput" class="flex items-center gap-3 p-2.5 bg-slate-50 border border-slate-100 rounded-xl">
                                                 <input type="color" id="splashBgColor" value="#FFFFFF" class="w-8 h-8 rounded-lg cursor-pointer bg-transparent border-none">
                                                 <span class="text-xs font-black text-slate-600" id="splashBgColorHex">#FFFFFF</span>
-                                            </div>
-                                            
-                                            <div id="bgUrlInput" class="hidden">
-                                                <input type="url" id="splashBgUrl" placeholder="https://..." class="w-full px-4 py-2.5 text-sm bg-slate-50 border border-slate-100 rounded-xl outline-none focus:border-blue-500 transition-all">
-                                            </div>
-                                            
-                                            <div id="bgUploadInput" class="hidden">
-                                                <div class="relative border-2 border-dashed border-slate-200 rounded-xl p-4 text-center hover:bg-slate-50 transition-all">
-                                                    <input type="file" id="splashBgFile" accept="image/*" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer">
-                                                    <span class="text-[10px] font-bold text-slate-500">Klik untuk upload BG</span>
-                                                </div>
                                             </div>
                                         </div>
 
@@ -626,20 +601,6 @@
             });
         }
 
-        // Background Type selection logic
-        bgTypeRadios.forEach(radio => {
-            radio.addEventListener('change', (e) => {
-                const selected = e.target.value;
-                bgColorInput.classList.toggle('hidden', selected !== 'color');
-                bgUrlInput.classList.toggle('hidden', selected !== 'url');
-                bgUploadInput.classList.toggle('hidden', selected !== 'upload');
-                
-                useCustomSplashCheckbox.checked = true;
-                customSplashSettings.classList.remove('hidden');
-                updateSimulator();
-            });
-        });
-
         function fileToBase64(file) {
             return new Promise((resolve, reject) => {
                 const reader = new FileReader();
@@ -656,25 +617,9 @@
                 simDefaultContent.classList.add('hidden');
                 simContent.classList.remove('hidden');
                 
-                // Update Background
-                const selectedBgType = document.querySelector('input[name="bgType"]:checked').value;
-                if (selectedBgType === 'color') {
-                    simContainer.style.backgroundImage = 'none';
-                    simContainer.style.backgroundColor = splashBgColorInput.value;
-                } else if (selectedBgType === 'url') {
-                    const url = document.getElementById('splashBgUrl').value.trim();
-                    simContainer.style.backgroundImage = url ? `url(${url})` : 'none';
-                    simContainer.style.backgroundColor = splashBgColorInput.value;
-                } else if (selectedBgType === 'upload') {
-                    const fileInput = document.getElementById('splashBgFile');
-                    if (fileInput.files.length > 0) {
-                        const url = URL.createObjectURL(fileInput.files[0]);
-                        simContainer.style.backgroundImage = `url(${url})`;
-                    } else {
-                        simContainer.style.backgroundImage = 'none';
-                        simContainer.style.backgroundColor = splashBgColorInput.value;
-                    }
-                }
+                // Update Background (Fixed to Color Only)
+                simContainer.style.backgroundImage = 'none';
+                simContainer.style.backgroundColor = splashBgColorInput.value;
 
                 simText.style.color = splashTextColorInput.value;
                 simText.textContent = splashLoadingTextInput.value || 'Memuat halaman...';
@@ -1034,19 +979,9 @@
                     }
                 }
 
-                // Background Selection
-                const selectedBgType = document.querySelector('input[name="bgType"]:checked').value;
-                payload.splashBgImageType = selectedBgType === 'upload' ? 'asset' : selectedBgType;
+                // Background (Fixed to Color Only)
+                payload.splashBgImageType = 'color';
                 payload.splashBgImageData = '';
-
-                if (selectedBgType === 'url') {
-                    payload.splashBgImageData = document.getElementById('splashBgUrl').value.trim();
-                } else if (selectedBgType === 'upload') {
-                    const bgFileInput = document.getElementById('splashBgFile');
-                    if (bgFileInput.files.length > 0) {
-                        payload.splashBgImageData = await fileToBase64(bgFileInput.files[0]);
-                    }
-                }
 
                 // App Icon Selection (Global)
                 const selectedIconType = document.querySelector('input[name="iconType"]:checked').value;
