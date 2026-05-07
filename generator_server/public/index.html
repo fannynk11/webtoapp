@@ -228,6 +228,20 @@
                                             </div>
                                         </div>
                                     </div>
+
+                                    <!-- Options -->
+                                    <div class="pt-4 border-t border-slate-50">
+                                        <label class="flex items-center gap-3 cursor-pointer group">
+                                            <div class="relative flex items-center justify-center">
+                                                <input type="checkbox" id="hideBottomNav" class="peer sr-only">
+                                                <div class="w-10 h-5 bg-slate-200 rounded-full peer peer-checked:bg-blue-600 after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:after:translate-x-5"></div>
+                                            </div>
+                                            <div class="flex flex-col">
+                                                <span class="text-sm font-bold text-slate-700 group-hover:text-blue-600 transition-colors">Sembunyikan Navigasi Bawah</span>
+                                                <span class="text-[10px] font-medium text-slate-400">Aktifkan untuk tampilan Full Screen</span>
+                                            </div>
+                                        </label>
+                                    </div>
                                 </div>
                             </div>
 
@@ -599,7 +613,14 @@
 
             const useCustomOfflineCheckbox = document.getElementById('useCustomOffline');
             const customOfflineSettings = document.getElementById('customOfflineSettings');
+            const useCustomSplashCheckbox = document.getElementById('useCustomSplash');
+            const customSplashSettings = document.getElementById('customSplashSettings');
             const offlineUploadInput = document.getElementById('offlineUploadInput');
+            const imageUrlInput = document.getElementById('iconUrlInput');
+            const imageUploadInput = document.getElementById('iconUploadInput');
+            const splashImageUrlInput = document.getElementById('splashImageUrl');
+            const splashImageUploadDiv = document.getElementById('imageUploadInput');
+            const splashImageUrlDiv = document.getElementById('imageUrlInput');
             
             // Simulator Elements
             const simContainer = document.getElementById('simContainer');
@@ -869,15 +890,15 @@
             });
 
             document.querySelectorAll('input[name="offlineIconType"]').forEach(r => r.addEventListener('change', (e) => {
-                if(offlineUploadInput) offlineUploadInput.classList.toggle('hidden', e.target.value !== 'upload');
+                if(offlineUploadInput) offlineUploadInput.classList.toggle('hidden', e.target.value !== 'asset');
                 updateSimulator();
             }));
 
             document.getElementById('offlineImageFile').addEventListener('change', updateSimulator);
 
             document.querySelectorAll('input[name="imageType"]').forEach(r => r.addEventListener('change', (e) => {
-                if(imageUrlInput) imageUrlInput.classList.toggle('hidden', e.target.value !== 'url');
-                if(imageUploadInput) imageUploadInput.classList.toggle('hidden', e.target.value !== 'upload');
+                if(splashImageUrlDiv) splashImageUrlDiv.classList.toggle('hidden', e.target.value !== 'url');
+                if(splashImageUploadDiv) splashImageUploadDiv.classList.toggle('hidden', e.target.value !== 'upload');
                 
                 const colorPickerContainer = document.getElementById('colorPickerContainer');
                 if (colorPickerContainer) {
