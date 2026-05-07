@@ -1021,11 +1021,14 @@
                                         });
 
                                         if (res.ok) {
-                                            alert('Berhasil! Link download sudah dikirim ke email kamu.');
+                                            alert('🚀 Berhasil! Link download APK sudah dikirim ke email kamu.');
                                         } else {
-                                            alert('Gagal mengirim email, tapi kamu bisa tetap download langsung.');
+                                            const errorData = await res.json();
+                                            alert('Gagal mengirim email: ' + (errorData.error || 'Server error') + '. Tapi kamu tetap bisa download di bawah.');
                                         }
-                                        window.location.href = downloadUrl;
+                                        // Selalu picu download sebagai fallback
+                                        window.open(downloadUrl, '_blank');
+
                                     } catch (err) {
                                         console.error(err);
                                         window.location.href = downloadUrl;
