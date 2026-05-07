@@ -42,6 +42,9 @@ on:
       splash_bg_image_data:
         description: 'Data BG Image'
         default: ''
+      app_icon_type:
+        description: 'Tipe Icon Aplikasi'
+        default: 'none'
       app_icon_data:
         description: 'Data Icon Aplikasi (Base64/URL)'
         default: ''

@@ -236,19 +236,26 @@ async function processBuild(jobId, payload, host) {
 
     } catch (error) {
         let detail = error.response?.data?.message || error.message;
+        let fullError = error.response?.data ? JSON.stringify(error.response.data) : error.message;
+        
+        console.error(`❌ GitHub Dispatch Failed:`, fullError);
+        
         let userFriendlyError = 'Terjadi kendala saat menghubungkan ke server build. Silakan hubungi Tim IT untuk bantuan.';
         
         if (detail.includes('inputs are too large')) {
-            userFriendlyError = 'Ukuran gambar yang diunggah terlalu besar untuk diproses. Silakan gunakan gambar dengan ukuran lebih kecil atau gunakan fitur URL.';
+            userFriendlyError = 'Ukuran gambar yang diunggah terlalu besar. Silakan gunakan gambar yang lebih kecil.';
         } else if (detail.includes('401') || detail.includes('Bad credentials')) {
-            userFriendlyError = 'Sistem mengalami kendala autentikasi. Silakan hubungi Tim IT untuk mengecek Token GitHub.';
+            userFriendlyError = 'Sistem mengalami kendala autentikasi (Token GitHub tidak valid).';
+        } else if (error.response?.status === 404) {
+            userFriendlyError = 'Workflow build tidak ditemukan. Pastikan file build-apk.yml ada di branch main.';
+        } else if (error.response?.status === 422) {
+            userFriendlyError = 'Data yang dikirim tidak sesuai format yang diharapkan GitHub.';
         }
 
-        console.error(`Build failed:`, detail);
         await Job.findOneAndUpdate({ jobId }, { 
             status: 'failed', 
             message: `Gagal: ${userFriendlyError}`,
-            errorLog: detail
+            errorLog: fullError
         });
     }
 }
