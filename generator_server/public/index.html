@@ -155,287 +155,256 @@
 
                 <!-- STEP 2: Customization -->
                 <div id="step2Section" class="hidden opacity-0 translate-x-4 transition-all duration-300 w-full">
-                    <div class="flex items-center justify-between mb-4 border-b border-slate-100 pb-4">
+                    <!-- Header Step 2 -->
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between mb-8 gap-4">
                         <div>
-                            <h2 class="text-xl font-extrabold text-slate-800">Customize App</h2>
-                            <p class="text-sm text-slate-500 mt-1">Atur tampilan Splash Screen App</p>
+                            <h2 class="text-2xl font-black text-slate-800 tracking-tight">Kustomisasi Aplikasi</h2>
+                            <p class="text-sm text-slate-500 font-medium">Personalisasi tampilan aplikasi Anda sebelum di-build.</p>
                         </div>
-                        <button type="button" id="btnBack" class="text-sm font-medium text-slate-400 hover:text-slate-800 transition-colors flex items-center gap-1 bg-slate-50 px-3 py-1.5 rounded-lg">
+                        <button type="button" id="btnBack" class="inline-flex items-center gap-2 px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 text-sm font-bold rounded-xl transition-all active:scale-95 w-fit">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" /></svg>
                             Kembali
                         </button>
                     </div>
 
-                    <div class="flex flex-col md:flex-row gap-8">
-                        <!-- Left Column: Settings -->
-                        <div class="flex-1 space-y-6">
+                    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+                        <!-- Left Column: Settings Cards -->
+                        <div class="lg:col-span-8 space-y-6">
                             
-                            <!-- Icon Aplikasi Section -->
-                            <div class="bg-white p-4 sm:p-5 rounded-2xl border border-slate-100 shadow-[0_4px_20px_-10px_rgba(0,0,0,0.05)] mb-5">
-                                <label class="block text-xs font-bold tracking-wide text-slate-500 uppercase mb-3">Icon Aplikasi (Launcher Icon)</label>
-                                <div class="flex flex-wrap gap-2 sm:gap-4 mb-3 p-1 bg-slate-100 rounded-lg w-full sm:w-max">
-                                    <label class="relative flex items-center cursor-pointer flex-1 sm:flex-none justify-center">
-                                        <input type="radio" name="iconType" value="none" checked class="peer sr-only">
-                                        <span class="w-full text-center px-3 py-1.5 text-xs font-medium text-slate-500 rounded-md transition-all peer-checked:bg-white peer-checked:text-slate-800 peer-checked:shadow-sm">Default</span>
-                                    </label>
-                                    <label class="relative flex items-center cursor-pointer flex-1 sm:flex-none justify-center">
-                                        <input type="radio" name="iconType" value="url" class="peer sr-only">
-                                        <span class="w-full text-center px-3 py-1.5 text-xs font-medium text-slate-500 rounded-md transition-all peer-checked:bg-white peer-checked:text-slate-800 peer-checked:shadow-sm">URL Link</span>
-                                    </label>
-                                    <label class="relative flex items-center cursor-pointer flex-1 sm:flex-none justify-center">
-                                        <input type="radio" name="iconType" value="upload" class="peer sr-only">
-                                        <span class="w-full text-center px-3 py-1.5 text-xs font-medium text-slate-500 rounded-md transition-all peer-checked:bg-white peer-checked:text-slate-800 peer-checked:shadow-sm">Upload File</span>
-                                    </label>
+                            <!-- Card 1: Identity -->
+                            <div class="bg-white rounded-3xl border border-slate-100 shadow-sm overflow-hidden">
+                                <div class="px-6 py-4 border-b border-slate-50 bg-slate-50/50">
+                                    <h3 class="text-xs font-black text-slate-400 uppercase tracking-widest">Identitas Visual</h3>
                                 </div>
-                                
-                                <div id="iconUrlInput" class="hidden mb-3">
-                                    <input type="url" id="appIconUrl" placeholder="https://... (PNG 512x512)" class="w-full px-4 py-3 text-sm bg-slate-50 rounded-xl border border-slate-200 focus:bg-white focus:ring-4 focus:ring-slate-500/10 focus:border-slate-500 outline-none transition-all placeholder-slate-400">
-                                </div>
-                                <div id="iconUploadInput" class="hidden mb-3">
-                                    <div class="relative border-2 border-dashed border-slate-200 rounded-xl p-4 text-center hover:bg-slate-50 hover:border-slate-400 transition-colors">
-                                        <input type="file" id="appIconFile" accept="image/png, image/jpeg, image/jpg" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer">
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mx-auto text-slate-400 mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" /></svg>
-                                        <span class="text-sm font-semibold text-slate-700">Pilih gambar icon</span>
-                                        <p class="text-xs text-slate-400 mt-1">Saran: PNG 512x512 pixel (Maks 1MB)</p>
-                                    </div>
-                                </div>
+                                <div class="p-6 space-y-6">
+                                    <!-- Launcher Icon -->
+                                    <div>
+                                        <label class="block text-sm font-bold text-slate-700 mb-3">Icon Aplikasi (Launcher Icon)</label>
+                                        <div class="flex flex-wrap gap-2 mb-4 p-1 bg-slate-100 rounded-xl w-fit">
+                                            <label class="cursor-pointer">
+                                                <input type="radio" name="iconType" value="none" checked class="peer sr-only">
+                                                <span class="inline-block px-4 py-2 text-xs font-bold text-slate-500 rounded-lg transition-all peer-checked:bg-white peer-checked:text-blue-600 peer-checked:shadow-sm">Default</span>
+                                            </label>
+                                            <label class="cursor-pointer">
+                                                <input type="radio" name="iconType" value="url" class="peer sr-only">
+                                                <span class="inline-block px-4 py-2 text-xs font-bold text-slate-500 rounded-lg transition-all peer-checked:bg-white peer-checked:text-blue-600 peer-checked:shadow-sm">URL</span>
+                                            </label>
+                                            <label class="cursor-pointer">
+                                                <input type="radio" name="iconType" value="upload" class="peer sr-only">
+                                                <span class="inline-block px-4 py-2 text-xs font-bold text-slate-500 rounded-lg transition-all peer-checked:bg-white peer-checked:text-blue-600 peer-checked:shadow-sm">Upload</span>
+                                            </label>
+                                        </div>
+                                        
+                                        <div id="iconUrlInput" class="hidden mb-4 animate-fade-in">
+                                            <input type="url" id="appIconUrl" placeholder="https://... (PNG 512x512)" class="w-full px-4 py-3 text-sm bg-slate-50 border border-slate-100 rounded-xl focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all">
+                                        </div>
+                                        <div id="iconUploadInput" class="hidden mb-4 animate-fade-in">
+                                            <div class="relative border-2 border-dashed border-slate-200 rounded-2xl p-6 text-center hover:bg-slate-50 hover:border-blue-400 transition-all group">
+                                                <input type="file" id="appIconFile" accept="image/png, image/jpeg, image/jpg" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer">
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 mx-auto text-slate-300 mb-2 group-hover:text-blue-500 transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" /></svg>
+                                                <span class="text-sm font-bold text-slate-600">Pilih Icon</span>
+                                                <p class="text-[10px] text-slate-400 mt-1 uppercase font-bold tracking-tighter">PNG 512x512 (Maks 1MB)</p>
+                                            </div>
+                                        </div>
 
-                                <!-- Icon Preview Box (Badge Style) -->
-                                <div class="flex items-center gap-4 p-4 bg-slate-50 rounded-2xl border border-slate-100">
-                                            <div class="w-16 h-16 bg-white rounded-2xl shadow-md border border-slate-200 overflow-hidden flex items-center justify-center p-2" id="iconPreview">
+                                        <!-- Mini Preview -->
+                                        <div class="flex items-center gap-4 p-4 bg-blue-50/30 rounded-2xl border border-blue-100/50">
+                                            <div class="w-14 h-14 bg-white rounded-2xl shadow-sm border border-white overflow-hidden flex items-center justify-center p-2" id="iconPreview">
                                                 <div id="iconPreviewImgContainer" class="w-full h-full flex items-center justify-center">
-                                                    <svg viewBox="0 0 24 24" class="w-10 h-10 text-indigo-600" fill="none" stroke="currentColor" stroke-width="1.5" id="iconPreviewSVG">
+                                                    <svg viewBox="0 0 24 24" class="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" stroke-width="2" id="iconPreviewSVG">
                                                         <rect x="5" y="2" width="14" height="20" rx="2" />
                                                         <path d="M12 18h.01" />
-                                                        <circle cx="12" cy="10" r="3" stroke-dasharray="2 2" />
-                                                        <path d="M9 10a3 3 0 0 1 6 0" />
                                                     </svg>
-
                                                     <img src="" class="w-full h-full object-contain hidden" id="iconPreviewImg">
                                                 </div>
                                             </div>
-
-
-                                    <div>
-                                        <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Launcher Icon Preview</p>
-                                        <p class="text-sm font-bold text-slate-700" id="iconPreviewText">Standard Flutter</p>
-                                        <div class="flex items-center gap-1 mt-1">
-                                            <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
-                                            <span class="text-[10px] font-medium text-slate-400">Ready for Android</span>
+                                            <div>
+                                                <p class="text-[9px] font-black text-blue-400 uppercase tracking-widest mb-0.5">Icon Preview</p>
+                                                <p class="text-sm font-black text-slate-800" id="iconPreviewText">Standard Flutter</p>
+                                                <span class="inline-flex items-center gap-1 text-[9px] font-bold text-emerald-500 uppercase">
+                                                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                                                    Android Optimized
+                                                </span>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
 
-                            <!-- Opsi Layar Loading Custom -->
-                            <div>
-                                <label class="flex items-center justify-between cursor-pointer group mb-4 bg-slate-50 p-4 rounded-2xl border border-slate-100 hover:border-slate-300 transition-all">
-                                    <div class="flex items-center gap-3">
-                                        <div class="w-10 h-10 bg-white rounded-xl flex items-center justify-center text-slate-600 shadow-sm">
-                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
-                                        </div>
-                                        <div>
-                                            <span class="block text-sm font-bold text-slate-800">Aktifkan Custom Splash Screen</span>
-                                            <span class="text-[10px] text-slate-400">Layar loading kustom saat aplikasi dibuka</span>
-                                        </div>
-                                    </div>
-                                    <div class="relative flex items-center justify-center">
-                                        <input type="checkbox" id="useCustomSplash" class="peer appearance-none w-10 h-5 bg-slate-300 rounded-full checked:bg-slate-800 transition-colors cursor-pointer relative shadow-inner">
-                                        <div class="absolute left-0.5 top-0.5 w-4 h-4 bg-white rounded-full peer-checked:translate-x-5 transition-transform shadow-sm pointer-events-none"></div>
-                                    </div>
-                                </label>
-
-                                <div id="customSplashSettings" class="hidden space-y-5 p-4 sm:p-5 bg-white rounded-2xl border border-slate-100 shadow-[0_4px_20px_-10px_rgba(0,0,0,0.05)]">
-                                    <div class="flex flex-col sm:flex-row gap-4 sm:gap-5">
-                                        <div class="flex-1">
-                                            <label class="block text-xs font-bold tracking-wide text-slate-500 uppercase mb-2">Background Layar</label>
-                                            <div class="flex flex-wrap gap-2 mb-3 p-1 bg-slate-100 rounded-lg w-full">
-                                                <label class="relative flex items-center cursor-pointer flex-1 justify-center">
+                            <!-- Card 2: Splash Screen -->
+                            <div class="bg-white rounded-3xl border border-slate-100 shadow-sm overflow-hidden">
+                                <div class="px-6 py-4 border-b border-slate-50 bg-slate-50/50 flex items-center justify-between">
+                                    <h3 class="text-xs font-black text-slate-400 uppercase tracking-widest">Splash Screen (Layar Loading)</h3>
+                                    <label class="relative inline-flex items-center cursor-pointer">
+                                        <input type="checkbox" id="useCustomSplash" class="peer sr-only">
+                                        <div class="w-10 h-5 bg-slate-200 rounded-full peer peer-checked:bg-blue-600 after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:after:translate-x-5"></div>
+                                    </label>
+                                </div>
+                                
+                                <div id="customSplashSettings" class="hidden p-6 space-y-6 animate-fade-in">
+                                    <!-- Grid for Splash Settings -->
+                                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                        <!-- Background Section -->
+                                        <div class="space-y-4">
+                                            <label class="block text-sm font-bold text-slate-700">Background Layar</label>
+                                            <div class="flex gap-1 p-1 bg-slate-100 rounded-xl w-full">
+                                                <label class="flex-1 cursor-pointer">
                                                     <input type="radio" name="bgType" value="color" checked class="peer sr-only">
-                                                    <span class="w-full text-center px-2 py-1.5 text-[10px] sm:text-xs font-medium text-slate-500 rounded-md transition-all peer-checked:bg-white peer-checked:text-slate-800 peer-checked:shadow-sm">Warna Solid</span>
+                                                    <span class="block text-center py-2 text-[10px] font-bold text-slate-500 rounded-lg peer-checked:bg-white peer-checked:text-blue-600 peer-checked:shadow-sm">WARNA</span>
                                                 </label>
-                                                <label class="relative flex items-center cursor-pointer flex-1 justify-center">
+                                                <label class="flex-1 cursor-pointer">
                                                     <input type="radio" name="bgType" value="url" class="peer sr-only">
-                                                    <span class="w-full text-center px-2 py-1.5 text-[10px] sm:text-xs font-medium text-slate-500 rounded-md transition-all peer-checked:bg-white peer-checked:text-slate-800 peer-checked:shadow-sm">URL Link</span>
+                                                    <span class="block text-center py-2 text-[10px] font-bold text-slate-500 rounded-lg peer-checked:bg-white peer-checked:text-blue-600 peer-checked:shadow-sm">URL</span>
                                                 </label>
-                                                <label class="relative flex items-center cursor-pointer flex-1 justify-center">
+                                                <label class="flex-1 cursor-pointer">
                                                     <input type="radio" name="bgType" value="upload" class="peer sr-only">
-                                                    <span class="w-full text-center px-2 py-1.5 text-[10px] sm:text-xs font-medium text-slate-500 rounded-md transition-all peer-checked:bg-white peer-checked:text-slate-800 peer-checked:shadow-sm">Upload File</span>
+                                                    <span class="block text-center py-2 text-[10px] font-bold text-slate-500 rounded-lg peer-checked:bg-white peer-checked:text-blue-600 peer-checked:shadow-sm">FILE</span>
                                                 </label>
                                             </div>
-                                            <div id="bgColorInput" class="flex items-center gap-3 p-2 bg-slate-50 rounded-lg border border-slate-100">
-                                                <div class="relative w-8 h-8 rounded-md overflow-hidden shadow-sm border border-slate-200">
-                                                    <input type="color" id="splashBgColor" value="#FFFFFF" class="absolute -inset-2 w-12 h-12 cursor-pointer">
-                                                </div>
-                                                <span class="text-sm font-medium text-slate-600" id="splashBgColorHex">#FFFFFF</span>
+                                            
+                                            <div id="bgColorInput" class="flex items-center gap-3 p-2.5 bg-slate-50 border border-slate-100 rounded-xl">
+                                                <input type="color" id="splashBgColor" value="#FFFFFF" class="w-8 h-8 rounded-lg cursor-pointer bg-transparent border-none">
+                                                <span class="text-xs font-black text-slate-600" id="splashBgColorHex">#FFFFFF</span>
                                             </div>
+                                            
                                             <div id="bgUrlInput" class="hidden">
-                                                <input type="url" id="splashBgUrl" placeholder="https://..." class="w-full px-4 py-3 text-sm bg-slate-50 rounded-xl border border-slate-200 focus:bg-white focus:ring-4 focus:ring-slate-500/10 focus:border-slate-500 outline-none transition-all placeholder-slate-400">
+                                                <input type="url" id="splashBgUrl" placeholder="https://..." class="w-full px-4 py-2.5 text-sm bg-slate-50 border border-slate-100 rounded-xl outline-none focus:border-blue-500 transition-all">
                                             </div>
+                                            
                                             <div id="bgUploadInput" class="hidden">
-                                                <div class="relative border-2 border-dashed border-slate-200 rounded-xl p-3 text-center hover:bg-slate-50 hover:border-slate-400 transition-colors">
-                                                    <input type="file" id="splashBgFile" accept="image/png, image/jpeg, image/jpg, image/webp" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer">
-                                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mx-auto text-slate-400 mb-1" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" /></svg>
-                                                    <span class="text-xs font-medium text-slate-700">Pilih gambar background</span>
-                                                    <p class="text-[10px] text-slate-400 mt-1">Maks 2MB (Gunakan URL jika file sangat besar)</p>
+                                                <div class="relative border-2 border-dashed border-slate-200 rounded-xl p-4 text-center hover:bg-slate-50 transition-all">
+                                                    <input type="file" id="splashBgFile" accept="image/*" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer">
+                                                    <span class="text-[10px] font-bold text-slate-500">Klik untuk upload BG</span>
                                                 </div>
                                             </div>
-                                        </div>
-                                        <div class="flex-1">
-                                            <label class="block text-xs font-bold tracking-wide text-slate-500 uppercase mb-2">Teks Loading</label>
-                                            <div class="mb-3">
-                                                <input type="text" id="splashLoadingText" value="Memuat halaman..." placeholder="Contoh: Mohon tunggu..." class="w-full px-4 py-2.5 text-sm bg-slate-50 rounded-lg border border-slate-200 focus:bg-white focus:ring-4 focus:ring-slate-500/10 focus:border-slate-500 outline-none transition-all placeholder-slate-400">
-                                            </div>
-                                            <label class="block text-xs font-bold tracking-wide text-slate-500 uppercase mb-2">Warna Teks</label>
-                                            <div class="flex items-center gap-3 p-2 bg-slate-50 rounded-lg border border-slate-100 mb-3">
-                                                <div class="relative w-8 h-8 rounded-md overflow-hidden shadow-sm border border-slate-200">
-                                                    <input type="color" id="splashTextColor" value="#6C63FF" class="absolute -inset-2 w-12 h-12 cursor-pointer">
-                                                </div>
-                                                <span class="text-sm font-medium text-slate-600" id="splashTextColorHex">#6C63FF</span>
-                                            </div>
-                                            <label class="block text-xs font-bold tracking-wide text-slate-500 uppercase mb-2">Warna Progress Bar</label>
-                                            <div class="flex items-center gap-3 p-2 bg-slate-50 rounded-lg border border-slate-100">
-                                                <div class="relative w-8 h-8 rounded-md overflow-hidden shadow-sm border border-slate-200">
-                                                    <input type="color" id="splashProgressBarColor" value="#6C63FF" class="absolute -inset-2 w-12 h-12 cursor-pointer">
-                                                </div>
-                                                <span class="text-sm font-medium text-slate-600" id="splashProgressBarColorHex">#6C63FF</span>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div>
-                                        <label class="block text-xs font-bold tracking-wide text-slate-500 uppercase mb-3">Gambar Logo</label>
-                                        <div class="flex flex-wrap gap-2 sm:gap-4 mb-3 p-1 bg-slate-100 rounded-lg w-full sm:w-max">
-                                            <label class="relative flex items-center cursor-pointer flex-1 sm:flex-none justify-center">
-                                                <input type="radio" name="imageType" value="none" checked class="peer sr-only">
-                                                <span class="w-full text-center px-3 py-1.5 text-xs font-medium text-slate-500 rounded-md transition-all peer-checked:bg-white peer-checked:text-slate-800 peer-checked:shadow-sm">Tanpa Gambar</span>
-                                            </label>
-                                            <label class="relative flex items-center cursor-pointer flex-1 sm:flex-none justify-center">
-                                                <input type="radio" name="imageType" value="spinner" class="peer sr-only">
-                                                <span class="w-full text-center px-3 py-1.5 text-xs font-medium text-slate-500 rounded-md transition-all peer-checked:bg-white peer-checked:text-slate-800 peer-checked:shadow-sm">Loading Spinner</span>
-                                            </label>
-                                            <label class="relative flex items-center cursor-pointer flex-1 sm:flex-none justify-center">
-                                                <input type="radio" name="imageType" value="url" class="peer sr-only">
-                                                <span class="w-full text-center px-3 py-1.5 text-xs font-medium text-slate-500 rounded-md transition-all peer-checked:bg-white peer-checked:text-slate-800 peer-checked:shadow-sm">URL Link</span>
-                                            </label>
-                                            <label class="relative flex items-center cursor-pointer flex-1 sm:flex-none justify-center">
-                                                <input type="radio" name="imageType" value="upload" class="peer sr-only">
-                                                <span class="w-full text-center px-3 py-1.5 text-xs font-medium text-slate-500 rounded-md transition-all peer-checked:bg-white peer-checked:text-slate-800 peer-checked:shadow-sm">Upload File</span>
-                                            </label>
-                                        </div>
-                                        
-                                        <div id="imageUrlInput" class="hidden">
-                                            <input type="url" id="splashImageUrl" placeholder="https://..." class="w-full px-4 py-3 text-sm bg-slate-50 rounded-xl border border-slate-200 focus:bg-white focus:ring-4 focus:ring-slate-500/10 focus:border-slate-500 outline-none transition-all placeholder-slate-400">
-                                        </div>
-                                        <div id="imageUploadInput" class="hidden">
-                                            <div class="relative border-2 border-dashed border-slate-200 rounded-xl p-4 text-center hover:bg-slate-50 hover:border-slate-400 transition-colors">
-                                                <input type="file" id="splashImageFile" accept="image/png, image/jpeg, image/jpg, image/webp" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer">
-                                                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mx-auto text-slate-400 mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" /></svg>
-                                                <span class="text-sm font-medium text-slate-700">Pilih file gambar</span>
-                                                <p class="text-[10px] text-slate-400 mt-1">Maks 1MB (Disarankan format PNG/Square)</p>
-                                            </div>
-                                        </div>
-                                        
-                                    </div>
-                                    
-                                    <!-- Loading & Color Settings -->
-                                    <div class="mt-4 p-4 bg-slate-50 rounded-2xl border border-slate-100 space-y-4">
-                                        <div class="flex items-center justify-between">
-                                            <div class="flex items-center gap-2">
-                                                <div class="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center">
-                                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-                                                    </svg>
-                                                </div>
-                                                <span class="text-sm font-bold text-slate-700">Animasi Loading</span>
-                                            </div>
-                                            <label class="relative inline-flex items-center cursor-pointer">
-                                                <input type="checkbox" id="useLoadingSpinner" class="peer sr-only" checked onchange="toggleColorPicker(this.checked)">
-                                                <div class="w-11 h-6 bg-slate-300 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600 shadow-inner"></div>
-                                            </label>
                                         </div>
 
-                                        <div id="colorPickerContainer" class="space-y-2 pt-2 border-t border-slate-200 transition-all duration-300">
-                                            <label class="block text-xs font-bold tracking-wide text-slate-500 uppercase">Warna Progress Bar</label>
-                                            <div class="flex items-center gap-3 p-2 bg-white rounded-lg border border-slate-100">
-                                                <div class="relative w-10 h-10 rounded-md overflow-hidden shadow-sm border border-slate-200">
-                                                    <input type="color" id="progressBarColor" value="#2563eb" class="absolute -inset-2 w-16 h-16 cursor-pointer">
-                                                </div>
-                                                <div class="flex flex-col">
-                                                    <span class="text-sm font-bold text-slate-700" id="progressBarColorHex">#2563eb</span>
-                                                    <span class="text-[10px] text-slate-400">Warna animasi saat memuat halaman</span>
-                                                </div>
+                                        <!-- Text & Loading Section -->
+                                        <div class="space-y-4">
+                                            <div>
+                                                <label class="block text-sm font-bold text-slate-700 mb-2">Teks Loading</label>
+                                                <input type="text" id="splashLoadingText" value="Memuat halaman..." class="w-full px-4 py-2.5 text-sm bg-slate-50 border border-slate-100 rounded-xl outline-none focus:border-blue-500 transition-all">
                                             </div>
-                                        </div>
-                                    </div>
-
-                                    <div class="mt-4 p-3 bg-slate-50 rounded-xl border border-slate-100">
-
-                                            <label class="flex items-center justify-between cursor-pointer group">
-                                                <span class="text-sm font-medium text-slate-700">Gunakan Latar Warna pada Logo</span>
-                                                <div class="relative flex items-center justify-center">
-                                                    <input type="checkbox" id="splashUseLogoBg" class="peer appearance-none w-8 h-4 bg-slate-300 rounded-full checked:bg-slate-800 transition-colors cursor-pointer relative shadow-inner">
-                                                    <div class="absolute left-0.5 top-0.5 w-3 h-3 bg-white rounded-full peer-checked:translate-x-4 transition-transform shadow-sm pointer-events-none"></div>
-                                                </div>
-                                            </label>
-                                            <div id="logoBgColorContainer" class="hidden mt-3 pt-3 border-t border-slate-200">
-                                                <label class="block text-xs font-bold tracking-wide text-slate-500 uppercase mb-2">Warna Latar Logo</label>
-                                                <div class="flex items-center gap-3 p-2 bg-white rounded-lg border border-slate-100">
-                                                    <div class="relative w-8 h-8 rounded-md overflow-hidden shadow-sm border border-slate-200">
-                                                        <input type="color" id="splashLogoBgColor" value="#FFFFFF" class="absolute -inset-2 w-12 h-12 cursor-pointer">
+                                            
+                                            <div class="grid grid-cols-2 gap-3">
+                                                <div>
+                                                    <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">Warna Teks</label>
+                                                    <div class="flex items-center gap-2 p-1.5 bg-slate-50 border border-slate-100 rounded-lg">
+                                                        <input type="color" id="splashTextColor" value="#6C63FF" class="w-6 h-6 rounded cursor-pointer border-none bg-transparent">
+                                                        <span class="text-[10px] font-bold text-slate-500" id="splashTextColorHex">#6C63FF</span>
                                                     </div>
-                                                    <span class="text-sm font-medium text-slate-600" id="splashLogoBgColorHex">#FFFFFF</span>
+                                                </div>
+                                                <div>
+                                                    <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">Warna Progress</label>
+                                                    <div class="flex items-center gap-2 p-1.5 bg-slate-50 border border-slate-100 rounded-lg">
+                                                        <input type="color" id="splashProgressBarColor" value="#6C63FF" class="w-6 h-6 rounded cursor-pointer border-none bg-transparent">
+                                                        <span class="text-[10px] font-bold text-slate-500" id="splashProgressBarColorHex">#6C63FF</span>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
-                                    <!-- Additional Settings -->
 
-                                    <div class="border-t border-slate-100 pt-4">
-                                        <label class="flex items-center justify-between cursor-pointer group bg-slate-50 p-3 rounded-xl border border-slate-100 hover:border-slate-300 transition-colors">
-                                            <span class="text-sm font-bold text-slate-700">Sembunyikan Menu Navigasi Bawah</span>
-                                            <div class="relative flex items-center justify-center">
-                                                <input type="checkbox" id="hideBottomNav" class="peer appearance-none w-10 h-5 bg-slate-300 rounded-full checked:bg-slate-800 transition-colors cursor-pointer relative shadow-inner">
-                                                <div class="absolute left-0.5 top-0.5 w-4 h-4 bg-white rounded-full peer-checked:translate-x-5 transition-transform shadow-sm pointer-events-none"></div>
+                                    <!-- Logo Selection -->
+                                    <div class="pt-6 border-t border-slate-50">
+                                        <label class="block text-sm font-bold text-slate-700 mb-4">Logo Tengah (Center Image)</label>
+                                        <div class="flex flex-wrap gap-1.5 p-1 bg-slate-100 rounded-xl w-full sm:w-max mb-4">
+                                            <label class="cursor-pointer">
+                                                <input type="radio" name="imageType" value="none" checked class="peer sr-only">
+                                                <span class="inline-block px-4 py-1.5 text-[10px] font-bold text-slate-500 rounded-lg peer-checked:bg-white peer-checked:text-blue-600 peer-checked:shadow-sm">TANPA LOGO</span>
+                                            </label>
+                                            <label class="cursor-pointer">
+                                                <input type="radio" name="imageType" value="spinner" class="peer sr-only">
+                                                <span class="inline-block px-4 py-1.5 text-[10px] font-bold text-slate-500 rounded-lg peer-checked:bg-white peer-checked:text-blue-600 peer-checked:shadow-sm">SPINNER</span>
+                                            </label>
+                                            <label class="cursor-pointer">
+                                                <input type="radio" name="imageType" value="url" class="peer sr-only">
+                                                <span class="inline-block px-4 py-1.5 text-[10px] font-bold text-slate-500 rounded-lg peer-checked:bg-white peer-checked:text-blue-600 peer-checked:shadow-sm">URL</span>
+                                            </label>
+                                            <label class="cursor-pointer">
+                                                <input type="radio" name="imageType" value="upload" class="peer sr-only">
+                                                <span class="inline-block px-4 py-1.5 text-[10px] font-bold text-slate-500 rounded-lg peer-checked:bg-white peer-checked:text-blue-600 peer-checked:shadow-sm">UPLOAD</span>
+                                            </label>
+                                        </div>
+                                        
+                                        <div id="imageUrlInput" class="hidden mb-4 animate-fade-in">
+                                            <input type="url" id="splashImageUrl" placeholder="https://..." class="w-full px-4 py-3 text-sm bg-slate-50 border border-slate-100 rounded-xl focus:border-blue-500 outline-none">
+                                        </div>
+                                        <div id="imageUploadInput" class="hidden mb-4 animate-fade-in">
+                                            <div class="relative border-2 border-dashed border-slate-200 rounded-2xl p-6 text-center hover:bg-slate-50 hover:border-blue-400 transition-all group">
+                                                <input type="file" id="splashImageFile" accept="image/*" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer">
+                                                <span class="text-sm font-bold text-slate-600">Unggah Logo</span>
+                                                <p class="text-[9px] text-slate-400 mt-1 uppercase font-bold tracking-tighter">Maks 1MB (PNG Recommended)</p>
                                             </div>
-                                        </label>
+                                        </div>
+
+                                        <!-- New: Extra Toggles -->
+                                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-6 pt-6 border-t border-slate-50">
+                                            <label class="flex items-center justify-between p-3 bg-slate-50 rounded-xl cursor-pointer hover:bg-slate-100 transition-colors">
+                                                <span class="text-[11px] font-bold text-slate-700 uppercase">Background Logo</span>
+                                                <input type="checkbox" id="splashUseLogoBg" class="sr-only peer">
+                                                <div class="w-8 h-4 bg-slate-300 rounded-full peer peer-checked:bg-blue-600 after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:bg-white after:rounded-full after:h-3 after:w-3 after:transition-all peer-checked:after:translate-x-4 relative"></div>
+                                            </label>
+                                            <label class="flex items-center justify-between p-3 bg-slate-50 rounded-xl cursor-pointer hover:bg-slate-100 transition-colors">
+                                                <span class="text-[11px] font-bold text-slate-700 uppercase">Hide Bottom Nav</span>
+                                                <input type="checkbox" id="hideBottomNav" class="sr-only peer">
+                                                <div class="w-8 h-4 bg-slate-300 rounded-full peer peer-checked:bg-blue-600 after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:bg-white after:rounded-full after:h-3 after:w-3 after:transition-all peer-checked:after:translate-x-4 relative"></div>
+                                            </label>
+                                        </div>
+
+                                        <div id="logoBgColorContainer" class="hidden mt-4 animate-fade-in p-4 bg-slate-50 rounded-2xl border border-slate-100">
+                                            <label class="block text-[10px] font-black text-slate-400 uppercase mb-2">Warna Background Logo</label>
+                                            <div class="flex items-center gap-3">
+                                                <input type="color" id="splashLogoBgColor" value="#FFFFFF" class="w-8 h-8 rounded cursor-pointer border-none bg-transparent">
+                                                <span class="text-sm font-bold text-slate-700" id="splashLogoBgColorHex">#FFFFFF</span>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-
-                            <button type="submit" class="w-full relative group overflow-hidden bg-slate-800 hover:bg-slate-900 text-white font-bold py-4 px-6 rounded-xl shadow-lg transform hover:-translate-y-0.5 transition-all duration-200 flex justify-center items-center gap-2 mt-4">
-                                <div class="absolute inset-0 bg-white/20 group-hover:translate-x-full -translate-x-full transform skew-x-12 transition-transform duration-500 ease-in-out"></div>
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                                    <path fill-rule="evenodd" d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 18v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.38z" clip-rule="evenodd" />
-                                </svg>
-                                <span>Build & Download APK</span>
-                            </button>
                         </div>
                         
                         <!-- Right Column: Live Simulator -->
-                        <div class="flex flex-col items-center justify-center w-full lg:w-80 bg-slate-50/50 rounded-2xl p-6 border border-slate-100 mt-6 lg:mt-0">
-                            <span class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-4">Live Preview</span>
-                            
-                            <!-- Phone Frame -->
-                            <div class="w-64 h-[500px] border-[10px] border-slate-900 rounded-[3rem] shadow-2xl relative overflow-hidden flex flex-col items-center justify-center transition-all duration-300 bg-white bg-cover bg-center bg-no-repeat" id="simContainer">
-                                <!-- Android Punch Hole -->
-                                <div class="absolute top-3 w-3 h-3 bg-slate-900 rounded-full z-10 shadow-[inset_0_-1px_2px_rgba(255,255,255,0.2)]"></div>
+                        <div class="lg:col-span-4 lg:sticky lg:top-6">
+                            <div class="bg-white rounded-[3rem] p-6 border border-slate-100 shadow-xl flex flex-col items-center">
+                                <span class="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-6">Live Simulator</span>
                                 
-                                <!-- Sim Content -->
-                                <div id="simContent" class="flex flex-col items-center justify-center w-full h-full p-4 text-center hidden relative z-0">
-                                    <img id="simImage" src="" class="w-24 h-24 object-contain mb-4 hidden drop-shadow-md" />
-                                    <div id="simSpinner" class="hidden w-12 h-12 border-4 border-slate-200 border-t-slate-800 rounded-full animate-spin mb-4"></div>
-                                    <div id="simText" class="text-sm font-semibold transition-colors duration-300" style="color: #6C63FF">Memuat halaman...</div>
+                                <!-- Phone Frame -->
+                                <div class="w-full max-w-[240px] aspect-[9/18.5] border-[10px] border-slate-900 rounded-[2.5rem] shadow-2xl relative overflow-hidden flex flex-col items-center justify-center transition-all duration-500 bg-white bg-cover bg-center" id="simContainer">
+                                    <!-- Android Notch -->
+                                    <div class="absolute top-2 w-16 h-4 bg-slate-900 rounded-full z-10"></div>
+                                    
+                                    <!-- Sim Content -->
+                                    <div id="simContent" class="flex flex-col items-center justify-center w-full h-full p-6 text-center hidden relative z-0">
+                                        <img id="simImage" src="" class="w-20 h-20 object-contain mb-6 drop-shadow-lg hidden" />
+                                        <div id="simSpinner" class="hidden w-10 h-10 border-4 border-slate-100 border-t-blue-600 rounded-full animate-spin mb-6"></div>
+                                        <div id="simText" class="text-xs font-black tracking-tight" style="color: #6C63FF">Memuat...</div>
+                                    </div>
+                                    
+                                    <div id="simDefaultContent" class="flex flex-col items-center justify-center text-center px-6 opacity-20">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-slate-400 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" /></svg>
+                                        <p class="text-[10px] font-bold text-slate-500">Aktifkan Splash Screen untuk preview</p>
+                                    </div>
                                 </div>
                                 
-                                <div id="simDefaultContent" class="flex flex-col items-center justify-center text-center opacity-30">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-slate-600 mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" /></svg>
-                                    <span class="text-xs font-medium text-slate-600 px-4">Aktifkan Custom Splash Screen untuk melihat preview layar loading</span>
-                                </div>
+                                <p class="mt-6 text-[10px] text-slate-400 text-center px-4 font-medium leading-relaxed">Preview ini hanya simulasi tampilan loading aplikasi di perangkat Android.</p>
                             </div>
                         </div>
                     </div>
+
+                    <!-- Final Action Section -->
+                    <div class="mt-12 pt-8 border-t border-slate-100 flex flex-col items-center">
+                        <div class="max-w-md w-full">
+                            <button type="submit" class="group relative w-full py-5 px-10 bg-slate-900 hover:bg-black text-white rounded-2xl font-black text-lg shadow-2xl shadow-slate-200 transition-all hover:-translate-y-1 active:scale-95 flex items-center justify-center gap-4 overflow-hidden">
+                                <div class="absolute inset-0 bg-gradient-to-r from-blue-600/20 to-purple-600/20 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                                <span>Build & Download APK</span>
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
+                            </button>
+                            <p class="mt-4 text-center text-[11px] font-bold text-slate-400 uppercase tracking-widest">Estimasi waktu proses: 2-5 Menit</p>
+                        </div>
+                    </div>
                 </div>
+
             </form>
         </div>
 
