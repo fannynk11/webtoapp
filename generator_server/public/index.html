@@ -501,6 +501,7 @@
             const progressSection = document.getElementById('progressSection');
             const resultSection = document.getElementById('resultSection');
             const errorSection = document.getElementById('errorSection');
+            const successState = document.getElementById('successState');
             const btnBuild = document.getElementById('btnBuild');
             const btnBack = document.getElementById('btnBack');
 
@@ -510,6 +511,9 @@
 
             const useCustomSplashCheckbox = document.getElementById('useCustomSplash');
             const customSplashSettings = document.getElementById('customSplashSettings');
+            
+            const imageUrlInput = document.getElementById('imageUrlInput');
+            const imageUploadInput = document.getElementById('imageUploadInput');
             
             // Simulator Elements
             const simContainer = document.getElementById('simContainer');
@@ -551,6 +555,7 @@
                 if(step2Section) step2Section.classList.add('opacity-0', 'translate-x-4');
 
                 if(customSplashSettings) customSplashSettings.classList.add('hidden');
+                if(successState) successState.classList.add('hidden');
                 showSection(formSection);
                 updateSimulator();
                 if(checkInterval) clearInterval(checkInterval);
@@ -706,7 +711,12 @@
                 });
             }
 
-            document.querySelectorAll('input[name="imageType"]').forEach(r => r.addEventListener('change', updateSimulator));
+            document.querySelectorAll('input[name="imageType"]').forEach(r => r.addEventListener('change', (e) => {
+                if(imageUrlInput) imageUrlInput.classList.toggle('hidden', e.target.value !== 'url');
+                if(imageUploadInput) imageUploadInput.classList.toggle('hidden', e.target.value !== 'upload');
+                updateSimulator();
+            }));
+
             document.querySelectorAll('input[name="iconType"]').forEach(r => {
                 r.addEventListener('change', (e) => {
                     document.getElementById('iconUrlInput').classList.toggle('hidden', e.target.value !== 'url');
@@ -801,6 +811,7 @@
                                 if (job.status === 'completed') {
                                     clearInterval(checkInterval);
                                     showSection(resultSection);
+                                    if(successState) successState.classList.remove('hidden');
                                     
                                     const directBtn = document.getElementById('directDownloadBtn');
                                     if (directBtn) directBtn.href = job.downloadUrl;
