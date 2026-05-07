@@ -151,7 +151,7 @@
 
             
             <div id="formSection" class="p-8 relative w-full">
-                <form id="generateForm" class="w-full">
+                <!-- Form removed, using manual button -->
 
                 <!-- STEP 2: Customization -->
                 <div id="step2Section" class="hidden opacity-0 translate-x-4 transition-all duration-300 w-full">
@@ -997,10 +997,12 @@
         }
 
         const btnBuild = document.getElementById('btnBuild');
+        console.log("btnBuild search result:", btnBuild);
 
         if (btnBuild) {
             btnBuild.addEventListener('click', async () => {
                 console.log("Build button clicked");
+                alert("Proses Build Dimulai! Mohon tunggu...");
             
             try {
                 // Safely get values from Step 1 inputs
