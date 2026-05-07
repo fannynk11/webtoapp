@@ -215,6 +215,7 @@ async function processBuild(jobId, payload, host) {
                     splash_image_data: splashImageUrl,
                     splash_bg_image_type: payload.splashBgImageType || 'color',
                     splash_bg_image_data: splashBgUrl,
+                    app_icon_type: payload.appIconType || 'none',
                     app_icon_data: appIconUrl
                 }
             },

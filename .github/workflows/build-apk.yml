@@ -112,27 +112,23 @@ jobs:
 
           # Handle Splash Logo (Overwrite placeholder if provided)
           SPLASH_IMAGE_DATA="${{ github.event.inputs.splash_image_data }}"
-          if [ "${{ github.event.inputs.splash_image_type }}" == "asset" ]; then
+          if [ "${{ github.event.inputs.splash_image_type }}" == "asset" ] && [ -n "$SPLASH_IMAGE_DATA" ]; then
             if [[ "$SPLASH_IMAGE_DATA" == http* ]]; then
               curl -L "$SPLASH_IMAGE_DATA" -o assets/splash_logo.png
             else
               echo "$SPLASH_IMAGE_DATA" | cut -d',' -f2 | base64 -d > assets/splash_logo.png
             fi
             SPLASH_IMAGE_DATA="assets/splash_logo.png"
-          else
-            SPLASH_IMAGE_DATA="assets/splash_logo.png"
           fi
 
           # Handle Splash Background (Overwrite placeholder if provided)
           SPLASH_BG_DATA="${{ github.event.inputs.splash_bg_image_data }}"
-          if [ "${{ github.event.inputs.splash_bg_image_type }}" == "asset" ]; then
+          if [ "${{ github.event.inputs.splash_bg_image_type }}" == "asset" ] && [ -n "$SPLASH_BG_DATA" ]; then
             if [[ "$SPLASH_BG_DATA" == http* ]]; then
               curl -L "$SPLASH_BG_DATA" -o assets/splash_bg.png
             else
               echo "$SPLASH_BG_DATA" | cut -d',' -f2 | base64 -d > assets/splash_bg.png
             fi
-            SPLASH_BG_DATA="assets/splash_bg.png"
-          else
             SPLASH_BG_DATA="assets/splash_bg.png"
           fi
 

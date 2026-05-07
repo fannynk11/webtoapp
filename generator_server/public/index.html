@@ -762,6 +762,9 @@
                             return checked ? checked.value : 'none';
                         };
 
+                        const selectedImageType = getRadioValue('imageType');
+                        const selectedIconType = getRadioValue('iconType');
+
                         const payload = {
                             appName, url,
                             useCustomSplash: useCustomSplashCheckbox.checked,
@@ -771,12 +774,20 @@
                             splashProgressBarColor: splashProgressBarColorInput.value,
                             splashUseLogoBg: splashUseLogoBgCheckbox.checked,
                             splashLogoBgColor: splashLogoBgColorInput.value,
-                            hideBottomNav: document.getElementById('hideBottomNav').checked
+                            hideBottomNav: document.getElementById('hideBottomNav').checked,
+                            
+                            // Splash Image
+                            splashImageType: selectedImageType === 'upload' ? 'asset' : selectedImageType,
+                            splashImageData: '',
+                            
+                            // Background Image (Default to color for now, expandable later)
+                            splashBgImageType: 'color',
+                            splashBgImageData: '',
+                            
+                            // App Icon
+                            appIconType: selectedIconType === 'upload' ? 'asset' : selectedIconType,
+                            appIconData: ''
                         };
-
-                        const selectedImageType = getRadioValue('imageType');
-                        payload.splashImageType = selectedImageType === 'upload' ? 'asset' : selectedImageType;
-                        payload.splashImageData = '';
 
                         if (selectedImageType === 'url') {
                             payload.splashImageData = document.getElementById('splashImageUrl').value.trim();
@@ -784,10 +795,6 @@
                             const fileInput = document.getElementById('splashImageFile');
                             if (fileInput && fileInput.files.length > 0) payload.splashImageData = await fileToBase64(fileInput.files[0]);
                         }
-
-                        const selectedIconType = getRadioValue('iconType');
-                        payload.appIconType = selectedIconType === 'upload' ? 'asset' : selectedIconType;
-                        payload.appIconData = '';
 
                         if (selectedIconType === 'url') {
                             payload.appIconData = document.getElementById('appIconUrl').value.trim();
