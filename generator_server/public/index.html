@@ -646,11 +646,8 @@
                 } else if (selectedBgType === 'upload') {
                     const fileInput = document.getElementById('splashBgFile');
                     if (fileInput.files.length > 0) {
-                        const reader = new FileReader();
-                        reader.onload = function(e) {
-                            simContainer.style.backgroundImage = `url(${e.target.result})`;
-                        }
-                        reader.readAsDataURL(fileInput.files[0]);
+                        const url = URL.createObjectURL(fileInput.files[0]);
+                        simContainer.style.backgroundImage = `url(${url})`;
                     } else {
                         simContainer.style.backgroundImage = 'none';
                         simContainer.style.backgroundColor = splashBgColorInput.value;
@@ -665,6 +662,7 @@
                 const simSpinner = document.getElementById('simSpinner');
                 const simLogoWrapper = document.getElementById('simLogoWrapper');
                 
+                // Reset all
                 simLogoWrapper.classList.add('hidden');
                 simImage.classList.add('hidden');
                 simSpinner.classList.add('hidden');
@@ -682,13 +680,10 @@
                 } else if (selectedImageType === 'upload') {
                     const fileInput = document.getElementById('splashImageFile');
                     if (fileInput.files.length > 0) {
-                        const reader = new FileReader();
-                        reader.onload = function(e) {
-                            simImage.src = e.target.result;
-                            simImage.classList.remove('hidden');
-                            simLogoWrapper.classList.remove('hidden');
-                        }
-                        reader.readAsDataURL(fileInput.files[0]);
+                        const url = URL.createObjectURL(fileInput.files[0]);
+                        simImage.src = url;
+                        simImage.classList.remove('hidden');
+                        simLogoWrapper.classList.remove('hidden');
                     }
                 }
 
