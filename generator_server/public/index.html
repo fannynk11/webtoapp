@@ -389,7 +389,7 @@
                     <!-- Final Action Section -->
                     <div class="mt-12 pt-8 border-t border-slate-100 flex flex-col items-center">
                         <div class="max-w-md w-full">
-                            <button type="submit" class="group relative w-full py-5 px-10 bg-slate-900 hover:bg-black text-white rounded-2xl font-black text-lg shadow-2xl shadow-slate-200 transition-all hover:-translate-y-1 active:scale-95 flex items-center justify-center gap-4 overflow-hidden">
+                            <button type="button" id="btnBuild" class="group relative w-full py-5 px-10 bg-slate-900 hover:bg-black text-white rounded-2xl font-black text-lg shadow-2xl shadow-slate-200 transition-all hover:-translate-y-1 active:scale-95 flex items-center justify-center gap-4 overflow-hidden">
                                 <div class="absolute inset-0 bg-gradient-to-r from-blue-600/20 to-purple-600/20 opacity-0 group-hover:opacity-100 transition-opacity"></div>
                                 <span>Build & Download APK</span>
                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
@@ -996,9 +996,11 @@
             if(checkInterval) clearInterval(checkInterval);
         }
 
-        generateForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            console.log("Submit triggered - generateForm");
+        const btnBuild = document.getElementById('btnBuild');
+
+        if (btnBuild) {
+            btnBuild.addEventListener('click', async () => {
+                console.log("Build button clicked");
             
             try {
                 // Safely get values from Step 1 inputs
