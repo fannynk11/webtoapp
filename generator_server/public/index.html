@@ -612,10 +612,18 @@
         const splashBgUrlInput = document.getElementById('splashBgUrl');
         
         if (splashImageUrlInput) {
-            splashImageUrlInput.addEventListener('input', updateSimulator);
+            splashImageUrlInput.addEventListener('input', () => {
+                useCustomSplashCheckbox.checked = true;
+                customSplashSettings.classList.remove('hidden');
+                updateSimulator();
+            });
         }
         if (splashBgUrlInput) {
-            splashBgUrlInput.addEventListener('input', updateSimulator);
+            splashBgUrlInput.addEventListener('input', () => {
+                useCustomSplashCheckbox.checked = true;
+                customSplashSettings.classList.remove('hidden');
+                updateSimulator();
+            });
         }
 
         // Background Type selection logic
@@ -626,6 +634,8 @@
                 bgUrlInput.classList.toggle('hidden', selected !== 'url');
                 bgUploadInput.classList.toggle('hidden', selected !== 'upload');
                 
+                useCustomSplashCheckbox.checked = true;
+                customSplashSettings.classList.remove('hidden');
                 updateSimulator();
             });
         });
@@ -769,14 +779,20 @@
         // Setup color hex display and simulator sync
         splashBgColorInput.addEventListener('input', (e) => {
             document.getElementById('splashBgColorHex').textContent = e.target.value.toUpperCase();
+            useCustomSplashCheckbox.checked = true; // Auto-enable switch
+            customSplashSettings.classList.remove('hidden');
             updateSimulator();
         });
         splashTextColorInput.addEventListener('input', (e) => {
             document.getElementById('splashTextColorHex').textContent = e.target.value.toUpperCase();
+            useCustomSplashCheckbox.checked = true; // Auto-enable switch
+            customSplashSettings.classList.remove('hidden');
             updateSimulator();
         });
         splashProgressBarColorInput.addEventListener('input', (e) => {
             document.getElementById('splashProgressBarColorHex').textContent = e.target.value.toUpperCase();
+            useCustomSplashCheckbox.checked = true; // Auto-enable switch
+            customSplashSettings.classList.remove('hidden');
             updateSimulator();
         });
 
