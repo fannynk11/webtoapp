@@ -409,71 +409,49 @@
                                     </div>
                                 </div>
                             </div>
-                        </div> <!-- End Left Column -->
-                        
-                        <div class="lg:col-span-3 space-y-6 lg:sticky lg:top-6 transform lg:scale-90 xl:scale-100 origin-top">
-                            <!-- Simulator 1: Splash Screen -->
-                            <div class="bg-white rounded-[2.5rem] p-4 border border-slate-100 shadow-xl flex flex-col items-center relative overflow-hidden">
-                                <span class="text-[9px] font-black text-slate-400 uppercase tracking-[0.2em] mb-4">Splash Screen Preview</span>
+                        <div class="lg:col-span-4 space-y-6 lg:sticky lg:top-6">
+                            <!-- Single Simulator Container -->
+                            <div class="bg-white rounded-[2.5rem] p-6 border border-slate-100 shadow-xl flex flex-col items-center relative overflow-hidden">
+                                <div class="flex items-center justify-between w-full mb-6">
+                                    <span class="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]" id="simModeText">Splash View</span>
+                                    <button type="button" id="btnSwitchSimView" class="p-2 bg-slate-50 hover:bg-slate-100 text-slate-600 rounded-xl transition-all active:scale-90 border border-slate-100 shadow-sm group">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 group-hover:rotate-180 transition-transform duration-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" /></svg>
+                                    </button>
+                                </div>
                                 
                                 <!-- Phone Frame -->
-                                <div class="w-full max-w-[220px] aspect-[9/19] border-[6px] border-slate-900 rounded-[2.5rem] shadow-xl relative overflow-hidden flex flex-col items-center justify-center bg-white" id="simSplashContainer">
+                                <div class="w-full max-w-[260px] aspect-[9/19] border-[8px] border-slate-900 rounded-[3rem] shadow-2xl relative overflow-hidden flex flex-col items-center justify-center bg-white transition-all duration-500" id="mainSimulator">
                                     <!-- Android Status Bar Simulation -->
-                                    <div class="absolute top-0 w-full h-5 px-5 flex justify-between items-center z-20">
-                                        <span class="text-[7px] font-bold text-slate-400">12:30</span>
-                                        <div class="flex gap-1 items-center">
-                                            <div class="w-1.5 h-1.5 border border-slate-400 rounded-sm"></div>
-                                            <div class="w-1.5 h-1.5 bg-slate-400 rounded-full"></div>
+                                    <div class="absolute top-0 w-full h-6 px-6 flex justify-between items-center z-20">
+                                        <span class="text-[8px] font-bold text-slate-400">12:30</span>
+                                        <div class="flex gap-1.5 items-center">
+                                            <div class="w-2 h-2 border border-slate-400 rounded-sm"></div>
+                                            <div class="w-2 h-2 bg-slate-400 rounded-full"></div>
                                         </div>
                                     </div>
-
                                     <!-- Punch Hole -->
-                                    <div class="absolute top-1.5 w-2 h-2 bg-slate-900 rounded-full z-30"></div>
-                                    
+                                    <div class="absolute top-2 w-2.5 h-2.5 bg-slate-900 rounded-full z-30"></div>
                                     <!-- Nav Bar -->
-                                    <div class="absolute bottom-1 w-16 h-0.5 bg-slate-300 rounded-full z-20"></div>
+                                    <div class="absolute bottom-1.5 w-20 h-1 bg-slate-300 rounded-full z-20"></div>
 
-                                    <!-- Content -->
-                                    <div id="simSplashContent" class="flex flex-col items-center justify-center w-full h-full p-5 text-center relative z-0">
-                                        <div id="simLogoWrapper" class="w-20 h-20 flex items-center justify-center mb-5 drop-shadow-lg hidden">
+                                    <!-- VIEW 1: Splash Screen -->
+                                    <div id="simSplashView" class="absolute inset-0 flex flex-col items-center justify-center p-6 text-center z-10 transition-all duration-500 bg-white" id="simSplashContainer">
+                                        <div id="simLogoWrapper" class="w-24 h-24 flex items-center justify-center mb-6 drop-shadow-2xl hidden">
                                             <img id="simImage" src="" class="w-full h-full object-contain" />
                                         </div>
-                                        <div id="simSpinner" class="hidden w-8 h-8 border-3 border-slate-100 border-t-blue-600 rounded-full animate-spin mb-5"></div>
-                                        <div id="simText" class="text-[10px] font-black tracking-tight" style="color: #6C63FF">Memuat...</div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Simulator 2: Offline Screen -->
-                            <div class="bg-white rounded-[2.5rem] p-4 border border-slate-100 shadow-xl flex flex-col items-center relative overflow-hidden">
-                                <span class="text-[9px] font-black text-slate-400 uppercase tracking-[0.2em] mb-4">Offline Screen Preview</span>
-                                
-                                <!-- Phone Frame -->
-                                <div class="w-full max-w-[220px] aspect-[9/19] border-[6px] border-slate-900 rounded-[2.5rem] shadow-xl relative overflow-hidden flex flex-col items-center justify-center bg-white" id="simOfflineContainer">
-                                    <!-- Android Status Bar Simulation -->
-                                    <div class="absolute top-0 w-full h-5 px-5 flex justify-between items-center z-20">
-                                        <span class="text-[7px] font-bold text-slate-400">12:30</span>
-                                        <div class="flex gap-1 items-center">
-                                            <div class="w-1.5 h-1.5 border border-slate-400 rounded-sm"></div>
-                                            <div class="w-1.5 h-1.5 bg-slate-400 rounded-full"></div>
-                                        </div>
+                                        <div id="simSpinner" class="hidden w-10 h-10 border-4 border-slate-100 border-t-blue-600 rounded-full animate-spin mb-6"></div>
+                                        <div id="simText" class="text-xs font-black tracking-tight" style="color: #6C63FF">Memuat...</div>
                                     </div>
 
-                                    <!-- Punch Hole -->
-                                    <div class="absolute top-1.5 w-2 h-2 bg-slate-900 rounded-full z-30"></div>
-                                    
-                                    <!-- Nav Bar -->
-                                    <div class="absolute bottom-1 w-16 h-0.5 bg-slate-300 rounded-full z-20"></div>
-
-                                    <!-- Content -->
-                                    <div class="flex flex-col items-center justify-center w-full h-full p-5 text-center relative z-0">
-                                        <div id="simOfflineIcon" class="w-16 h-16 bg-amber-50 text-amber-500 rounded-2xl flex items-center justify-center mb-5 shadow-sm">
-                                            <img id="simOfflineImage" src="" class="w-full h-full object-contain hidden p-2.5" />
-                                            <svg id="simOfflineSVG" xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 5.636a9 9 0 010 12.728m0 0l-2.829-2.829m2.829 2.829L21 21M15.536 8.464a5 5 0 010 7.072m0 0l-2.829-2.829m-4.243 4.243a5 5 0 01-7.072 0m0 0l2.829-2.829m-4.243-4.243a9 9 0 0112.728 0m0 0l-2.829 2.829" /></svg>
+                                    <!-- VIEW 2: Offline Screen -->
+                                    <div id="simOfflineView" class="absolute inset-0 flex flex-col items-center justify-center p-6 text-center z-0 opacity-0 translate-y-10 transition-all duration-500 bg-white">
+                                        <div id="simOfflineIcon" class="w-20 h-20 bg-amber-50 text-amber-500 rounded-3xl flex items-center justify-center mb-6 shadow-sm">
+                                            <img id="simOfflineImage" src="" class="w-full h-full object-contain hidden p-3" />
+                                            <svg id="simOfflineSVG" xmlns="http://www.w3.org/2000/svg" class="h-10 w-10" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 5.636a9 9 0 010 12.728m0 0l-2.829-2.829m2.829 2.829L21 21M15.536 8.464a5 5 0 010 7.072m0 0l-2.829-2.829m-4.243 4.243a5 5 0 01-7.072 0m0 0l2.829-2.829m-4.243-4.243a9 9 0 0112.728 0m0 0l-2.829 2.829" /></svg>
                                         </div>
-                                        <h4 id="simOfflineTitle" class="text-sm font-black text-slate-800 mb-1.5">Koneksi Terputus</h4>
-                                        <p id="simOfflineDesc" class="text-[9px] text-slate-500 mb-6 leading-relaxed px-2">Pastikan koneksi internet kamu aktif dan coba lagi.</p>
-                                        <div id="simOfflineBtn" class="px-6 py-2 bg-amber-500 text-white text-[9px] font-black rounded-lg shadow-lg shadow-amber-200">Coba Lagi</div>
+                                        <h4 id="simOfflineTitle" class="text-base font-black text-slate-800 mb-2">Koneksi Terputus</h4>
+                                        <p id="simOfflineDesc" class="text-[10px] text-slate-500 mb-8 leading-relaxed px-4">Pastikan koneksi internet kamu aktif dan coba lagi.</p>
+                                        <div id="simOfflineBtn" class="px-8 py-2.5 bg-amber-500 text-white text-[10px] font-black rounded-xl shadow-xl shadow-amber-200">Coba Lagi</div>
                                     </div>
                                 </div>
                             </div>
@@ -624,14 +602,18 @@
             const splashImageFile = document.getElementById('splashImageFile');
             
             // Simulator Elements
-            const simSplashContainer = document.getElementById('simSplashContainer');
-            const simSplashContent = document.getElementById('simSplashContent');
+            const simSplashView = document.getElementById('simSplashView');
+            const simOfflineView = document.getElementById('simOfflineView');
+            const simModeText = document.getElementById('simModeText');
+            const btnSwitchSimView = document.getElementById('btnSwitchSimView');
+            
+            const simSplashContainer = document.getElementById('simSplashView'); // Legacy alias for updateSimulator
             const simImage = document.getElementById('simImage');
             const simText = document.getElementById('simText');
             const simSpinner = document.getElementById('simSpinner');
             const simLogoWrapper = document.getElementById('simLogoWrapper');
 
-            const simOfflineContainer = document.getElementById('simOfflineContainer');
+            const simOfflineContainer = document.getElementById('simOfflineView'); // Legacy alias for updateSimulator
             const splashBgColorInput = document.getElementById('splashBgColor');
             const splashTextColorInput = document.getElementById('splashTextColor');
             const splashLoadingTextInput = document.getElementById('splashLoadingText');
@@ -653,9 +635,31 @@
 
             let checkInterval;
             let currentBuildAppName = '';
+            let currentSimMode = 'splash';
 
             // --- FUNCTIONS ---
             
+            function switchSimulatorView(mode) {
+                if (!simSplashView || !simOfflineView || !simModeText) return;
+                
+                if (mode === 'splash') {
+                    simSplashView.classList.remove('opacity-0', 'translate-y-10', 'z-0');
+                    simSplashView.classList.add('z-10');
+                    simOfflineView.classList.add('opacity-0', 'translate-y-10', 'z-0');
+                    simOfflineView.classList.remove('z-10');
+                    simModeText.innerText = 'Splash View';
+                    currentSimMode = 'splash';
+                } else {
+                    simOfflineView.classList.remove('opacity-0', 'translate-y-10', 'z-0');
+                    simOfflineView.classList.add('z-10');
+                    simSplashView.classList.add('opacity-0', 'translate-y-10', 'z-0');
+                    simSplashView.classList.remove('z-10');
+                    simModeText.innerText = 'Offline View';
+                    currentSimMode = 'offline';
+                }
+            }
+            window.switchSimulatorView = switchSimulatorView;
+
             function showSection(section) {
                 if(formSection) formSection.classList.add('hidden');
                 if(progressSection) progressSection.classList.add('hidden');
@@ -669,9 +673,11 @@
                 if(heroForm) heroForm.reset();
                 
                 // Reset to Landing Page
-                appBuilder.classList.add('hidden');
-                landingPage.classList.remove('hidden');
-                landingPage.classList.remove('opacity-0');
+                if(appBuilder) appBuilder.classList.add('hidden');
+                if(landingPage) {
+                    landingPage.classList.remove('hidden');
+                    landingPage.classList.remove('opacity-0');
+                }
                 
                 const step2Section = document.getElementById('step2Section');
                 if(step2Section) step2Section.classList.add('opacity-0', 'translate-x-4');
@@ -681,6 +687,7 @@
                 if(successState) successState.classList.add('hidden');
                 
                 showSection(formSection);
+                switchSimulatorView('splash');
                 updateSimulator();
                 if(checkInterval) clearInterval(checkInterval);
             }
@@ -840,9 +847,16 @@
                 if(el) el.addEventListener('input', updateSimulator);
             });
 
+            if(btnSwitchSimView) {
+                btnSwitchSimView.addEventListener('click', () => {
+                    switchSimulatorView(currentSimMode === 'splash' ? 'offline' : 'splash');
+                });
+            }
+
             if(useCustomSplashCheckbox) {
                 useCustomSplashCheckbox.addEventListener('change', (e) => {
                     if(customSplashSettings) customSplashSettings.classList.toggle('hidden', !e.target.checked);
+                    if(e.target.checked) switchSimulatorView('splash');
                     updateSimulator();
                 });
             }
@@ -855,6 +869,7 @@
             if(useCustomOfflineCheckbox) {
                 useCustomOfflineCheckbox.addEventListener('change', (e) => {
                     if(customOfflineSettings) customOfflineSettings.classList.toggle('hidden', !e.target.checked);
+                    if(e.target.checked) switchSimulatorView('offline');
                     updateSimulator();
                 });
             }
