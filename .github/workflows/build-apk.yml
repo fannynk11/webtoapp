@@ -204,7 +204,6 @@ jobs:
           
           # Replace Application ID in build.gradle.kts
           sed -i "s|applicationId = .*|applicationId = \"$package_name\"|g" android/app/build.gradle.kts
-          sed -i "s|namespace = .*|namespace = \"$package_name\"|g" android/app/build.gradle.kts
 
       - name: Build APK
         run: flutter build apk --release
