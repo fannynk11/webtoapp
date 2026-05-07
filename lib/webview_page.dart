@@ -395,7 +395,7 @@ class _WebViewPageState extends State<WebViewPage> {
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   fontSize: 15,
-                  color: Colors.slate.shade500,
+                  color: const Color(0xFF64748B),
                   height: 1.6,
                   fontWeight: FontWeight.w500,
                 ),
