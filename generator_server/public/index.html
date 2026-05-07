@@ -155,21 +155,22 @@
 
                 <!-- STEP 2: Customization -->
                 <div id="step2Section" class="hidden opacity-0 translate-x-4 transition-all duration-300 w-full">
-                    <!-- Header Step 2 -->
-                    <div class="flex flex-col sm:flex-row sm:items-center justify-between mb-8 gap-4">
-                        <div>
-                            <h2 class="text-2xl font-black text-slate-800 tracking-tight">Kustomisasi Aplikasi</h2>
-                            <p class="text-sm text-slate-500 font-medium">Personalisasi tampilan aplikasi Anda sebelum di-build.</p>
-                        </div>
-                        <button type="button" id="btnBack" class="inline-flex items-center gap-2 px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 text-sm font-bold rounded-xl transition-all active:scale-95 w-fit">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" /></svg>
-                            Kembali
-                        </button>
-                    </div>
+                    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+                        <!-- Left side: Header + Cards -->
+                        <div class="lg:col-span-8 space-y-8">
+                            <!-- Header Step 2 -->
+                            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                                <div>
+                                    <h2 class="text-2xl font-black text-slate-800 tracking-tight">Kustomisasi Aplikasi</h2>
+                                    <p class="text-sm text-slate-500 font-medium">Personalisasi tampilan aplikasi Anda sebelum di-build.</p>
+                                </div>
+                                <button type="button" id="btnBack" class="inline-flex items-center gap-2 px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 text-sm font-bold rounded-xl transition-all active:scale-95 w-fit">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" /></svg>
+                                    Kembali
+                                </button>
+                            </div>
 
-                    <div class="grid grid-cols-1 md:grid-cols-12 gap-6 items-start">
-                        <!-- Left Column: Settings Cards -->
-                        <div class="md:col-span-8 lg:col-span-9 space-y-6">
+                            <div class="space-y-6">
                             
                             <!-- Card 1: Identity -->
                             <div class="bg-white rounded-3xl border border-slate-100 shadow-sm overflow-hidden">
@@ -404,10 +405,11 @@
                                                 <p class="text-[9px] text-slate-400 mt-1 uppercase font-bold tracking-tighter">Maks 1MB</p>
                                             </div>
                                         </div>
-                                    </div>
                                 </div>
                             </div>
-                        <div class="md:col-span-4 lg:col-span-3 space-y-6 md:sticky md:top-6">
+                        </div>
+
+                        <div class="lg:col-span-4 space-y-6 lg:sticky lg:top-8">
                             <!-- Single Simulator Container -->
                             <div class="bg-white rounded-[2rem] p-4 border border-slate-100 shadow-xl flex flex-col items-center relative overflow-hidden">
                                 <div class="flex items-center justify-between w-full mb-6">
