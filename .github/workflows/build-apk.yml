@@ -30,6 +30,9 @@ on:
       splash_use_logo_bg:
         description: 'Pakai BG Logo'
         default: 'false'
+      splash_logo_bg_color:
+        description: 'Warna BG Logo'
+        default: '#FFFFFF'
       hide_bottom_nav:
         description: 'Sembunyi Nav'
         default: 'false'

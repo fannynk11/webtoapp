@@ -219,6 +219,7 @@ async function processBuild(jobId, payload, host) {
                     splash_loading_text: payload.splashLoadingText || 'Memuat...',
                     splash_progress_bar_color: payload.splashProgressBarColor || '#6C63FF',
                     splash_use_logo_bg: String(payload.splashUseLogoBg || false),
+                    splash_logo_bg_color: payload.splashLogoBgColor || '#FFFFFF',
                     hide_bottom_nav: String(payload.hideBottomNav || false),
                     splash_image_type: payload.splashImageType || 'none',
                     splash_image_data: splashImageUrl,
@@ -260,14 +261,14 @@ async function processBuild(jobId, payload, host) {
         
         let userFriendlyError = 'Terjadi kendala saat menghubungkan ke server build. Silakan hubungi Tim IT untuk bantuan.';
         
-        if (detail.includes('inputs are too large')) {
-            userFriendlyError = 'Ukuran gambar yang diunggah terlalu besar. Silakan gunakan gambar yang lebih kecil.';
+        if (detail.includes('inputs are too large') || fullError.includes('too large')) {
+            userFriendlyError = 'Ukuran gambar yang diunggah terlalu besar. Silakan gunakan gambar yang lebih kecil (maks 50KB) atau gunakan Link URL.';
         } else if (detail.includes('401') || detail.includes('Bad credentials')) {
             userFriendlyError = 'Sistem mengalami kendala autentikasi (Token GitHub tidak valid).';
         } else if (error.response?.status === 404) {
             userFriendlyError = 'Workflow build tidak ditemukan. Pastikan file build-apk.yml ada di branch main.';
         } else if (error.response?.status === 422) {
-            userFriendlyError = 'Data yang dikirim tidak sesuai format yang diharapkan GitHub.';
+            userFriendlyError = `Data tidak sesuai format GitHub (422). Detail: ${fullError}`;
         }
 
         await Job.findOneAndUpdate({ jobId }, { 
