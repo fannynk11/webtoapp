@@ -276,20 +276,20 @@ app.post('/api/send-email', async (req, res) => {
 
 
         const mailOptions = {
-            from: `"WebToAPK Pro" <${process.env.EMAIL_USER}>`,
+            from: `"WebToAPK" <${process.env.EMAIL_USER}>`,
             to: email,
             subject: `🎁 Aplikasi ${appName} Kamu Sudah Siap!`,
             html: `
                 <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e2e8f0; rounded-lg: 12px;">
                     <div style="text-align: center; margin-bottom: 30px;">
-                        <h1 style="color: #2563eb; margin-bottom: 10px;">WebToAPK Pro</h1>
+                        <h1 style="color: #2563eb; margin-bottom: 10px;">WebToAPK</h1>
                         <p style="color: #64748b;">Transformasi Website ke Aplikasi Android</p>
                     </div>
                     
                     <div style="background-color: #f8fafc; padding: 30px; border-radius: 12px; text-align: center;">
                         <h2 style="color: #1e293b; margin-top: 0;">Halo! 👋</h2>
                         <p style="color: #475569; line-height: 1.6;">
-                            Aplikasi <strong>${appName}</strong> yang kamu buat sudah berhasil kami proses dan siap untuk diunduh.
+                            Aplikasi <strong>${appName}</strong> yang dibuat sudah berhasil diproses dan siap untuk diunduh.
                         </p>
                         
                         <div style="margin: 30px 0;">
@@ -299,13 +299,13 @@ app.post('/api/send-email', async (req, res) => {
                         </div>
                         
                         <p style="color: #94a3b8; font-size: 12px;">
-                            Jika tombol di atas tidak berfungsi, copy link berikut ke browser kamu:<br/>
+                            Jika tombol di atas tidak berfungsi, copy link berikut ke browser Anda:<br/>
                             <span style="color: #3b82f6;">${downloadUrl}</span>
                         </p>
                     </div>
                     
                     <div style="text-align: center; margin-top: 30px; color: #94a3b8; font-size: 12px;">
-                        <p>&copy; 2026 WebToAPK. Dibuat dengan ❤️ untuk kemudahan transformasi digital.</p>
+                        <p>&copy; 2026 WebToAPK. Dibuat untuk kemudahan transformasi digital.</p>
                     </div>
                 </div>
             `
