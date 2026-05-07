@@ -714,6 +714,15 @@
             document.querySelectorAll('input[name="imageType"]').forEach(r => r.addEventListener('change', (e) => {
                 if(imageUrlInput) imageUrlInput.classList.toggle('hidden', e.target.value !== 'url');
                 if(imageUploadInput) imageUploadInput.classList.toggle('hidden', e.target.value !== 'upload');
+                
+                const colorPickerContainer = document.getElementById('colorPickerContainer');
+                if (colorPickerContainer) {
+                    if (e.target.value === 'spinner') {
+                        colorPickerContainer.classList.remove('opacity-40', 'pointer-events-none');
+                    } else {
+                        colorPickerContainer.classList.add('opacity-40', 'pointer-events-none');
+                    }
+                }
                 updateSimulator();
             }));
 
