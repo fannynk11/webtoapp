@@ -571,15 +571,19 @@
             });
         });
 
-        // FIX: Add listeners to file inputs so simulator updates when file is picked
+        // FIX: Add listeners to file inputs so simulator/preview updates when file is picked
         const splashImageFileInput = document.getElementById('splashImageFile');
         const splashBgFileInput = document.getElementById('splashBgFile');
+        const appIconFileInputEl = document.getElementById('appIconFile');
         
         if (splashImageFileInput) {
             splashImageFileInput.addEventListener('change', updateSimulator);
         }
         if (splashBgFileInput) {
             splashBgFileInput.addEventListener('change', updateSimulator);
+        }
+        if (appIconFileInputEl) {
+            appIconFileInputEl.addEventListener('change', updateIconPreview);
         }
 
         // Also add listeners to URL inputs for live preview
@@ -599,6 +603,59 @@
                 customSplashSettings.classList.remove('hidden');
                 updateSimulator();
             });
+        }
+
+        const appIconUrlInputEl = document.getElementById('appIconUrl');
+        if (appIconUrlInputEl) {
+            appIconUrlInputEl.addEventListener('input', updateIconPreview);
+        }
+
+        // Icon Type selection logic
+        iconTypeRadios.forEach(radio => {
+            radio.addEventListener('change', (e) => {
+                const selected = e.target.value;
+                iconUrlInput.classList.toggle('hidden', selected !== 'url');
+                iconUploadInput.classList.toggle('hidden', selected !== 'upload');
+                updateIconPreview();
+            });
+        });
+
+        function updateIconPreview() {
+            const selected = document.querySelector('input[name="iconType"]:checked').value;
+            const previewImg = document.getElementById('iconPreviewImg');
+            const previewSVG = document.getElementById('iconPreviewSVG');
+            const previewText = document.getElementById('iconPreviewText');
+
+            if (selected === 'none') {
+                previewImg.classList.add('hidden');
+                previewSVG.classList.remove('hidden');
+                previewText.textContent = 'Standard Flutter';
+            } else if (selected === 'url') {
+                const url = document.getElementById('appIconUrl').value.trim();
+                if (url) {
+                    previewImg.src = url;
+                    previewImg.classList.remove('hidden');
+                    previewSVG.classList.add('hidden');
+                    previewText.textContent = 'Remote URL Icon';
+                } else {
+                    previewImg.classList.add('hidden');
+                    previewSVG.classList.remove('hidden');
+                    previewText.textContent = 'Masukkan URL';
+                }
+            } else if (selected === 'upload') {
+                const fileInput = document.getElementById('appIconFile');
+                if (fileInput.files.length > 0) {
+                    const url = URL.createObjectURL(fileInput.files[0]);
+                    previewImg.src = url;
+                    previewImg.classList.remove('hidden');
+                    previewSVG.classList.add('hidden');
+                    previewText.textContent = fileInput.files[0].name;
+                } else {
+                    previewImg.classList.add('hidden');
+                    previewSVG.classList.remove('hidden');
+                    previewText.textContent = 'Pilih File';
+                }
+            }
         }
 
         function fileToBase64(file) {
