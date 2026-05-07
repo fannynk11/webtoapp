@@ -1015,11 +1015,12 @@
 
                                     try {
                                         console.log('Attempting to send email to:', email);
-                                        const res = await fetch('/send-to-email', {
+                                        const res = await fetch('/api/send-email', {
                                             method: 'POST',
                                             headers: { 'Content-Type': 'application/json' },
                                             body: JSON.stringify({ email, downloadUrl, appName })
                                         });
+
 
                                         const data = await res.json();
                                         console.log('Server response:', data);
