@@ -862,8 +862,7 @@
                 useCustomOfflineCheckbox.addEventListener('change', (e) => {
                     customOfflineSettings.classList.toggle('hidden', !e.target.checked);
                     if(e.target.checked) {
-                        currentSimMode = 'offline';
-                        if(simModeText) simModeText.innerText = 'Offline View';
+                        // Switch logic removed since dual simulators are always visible
                     }
                     updateSimulator();
                 });
