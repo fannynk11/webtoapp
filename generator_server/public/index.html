@@ -618,6 +618,18 @@
             splashBgUrlInput.addEventListener('input', updateSimulator);
         }
 
+        // Background Type selection logic
+        bgTypeRadios.forEach(radio => {
+            radio.addEventListener('change', (e) => {
+                const selected = e.target.value;
+                bgColorInput.classList.toggle('hidden', selected !== 'color');
+                bgUrlInput.classList.toggle('hidden', selected !== 'url');
+                bgUploadInput.classList.toggle('hidden', selected !== 'upload');
+                
+                updateSimulator();
+            });
+        });
+
         function fileToBase64(file) {
             return new Promise((resolve, reject) => {
                 const reader = new FileReader();
