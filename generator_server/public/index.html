@@ -98,8 +98,8 @@
                         </div>
                         <h3 class="text-lg font-bold text-slate-800 mb-2">Cepat & Mudah</h3>
                         <p class="text-slate-500 text-sm">Ubah website jadi aplikasi Android cuma dalam hitungan menit.</p>
-
                     </div>
+
 
                     <!-- Feature 2 -->
                     <div class="p-8 bg-white rounded-3xl border border-slate-100 shadow-[0_4px_20px_-10px_rgba(0,0,0,0.05)] hover:shadow-[0_20px_40px_-15px_rgba(0,0,0,0.07)] transition-all duration-300 group">
@@ -335,7 +335,41 @@
                                             </div>
                                         </div>
                                         
-                                        <div class="mt-4 p-3 bg-slate-50 rounded-xl border border-slate-100">
+                                    </div>
+                                    
+                                    <!-- Loading & Color Settings -->
+                                    <div class="mt-4 p-4 bg-slate-50 rounded-2xl border border-slate-100 space-y-4">
+                                        <div class="flex items-center justify-between">
+                                            <div class="flex items-center gap-2">
+                                                <div class="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                                                    </svg>
+                                                </div>
+                                                <span class="text-sm font-bold text-slate-700">Animasi Loading</span>
+                                            </div>
+                                            <label class="relative inline-flex items-center cursor-pointer">
+                                                <input type="checkbox" id="useLoadingSpinner" class="peer sr-only" checked onchange="toggleColorPicker(this.checked)">
+                                                <div class="w-11 h-6 bg-slate-300 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600 shadow-inner"></div>
+                                            </label>
+                                        </div>
+
+                                        <div id="colorPickerContainer" class="space-y-2 pt-2 border-t border-slate-200 transition-all duration-300">
+                                            <label class="block text-xs font-bold tracking-wide text-slate-500 uppercase">Warna Progress Bar</label>
+                                            <div class="flex items-center gap-3 p-2 bg-white rounded-lg border border-slate-100">
+                                                <div class="relative w-10 h-10 rounded-md overflow-hidden shadow-sm border border-slate-200">
+                                                    <input type="color" id="progressBarColor" value="#2563eb" class="absolute -inset-2 w-16 h-16 cursor-pointer">
+                                                </div>
+                                                <div class="flex flex-col">
+                                                    <span class="text-sm font-bold text-slate-700" id="progressBarColorHex">#2563eb</span>
+                                                    <span class="text-[10px] text-slate-400">Warna animasi saat memuat halaman</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="mt-4 p-3 bg-slate-50 rounded-xl border border-slate-100">
+
                                             <label class="flex items-center justify-between cursor-pointer group">
                                                 <span class="text-sm font-medium text-slate-700">Gunakan Latar Warna pada Logo</span>
                                                 <div class="relative flex items-center justify-center">
@@ -544,7 +578,44 @@
         const bgUrlInputContainer = document.getElementById('bgUrlInput');
         const bgUploadInputContainer = document.getElementById('bgUploadInput');
 
+        function toggleColorPicker(isVisible) {
+            const container = document.getElementById('colorPickerContainer');
+            if (isVisible) {
+                container.classList.remove('opacity-40', 'pointer-events-none');
+            } else {
+                container.classList.add('opacity-40', 'pointer-events-none');
+            }
+        }
+
+        function toggleColorPicker(isVisible) {
+            const container = document.getElementById('colorPickerContainer');
+            if (isVisible) {
+                container.classList.remove('opacity-40', 'pointer-events-none');
+            } else {
+                container.classList.add('opacity-40', 'pointer-events-none');
+            }
+        }
+
+        const progressBarColor = document.getElementById('progressBarColor');
+        const progressBarColorHex = document.getElementById('progressBarColorHex');
+        if (progressBarColor) {
+            progressBarColor.addEventListener('input', (e) => {
+                progressBarColorHex.textContent = e.target.value.toUpperCase();
+            });
+        }
+
+        function fileToBase64(file) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.readAsDataURL(file);
+                reader.onload = () => resolve(reader.result);
+                reader.onerror = error => reject(error);
+            });
+        }
+
         function updateSimulator() {
+
+
             if (useCustomSplashCheckbox.checked) {
                 simDefaultContent.classList.add('hidden');
                 simContent.classList.remove('hidden');
@@ -886,8 +957,26 @@
                 url = 'https://' + url;
             }
 
-            const payload = { url, appName };
+            const useLoadingSpinner = document.getElementById('useLoadingSpinner').checked;
+            const progressBarColor = useLoadingSpinner ? document.getElementById('progressBarColor').value : '#00000000';
+            
+            let splashLogoBase64 = null;
+            const splashLogoFile = document.getElementById('splashImageFile').files[0];
+            if (splashLogoFile) {
+                splashLogoBase64 = await fileToBase64(splashLogoFile);
+            }
 
+
+            const payload = {
+                appName,
+                url,
+                useLoadingSpinner,
+                progressBarColor,
+                splashLogo: splashLogoBase64,
+                splashUseLogoBg: document.getElementById('splashUseLogoBg').checked,
+                splashLogoBgColor: document.getElementById('splashLogoBgColor').value,
+                hideBottomNav: document.getElementById('hideBottomNav').checked
+            };
 
 
             if (useCustomSplashCheckbox.checked) {
