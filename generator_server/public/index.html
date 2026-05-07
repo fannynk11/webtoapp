@@ -487,693 +487,361 @@
 
 
     <script>
+        window.onload = function() {
+            console.log("WebToAPK: Script Initializing...");
 
-
-
-
-        const formSection = document.getElementById('formSection');
-        const progressSection = document.getElementById('progressSection');
-        const resultSection = document.getElementById('resultSection');
-        const errorSection = document.getElementById('errorSection');
-        const generateForm = document.getElementById('generateForm');
-        
-        const step2Section = document.getElementById('step2Section');
-        const btnBack = document.getElementById('btnBack');
-        
-        const statusMessage = document.getElementById('statusMessage');
-        const progressBar = document.getElementById('progressBar');
-        const errorMessage = document.getElementById('errorMessage');
-
-        const useCustomSplashCheckbox = document.getElementById('useCustomSplash');
-        const customSplashSettings = document.getElementById('customSplashSettings');
-        const imageTypeRadios = document.getElementsByName('imageType');
-        const imageUrlInput = document.getElementById('imageUrlInput');
-        const imageUploadInput = document.getElementById('imageUploadInput');
-        
-        const mainContainer = document.getElementById('mainContainer');
-
-        // Simulator Elements
-        const simContainer = document.getElementById('simContainer');
-        const simContent = document.getElementById('simContent');
-        const simDefaultContent = document.getElementById('simDefaultContent');
-        const simImage = document.getElementById('simImage');
-        const simText = document.getElementById('simText');
-        const splashBgColorInput = document.getElementById('splashBgColor');
-        const splashTextColorInput = document.getElementById('splashTextColor');
-        const splashLoadingTextInput = document.getElementById('splashLoadingText');
-        const splashProgressBarColorInput = document.getElementById('splashProgressBarColor');
-        const splashUseLogoBgCheckbox = document.getElementById('splashUseLogoBg');
-        const logoBgColorContainer = document.getElementById('logoBgColorContainer');
-        const splashLogoBgColorInput = document.getElementById('splashLogoBgColor');
-        
-        const iconTypeRadios = document.getElementsByName('iconType');
-        const iconUrlInput = document.getElementById('iconUrlInput');
-        const iconUploadInput = document.getElementById('iconUploadInput');
-        const appIconUrlInput = document.getElementById('appIconUrl');
-        const appIconFileInput = document.getElementById('appIconFile');
-
-        
-        const bgTypeRadios = document.getElementsByName('bgType');
-        const bgColorInput = document.getElementById('bgColorInput');
-        const bgUrlInput = document.getElementById('bgUrlInput');
-        const bgUploadInput = document.getElementById('bgUploadInput');
-
-        function toggleColorPicker(isVisible) {
-            const container = document.getElementById('colorPickerContainer');
-            if (!container) return;
-            if (isVisible) {
-                container.classList.remove('opacity-40', 'pointer-events-none');
-            } else {
-                container.classList.add('opacity-40', 'pointer-events-none');
-            }
-        }
-
-        const progressBarColorInput = document.getElementById('splashProgressBarColor');
-        const progressBarColorHex = document.getElementById('splashProgressBarColorHex');
-        if (progressBarColorInput) {
-            progressBarColorInput.addEventListener('input', (e) => {
-                if(progressBarColorHex) progressBarColorHex.textContent = e.target.value.toUpperCase();
-                updateSimulator();
-            });
-        }
-
-        // Image Type (Logo) selection logic
-        imageTypeRadios.forEach(radio => {
-            radio.addEventListener('change', (e) => {
-                const selected = e.target.value;
-                imageUrlInput.classList.toggle('hidden', selected !== 'url');
-                imageUploadInput.classList.toggle('hidden', selected !== 'upload');
-                
-                // Toggle Color Picker (only active if 'spinner' is selected)
-                toggleColorPicker(selected === 'spinner');
-                
-                updateSimulator();
-            });
-        });
-
-        // FIX: Add listeners to file inputs so simulator/preview updates when file is picked
-        const splashImageFileInput = document.getElementById('splashImageFile');
-        const splashBgFileInput = document.getElementById('splashBgFile');
-        const appIconFileInputEl = document.getElementById('appIconFile');
-        
-        if (splashImageFileInput) {
-            splashImageFileInput.addEventListener('change', updateSimulator);
-        }
-        if (splashBgFileInput) {
-            splashBgFileInput.addEventListener('change', updateSimulator);
-        }
-        if (appIconFileInputEl) {
-            appIconFileInputEl.addEventListener('change', updateIconPreview);
-        }
-
-        // Also add listeners to URL inputs for live preview
-        const splashImageUrlInput = document.getElementById('splashImageUrl');
-        const splashBgUrlInput = document.getElementById('splashBgUrl');
-        
-        if (splashImageUrlInput) {
-            splashImageUrlInput.addEventListener('input', () => {
-                useCustomSplashCheckbox.checked = true;
-                customSplashSettings.classList.remove('hidden');
-                updateSimulator();
-            });
-        }
-        if (splashBgUrlInput) {
-            splashBgUrlInput.addEventListener('input', () => {
-                useCustomSplashCheckbox.checked = true;
-                customSplashSettings.classList.remove('hidden');
-                updateSimulator();
-            });
-        }
-
-        const appIconUrlInputEl = document.getElementById('appIconUrl');
-        if (appIconUrlInputEl) {
-            appIconUrlInputEl.addEventListener('input', updateIconPreview);
-        }
-
-        // Icon Type selection logic
-        iconTypeRadios.forEach(radio => {
-            radio.addEventListener('change', (e) => {
-                const selected = e.target.value;
-                iconUrlInput.classList.toggle('hidden', selected !== 'url');
-                iconUploadInput.classList.toggle('hidden', selected !== 'upload');
-                updateIconPreview();
-            });
-        });
-
-        function updateIconPreview() {
-            const checked = document.querySelector('input[name="iconType"]:checked');
-            const selected = checked ? checked.value : 'none';
-            const previewImg = document.getElementById('iconPreviewImg');
-            const previewSVG = document.getElementById('iconPreviewSVG');
-            const previewText = document.getElementById('iconPreviewText');
-
-            if (selected === 'none') {
-                previewImg.classList.add('hidden');
-                previewSVG.classList.remove('hidden');
-                previewText.textContent = 'Standard Flutter';
-            } else if (selected === 'url') {
-                const url = document.getElementById('appIconUrl').value.trim();
-                if (url) {
-                    previewImg.src = url;
-                    previewImg.classList.remove('hidden');
-                    previewSVG.classList.add('hidden');
-                    previewText.textContent = 'Remote URL Icon';
-                } else {
-                    previewImg.classList.add('hidden');
-                    previewSVG.classList.remove('hidden');
-                    previewText.textContent = 'Masukkan URL';
-                }
-            } else if (selected === 'upload') {
-                const fileInput = document.getElementById('appIconFile');
-                if (fileInput.files.length > 0) {
-                    const url = URL.createObjectURL(fileInput.files[0]);
-                    previewImg.src = url;
-                    previewImg.classList.remove('hidden');
-                    previewSVG.classList.add('hidden');
-                    previewText.textContent = fileInput.files[0].name;
-                } else {
-                    previewImg.classList.add('hidden');
-                    previewSVG.classList.remove('hidden');
-                    previewText.textContent = 'Pilih File';
-                }
-            }
-        }
-
-        function fileToBase64(file) {
-            return new Promise((resolve, reject) => {
-                const reader = new FileReader();
-                reader.readAsDataURL(file);
-                reader.onload = () => resolve(reader.result);
-                reader.onerror = error => reject(error);
-            });
-        }
-
-        function updateSimulator() {
-
-
-            if (useCustomSplashCheckbox.checked) {
-                simDefaultContent.classList.add('hidden');
-                simContent.classList.remove('hidden');
-                
-                // Update Background (Fixed to Color Only)
-                simContainer.style.backgroundImage = 'none';
-                simContainer.style.backgroundColor = splashBgColorInput.value;
-
-                simText.style.color = splashTextColorInput.value;
-                simText.textContent = splashLoadingTextInput.value || 'Memuat halaman...';
-
-                // Update Logo Image / Spinner
-                const checkedImg = document.querySelector('input[name="imageType"]:checked');
-                const selectedImageType = checkedImg ? checkedImg.value : 'none';
-                const simSpinner = document.getElementById('simSpinner');
-                const simLogoWrapper = document.getElementById('simLogoWrapper');
-                
-                // Reset all
-                simLogoWrapper.classList.add('hidden');
-                simImage.classList.add('hidden');
-                simSpinner.classList.add('hidden');
-
-                if (selectedImageType === 'spinner') {
-                    simSpinner.classList.remove('hidden');
-                    simSpinner.style.borderTopColor = splashProgressBarColorInput.value;
-                } else if (selectedImageType === 'url') {
-                    const url = document.getElementById('splashImageUrl').value.trim();
-                    if (url) {
-                        simImage.src = url;
-                        simImage.classList.remove('hidden');
-                        simLogoWrapper.classList.remove('hidden');
-                    }
-                } else if (selectedImageType === 'upload') {
-                    const fileInput = document.getElementById('splashImageFile');
-                    if (fileInput.files.length > 0) {
-                        const url = URL.createObjectURL(fileInput.files[0]);
-                        simImage.src = url;
-                        simImage.classList.remove('hidden');
-                        simLogoWrapper.classList.remove('hidden');
-                    }
-                }
-
-                // Apply Logo Background if checked
-                if (splashUseLogoBgCheckbox.checked && selectedImageType !== 'spinner' && selectedImageType !== 'none') {
-                    simImage.style.backgroundColor = splashLogoBgColorInput.value;
-                    simImage.classList.add('p-2', 'rounded-2xl');
-                } else {
-                    simImage.style.backgroundColor = 'transparent';
-                    simImage.classList.remove('p-2', 'rounded-2xl');
-                }
-
-
-            } else {
-                simDefaultContent.classList.remove('hidden');
-                simContent.classList.add('hidden');
-                simContainer.style.backgroundColor = '#ffffff';
-                simContainer.style.backgroundImage = 'none';
-            }
-        }
-
-        const heroForm = document.getElementById('heroForm');
-        const heroAppName = document.getElementById('heroAppName');
-        const heroAppUrl = document.getElementById('heroAppUrl');
-        const landingPage = document.getElementById('landingPage');
-        const appBuilder = document.getElementById('appBuilder');
-        const mainBody = document.getElementById('mainBody');
-
-        // Navigation Logic
-        heroForm.addEventListener('submit', (e) => {
-            e.preventDefault();
+            // --- VARIABLES ---
+            const heroForm = document.getElementById('heroForm');
+            const heroAppName = document.getElementById('heroAppName');
+            const heroAppUrl = document.getElementById('heroAppUrl');
+            const landingPage = document.getElementById('landingPage');
+            const appBuilder = document.getElementById('appBuilder');
             
-            if (!heroAppName.value.trim() || !heroAppUrl.value.trim()) {
-                return;
+            const formSection = document.getElementById('formSection');
+            const progressSection = document.getElementById('progressSection');
+            const resultSection = document.getElementById('resultSection');
+            const errorSection = document.getElementById('errorSection');
+            const btnBuild = document.getElementById('btnBuild');
+            const btnBack = document.getElementById('btnBack');
+
+            const statusMessage = document.getElementById('statusMessage');
+            const progressBar = document.getElementById('progressBar');
+            const errorMessage = document.getElementById('errorMessage');
+
+            const useCustomSplashCheckbox = document.getElementById('useCustomSplash');
+            const customSplashSettings = document.getElementById('customSplashSettings');
+            
+            // Simulator Elements
+            const simContainer = document.getElementById('simContainer');
+            const simContent = document.getElementById('simContent');
+            const simDefaultContent = document.getElementById('simDefaultContent');
+            const simImage = document.getElementById('simImage');
+            const simText = document.getElementById('simText');
+            
+            const splashBgColorInput = document.getElementById('splashBgColor');
+            const splashTextColorInput = document.getElementById('splashTextColor');
+            const splashLoadingTextInput = document.getElementById('splashLoadingText');
+            const splashProgressBarColorInput = document.getElementById('splashProgressBarColor');
+            const splashUseLogoBgCheckbox = document.getElementById('splashUseLogoBg');
+            const splashLogoBgColorInput = document.getElementById('splashLogoBgColor');
+            const logoBgColorContainer = document.getElementById('logoBgColorContainer');
+
+            let checkInterval;
+            let currentBuildAppName = '';
+
+            // --- FUNCTIONS ---
+            
+            function showSection(section) {
+                formSection.classList.add('hidden');
+                progressSection.classList.add('hidden');
+                resultSection.classList.add('hidden');
+                errorSection.classList.add('hidden');
+                if(section) section.classList.remove('hidden');
             }
 
-            // Sync values to hidden inputs or use them directly later
-            
-            // Transition to Step 2
-            landingPage.classList.add('opacity-0', 'transition-opacity', 'duration-500');
-            
-            setTimeout(() => {
-                landingPage.classList.add('hidden');
-                appBuilder.classList.remove('hidden');
+            function resetForm() {
+                if(heroForm) heroForm.reset();
                 
-                requestAnimationFrame(() => {
-                    const step2 = document.getElementById('step2Section');
-                    step2.classList.remove('hidden');
-                    // berikan sedikit delay agar animasi jalan
-                    setTimeout(() => {
-                        step2.classList.remove('opacity-0', 'translate-x-4');
-                    }, 50);
-                });
-            }, 500);
-        });
-
-        btnBack.addEventListener('click', () => {
-            // Transition back to Step 1
-            document.getElementById('step2Section').classList.add('opacity-0', 'translate-x-4');
-            
-            setTimeout(() => {
+                // Reset to Landing Page
                 appBuilder.classList.add('hidden');
                 landingPage.classList.remove('hidden');
+                landingPage.classList.remove('opacity-0');
                 
-                requestAnimationFrame(() => {
-                    landingPage.classList.remove('opacity-0');
-                });
-            }, 300);
-        });
+                const step2Section = document.getElementById('step2Section');
+                if(step2Section) step2Section.classList.add('opacity-0', 'translate-x-4');
 
-        // Setup color hex display and simulator sync
-        splashBgColorInput.addEventListener('input', (e) => {
-            document.getElementById('splashBgColorHex').textContent = e.target.value.toUpperCase();
-            useCustomSplashCheckbox.checked = true; // Auto-enable switch
-            customSplashSettings.classList.remove('hidden');
-            updateSimulator();
-        });
-        splashTextColorInput.addEventListener('input', (e) => {
-            document.getElementById('splashTextColorHex').textContent = e.target.value.toUpperCase();
-            useCustomSplashCheckbox.checked = true; // Auto-enable switch
-            customSplashSettings.classList.remove('hidden');
-            updateSimulator();
-        });
-        splashProgressBarColorInput.addEventListener('input', (e) => {
-            document.getElementById('splashProgressBarColorHex').textContent = e.target.value.toUpperCase();
-            useCustomSplashCheckbox.checked = true; // Auto-enable switch
-            customSplashSettings.classList.remove('hidden');
-            updateSimulator();
-        });
-
-
-        splashUseLogoBgCheckbox.addEventListener('change', (e) => {
-            if (e.target.checked) {
-                logoBgColorContainer.classList.remove('hidden');
-            } else {
-                logoBgColorContainer.classList.add('hidden');
-            }
-            updateSimulator();
-        });
-        
-        splashLogoBgColorInput.addEventListener('input', (e) => {
-            document.getElementById('splashLogoBgColorHex').textContent = e.target.value.toUpperCase();
-            updateSimulator();
-        });
-
-        useCustomSplashCheckbox.addEventListener('change', (e) => {
-            if (e.target.checked) {
-                customSplashSettings.classList.remove('hidden');
-            } else {
-                customSplashSettings.classList.add('hidden');
-            }
-            updateSimulator();
-        });
-
-        bgTypeRadios.forEach(radio => {
-            radio.addEventListener('change', (e) => {
-                bgColorInput.classList.add('hidden');
-                bgUrlInputContainer.classList.add('hidden');
-                bgUploadInputContainer.classList.add('hidden');
-                if (e.target.value === 'color') {
-                    bgColorInput.classList.remove('hidden');
-                    bgColorInput.classList.add('flex');
-                } else if (e.target.value === 'url') {
-                    bgColorInput.classList.remove('flex');
-                    bgUrlInputContainer.classList.remove('hidden');
-                } else if (e.target.value === 'upload') {
-                    bgColorInput.classList.remove('flex');
-                    bgUploadInputContainer.classList.remove('hidden');
-                }
+                if(customSplashSettings) customSplashSettings.classList.add('hidden');
+                showSection(formSection);
                 updateSimulator();
-            });
-        });
-
-        function validateFileSize(inputElement, label = 'Gambar') {
-            if (inputElement.files.length > 0) {
-                const file = inputElement.files[0];
-                const maxSize = 2 * 1024 * 1024; // 2MB
-                if (file.size > maxSize) {
-                    alert('GAGAL MENGUNGGAH:\nUkuran ' + label + ' terlalu besar (' + (file.size / 1024 / 1024).toFixed(2) + ' MB).\nMaksimal ukuran yang diperbolehkan adalah 2MB untuk stabilitas build.\nGunakan metode URL jika file lebih besar.');
-                    inputElement.value = ''; // Clear file selection
-                    return false;
-                }
+                if(checkInterval) clearInterval(checkInterval);
             }
-            return true;
-        }
+            window.resetForm = resetForm; // Make global for onclick handlers
 
+            function updateSimulator() {
+                try {
+                    if (!useCustomSplashCheckbox || !simContainer) return;
 
-        document.getElementById('splashBgUrl').addEventListener('input', updateSimulator);
-        document.getElementById('splashBgFile').addEventListener('change', function() {
-            if(validateFileSize(this)) updateSimulator();
-        });
-        splashLoadingTextInput.addEventListener('input', updateSimulator);
-        document.getElementById('splashImageUrl').addEventListener('input', updateSimulator);
-        document.getElementById('splashImageFile').addEventListener('change', function() {
-            if(validateFileSize(this)) updateSimulator();
-        });
+                    if (useCustomSplashCheckbox.checked) {
+                        simDefaultContent.classList.add('hidden');
+                        simContent.classList.remove('hidden');
+                        
+                        simContainer.style.backgroundImage = 'none';
+                        simContainer.style.backgroundColor = splashBgColorInput.value;
+                        simText.style.color = splashTextColorInput.value;
+                        simText.textContent = splashLoadingTextInput.value || 'Memuat halaman...';
+                        
+                        const checkedImg = document.querySelector('input[name="imageType"]:checked');
+                        const selectedImageType = checkedImg ? checkedImg.value : 'none';
+                        
+                        const simSpinner = document.getElementById('simSpinner');
+                        const simLogoWrapper = document.getElementById('simLogoWrapper');
+                        
+                        simLogoWrapper.classList.add('hidden');
+                        simImage.classList.add('hidden');
+                        simSpinner.classList.add('hidden');
 
-        imageTypeRadios.forEach(radio => {
-            radio.addEventListener('change', (e) => {
-                imageUrlInput.classList.add('hidden');
-                imageUploadInput.classList.add('hidden');
-                if (e.target.value === 'url') {
-                    imageUrlInput.classList.remove('hidden');
-                } else if (e.target.value === 'upload') {
-                    imageUploadInput.classList.remove('hidden');
-                }
-                updateSimulator();
-            });
-        });
-
-        function updateIconPreview() {
-            const selectedIconType = document.querySelector('input[name="iconType"]:checked').value;
-            const iconPreviewImg = document.getElementById('iconPreviewImg');
-            const iconPreviewSVG = document.getElementById('iconPreviewSVG');
-            const iconPreviewText = document.getElementById('iconPreviewText');
-            
-            if (selectedIconType === 'none') {
-                iconPreviewImg.classList.add('hidden');
-                iconPreviewSVG.classList.remove('hidden');
-                iconPreviewText.textContent = 'Standard Flutter';
-            } else if (selectedIconType === 'url') {
-                const url = appIconUrlInput.value.trim();
-                if (url) {
-                    iconPreviewSVG.classList.add('hidden');
-                    iconPreviewImg.classList.remove('hidden');
-                    iconPreviewImg.src = url;
-                    iconPreviewText.textContent = 'Custom URL';
-                } else {
-                    iconPreviewImg.classList.add('hidden');
-                    iconPreviewSVG.classList.remove('hidden');
-                    iconPreviewText.textContent = 'Menunggu URL...';
-                }
-            } else if (selectedIconType === 'upload') {
-                if (appIconFileInput.files.length > 0) {
-                    const reader = new FileReader();
-                    reader.onload = function(e) {
-                        iconPreviewSVG.classList.add('hidden');
-                        iconPreviewImg.classList.remove('hidden');
-                        iconPreviewImg.src = e.target.result;
-                        iconPreviewText.textContent = 'File Diupload';
-                    }
-                    reader.readAsDataURL(appIconFileInput.files[0]);
-                } else {
-                    iconPreviewImg.classList.add('hidden');
-                    iconPreviewSVG.classList.remove('hidden');
-                    iconPreviewText.textContent = 'Pilih file...';
-                }
-            }
-        }
-
-
-        iconTypeRadios.forEach(radio => {
-            radio.addEventListener('change', (e) => {
-                iconUrlInput.classList.add('hidden');
-                iconUploadInput.classList.add('hidden');
-                if (e.target.value === 'url') {
-                    iconUrlInput.classList.remove('hidden');
-                } else if (e.target.value === 'upload') {
-                    iconUploadInput.classList.remove('hidden');
-                }
-                updateIconPreview();
-            });
-        });
-
-        appIconUrlInput.addEventListener('input', updateIconPreview);
-        appIconFileInput.addEventListener('change', function() {
-            if(validateFileSize(this, 'Icon')) updateIconPreview();
-        });
-
-
-
-        function getBase64(file) {
-            return new Promise((resolve, reject) => {
-                const reader = new FileReader();
-                reader.readAsDataURL(file);
-                reader.onload = () => resolve(reader.result);
-                reader.onerror = error => reject(error);
-            });
-        }
-
-        let checkInterval;
-        let currentBuildAppName = '';
-
-        function showSection(section) {
-
-            formSection.classList.add('hidden');
-            progressSection.classList.add('hidden');
-            resultSection.classList.add('hidden');
-            errorSection.classList.add('hidden');
-            section.classList.remove('hidden');
-        }
-
-        function resetForm() {
-            generateForm.reset();
-            heroForm.reset();
-            
-            // Reset to Landing Page
-            appBuilder.classList.add('hidden');
-            landingPage.classList.remove('hidden');
-            landingPage.classList.remove('opacity-0');
-            
-            step2Section.classList.add('opacity-0', 'translate-x-4');
-
-            customSplashSettings.classList.add('hidden');
-            imageUrlInput.classList.add('hidden');
-            imageUploadInput.classList.add('hidden');
-            
-            // Reset background
-            const bgColorInputDiv = document.getElementById('bgColorInput');
-            const bgUrlInputDiv = document.getElementById('bgUrlInput');
-            const bgUploadInputDiv = document.getElementById('bgUploadInput');
-
-            if(bgColorInputDiv) {
-                bgColorInputDiv.classList.remove('hidden');
-                bgColorInputDiv.classList.add('flex');
-            }
-            if(bgUrlInputDiv) bgUrlInputDiv.classList.add('hidden');
-            if(bgUploadInputDiv) bgUploadInputDiv.classList.add('hidden');
-
-            document.getElementById('splashBgColorHex').textContent = '#FFFFFF';
-            document.getElementById('splashTextColorHex').textContent = '#6C63FF';
-            showSection(formSection);
-            updateSimulator();
-            if(checkInterval) clearInterval(checkInterval);
-        }
-
-        const btnBuild = document.getElementById('btnBuild');
-        console.log("btnBuild search result:", btnBuild);
-
-        if (btnBuild) {
-            btnBuild.addEventListener('click', async () => {
-                console.log("Build button clicked");
-                alert("Proses Build Dimulai! Mohon tunggu...");
-            
-            try {
-                // Safely get values from Step 1 inputs
-                const appNameInput = document.getElementById('heroAppName');
-                const appUrlInput = document.getElementById('heroAppUrl');
-                
-                if (!appNameInput || !appUrlInput) {
-                    throw new Error("Input nama atau URL tidak ditemukan.");
-                }
-
-                const appName = appNameInput.value.trim();
-                let url = appUrlInput.value.trim();
-                currentBuildAppName = appName;
-
-                if (!appName || !url) {
-                    alert("Mohon isi Nama Aplikasi dan Link Website di halaman depan.");
-                    resetForm();
-                    return;
-                }
-
-                if (!url.startsWith('http')) {
-                    url = 'https://' + url;
-                }
-                
-                console.log("Building app for:", appName, "at URL:", url);
-
-                // Safely get selected radio values
-                const getRadioValue = (name) => {
-                    const checked = document.querySelector(`input[name="${name}"]:checked`);
-                    return checked ? checked.value : 'none';
-                };
-
-                const selectedImageType = getRadioValue('imageType');
-                const selectedIconType = getRadioValue('iconType');
-                
-                const payload = {
-                    appName,
-                    url,
-                    useCustomSplash: useCustomSplashCheckbox.checked,
-                    splashBgColor: document.getElementById('splashBgColor').value,
-                    splashTextColor: document.getElementById('splashTextColor').value,
-                    splashLoadingText: document.getElementById('splashLoadingText').value || 'Memuat halaman...',
-                    splashProgressBarColor: document.getElementById('splashProgressBarColor').value,
-                    splashUseLogoBg: document.getElementById('splashUseLogoBg').checked,
-                    splashLogoBgColor: document.getElementById('splashLogoBgColor').value,
-                    hideBottomNav: document.getElementById('hideBottomNav').checked
-                };
-
-                // Image Selection (Logo)
-                payload.splashImageType = selectedImageType === 'upload' ? 'asset' : selectedImageType;
-                payload.splashImageData = '';
-
-                if (selectedImageType === 'url') {
-                    payload.splashImageData = document.getElementById('splashImageUrl').value.trim();
-                } else if (selectedImageType === 'upload') {
-                    const fileInput = document.getElementById('splashImageFile');
-                    if (fileInput && fileInput.files.length > 0) {
-                        payload.splashImageData = await fileToBase64(fileInput.files[0]);
-                    }
-                }
-
-                // Background (Fixed to Color Only)
-                payload.splashBgImageType = 'color';
-                payload.splashBgImageData = '';
-
-                // App Icon Selection (Global)
-                payload.appIconType = selectedIconType === 'upload' ? 'asset' : selectedIconType;
-                payload.appIconData = '';
-
-                if (selectedIconType === 'url') {
-                    payload.appIconData = document.getElementById('appIconUrl').value.trim();
-                } else if (selectedIconType === 'upload') {
-                    const iconFileInput = document.getElementById('appIconFile');
-                    if (iconFileInput && iconFileInput.files.length > 0) {
-                        payload.appIconData = await fileToBase64(iconFileInput.files[0]);
-                    }
-                }
-
-                showSection(progressSection);
-                progressBar.style.width = '5%';
-
-                const response = await fetch('/api/generate', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload)
-                });
-
-                const data = await response.json();
-                if (data.error) throw new Error(data.error);
-
-                const jobId = data.jobId;
-                
-                checkInterval = setInterval(async () => {
-                    try {
-                        const statusRes = await fetch(`/api/status/${jobId}`);
-                        const job = await statusRes.json();
-
-                        statusMessage.textContent = job.message;
-                        progressBar.style.width = `${job.progress}%`;
-
-                        if (job.status === 'completed') {
-                            clearInterval(checkInterval);
-                            const downloadUrl = job.downloadUrl;
-                            const currentAppName = currentBuildAppName || 'Aplikasi';
-                            
-                            successState.classList.remove('hidden');
-                            
-                            const sendBtn = document.getElementById('sendAndDownloadBtn');
-                            const directBtn = document.getElementById('directDownloadBtn');
-
-                            if (directBtn) {
-                                directBtn.href = downloadUrl;
-                                directBtn.onclick = (e) => {
-                                    e.preventDefault();
-                                    window.location.href = downloadUrl;
-                                };
+                        if (selectedImageType === 'spinner') {
+                            simSpinner.classList.remove('hidden');
+                            simSpinner.style.borderTopColor = splashProgressBarColorInput.value;
+                        } else if (selectedImageType === 'url') {
+                            const url = document.getElementById('splashImageUrl').value.trim();
+                            if (url) {
+                                simImage.src = url;
+                                simImage.classList.remove('hidden');
+                                simLogoWrapper.classList.remove('hidden');
                             }
-
-                            if (sendBtn) {
-                                sendBtn.onclick = async () => {
-                                    const emailInput = document.getElementById('deliveryEmail');
-                                    const email = emailInput ? emailInput.value.trim() : '';
-                                    if (!email || !email.includes('@')) {
-                                        alert('Masukkan alamat email yang valid ya!');
-                                        return;
-                                    }
-
-                                    sendBtn.disabled = true;
-                                    sendBtn.innerHTML = '<span class="animate-spin mr-2">⏳</span> Mengirim...';
-
-                                    try {
-                                        const res = await fetch('/api/send-email', {
-                                            method: 'POST',
-                                            headers: { 'Content-Type': 'application/json' },
-                                            body: JSON.stringify({ email, downloadUrl, appName: currentAppName })
-                                        });
-
-                                        const resData = await res.json();
-                                        if (res.ok) {
-                                            alert('🚀 BERHASIL!\n\nLink download APK sudah dikirim ke email: ' + email);
-                                            window.location.href = downloadUrl;
-                                        } else {
-                                            alert('⚠️ GAGAL MENGIRIM EMAIL\n\nAlasan: ' + (resData.error || 'Server error.'));
-                                        }
-                                    } catch (err) {
-                                        console.error('Email error:', err);
-                                        alert('❌ KESALAHAN KONEKSI');
-                                    } finally {
-                                        sendBtn.disabled = false;
-                                        sendBtn.innerHTML = '<span>Kirim ke Email & Download</span>';
-                                    }
-                                };
+                        } else if (selectedImageType === 'upload') {
+                            const fileInput = document.getElementById('splashImageFile');
+                            if (fileInput && fileInput.files.length > 0) {
+                                const url = URL.createObjectURL(fileInput.files[0]);
+                                simImage.src = url;
+                                simImage.classList.remove('hidden');
+                                simLogoWrapper.classList.remove('hidden');
                             }
-                            showSection(resultSection);
-                        } else if (job.status === 'failed') {
-                            clearInterval(checkInterval);
-                            errorMessage.textContent = job.message;
-                            showSection(errorSection);
                         }
-                    } catch (err) {
-                        console.error('Polling error:', err);
-                    }
-                }, 2000);
 
-            } catch (err) {
-                console.error('Submit error:', err);
-                errorMessage.textContent = 'Terjadi kesalahan: ' + err.message;
-                showSection(errorSection);
+                        if (splashUseLogoBgCheckbox.checked && selectedImageType !== 'spinner' && selectedImageType !== 'none') {
+                            simImage.style.backgroundColor = splashLogoBgColorInput.value;
+                            simImage.classList.add('p-2', 'rounded-2xl');
+                        } else {
+                            simImage.style.backgroundColor = 'transparent';
+                            simImage.classList.remove('p-2', 'rounded-2xl');
+                        }
+                    } else {
+                        simDefaultContent.classList.remove('hidden');
+                        simContent.classList.add('hidden');
+                        simContainer.style.backgroundColor = '#ffffff';
+                    }
+                } catch (e) { console.error("Simulator Error:", e); }
             }
-        });
-    }
-</script>
+
+            function updateIconPreview() {
+                try {
+                    const checked = document.querySelector('input[name="iconType"]:checked');
+                    const selected = checked ? checked.value : 'none';
+                    const previewImg = document.getElementById('iconPreviewImg');
+                    const previewSVG = document.getElementById('iconPreviewSVG');
+                    const previewText = document.getElementById('iconPreviewText');
+
+                    if (selected === 'none') {
+                        previewImg.classList.add('hidden');
+                        previewSVG.classList.remove('hidden');
+                        previewText.textContent = 'Standard Flutter';
+                    } else if (selected === 'url') {
+                        const url = document.getElementById('appIconUrl').value.trim();
+                        if (url) {
+                            previewImg.src = url;
+                            previewImg.classList.remove('hidden');
+                            previewSVG.classList.add('hidden');
+                            previewText.textContent = 'Remote URL Icon';
+                        }
+                    } else if (selected === 'upload') {
+                        const fileInput = document.getElementById('appIconFile');
+                        if (fileInput && fileInput.files.length > 0) {
+                            const url = URL.createObjectURL(fileInput.files[0]);
+                            previewImg.src = url;
+                            previewImg.classList.remove('hidden');
+                            previewSVG.classList.add('hidden');
+                            previewText.textContent = 'Custom Uploaded Icon';
+                        }
+                    }
+                } catch (e) { console.error("Icon Preview Error:", e); }
+            }
+
+            async function fileToBase64(file) {
+                return new Promise((resolve, reject) => {
+                    const reader = new FileReader();
+                    reader.onload = () => resolve(reader.result.split(',')[1]);
+                    reader.onerror = reject;
+                    reader.readAsDataURL(file);
+                });
+            }
+
+            // --- LISTENERS ---
+
+            if (heroForm) {
+                heroForm.addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    if (!heroAppName.value.trim() || !heroAppUrl.value.trim()) return;
+
+                    landingPage.classList.add('opacity-0', 'transition-opacity', 'duration-500');
+                    setTimeout(() => {
+                        landingPage.classList.add('hidden');
+                        appBuilder.classList.remove('hidden');
+                        const step2 = document.getElementById('step2Section');
+                        if (step2) {
+                            step2.classList.remove('hidden');
+                            setTimeout(() => step2.classList.remove('opacity-0', 'translate-x-4'), 50);
+                        }
+                    }, 500);
+                });
+            }
+
+            if (btnBack) {
+                btnBack.addEventListener('click', () => {
+                    const step2 = document.getElementById('step2Section');
+                    if (step2) step2.classList.add('opacity-0', 'translate-x-4');
+                    setTimeout(() => {
+                        appBuilder.classList.add('hidden');
+                        landingPage.classList.remove('hidden');
+                        setTimeout(() => landingPage.classList.remove('opacity-0'), 10);
+                    }, 300);
+                });
+            }
+
+            // Sync Simulator on Input
+            [splashBgColorInput, splashTextColorInput, splashProgressBarColorInput, splashLogoBgColorInput, splashLoadingTextInput].forEach(el => {
+                if(el) el.addEventListener('input', updateSimulator);
+            });
+            if(useCustomSplashCheckbox) {
+                useCustomSplashCheckbox.addEventListener('change', (e) => {
+                    customSplashSettings.classList.toggle('hidden', !e.target.checked);
+                    updateSimulator();
+                });
+            }
+            if(splashUseLogoBgCheckbox) {
+                splashUseLogoBgCheckbox.addEventListener('change', (e) => {
+                    if(logoBgColorContainer) logoBgColorContainer.classList.toggle('hidden', !e.target.checked);
+                    updateSimulator();
+                });
+            }
+
+            document.querySelectorAll('input[name="imageType"]').forEach(r => r.addEventListener('change', updateSimulator));
+            document.querySelectorAll('input[name="iconType"]').forEach(r => {
+                r.addEventListener('change', (e) => {
+                    document.getElementById('iconUrlInput').classList.toggle('hidden', e.target.value !== 'url');
+                    document.getElementById('iconUploadInput').classList.toggle('hidden', e.target.value !== 'upload');
+                    updateIconPreview();
+                });
+            });
+
+            document.getElementById('splashImageUrl').addEventListener('input', updateSimulator);
+            document.getElementById('splashImageFile').addEventListener('change', updateSimulator);
+            document.getElementById('appIconUrl').addEventListener('input', updateIconPreview);
+            document.getElementById('appIconFile').addEventListener('change', updateIconPreview);
+
+            // --- BUILD PROCESS ---
+
+            if (btnBuild) {
+                btnBuild.addEventListener('click', async () => {
+                    console.log("WebToAPK: Build Triggered");
+                    try {
+                        const appName = heroAppName.value.trim();
+                        let url = heroAppUrl.value.trim();
+                        currentBuildAppName = appName;
+
+                        if (!appName || !url) {
+                            alert("Mohon isi Nama Aplikasi dan Link Website di halaman depan.");
+                            resetForm();
+                            return;
+                        }
+
+                        if (!url.startsWith('http')) url = 'https://' + url;
+                        
+                        const getRadioValue = (name) => {
+                            const checked = document.querySelector(`input[name="${name}"]:checked`);
+                            return checked ? checked.value : 'none';
+                        };
+
+                        const payload = {
+                            appName, url,
+                            useCustomSplash: useCustomSplashCheckbox.checked,
+                            splashBgColor: splashBgColorInput.value,
+                            splashTextColor: splashTextColorInput.value,
+                            splashLoadingText: splashLoadingTextInput.value || 'Memuat halaman...',
+                            splashProgressBarColor: splashProgressBarColorInput.value,
+                            splashUseLogoBg: splashUseLogoBgCheckbox.checked,
+                            splashLogoBgColor: splashLogoBgColorInput.value,
+                            hideBottomNav: document.getElementById('hideBottomNav').checked
+                        };
+
+                        const selectedImageType = getRadioValue('imageType');
+                        payload.splashImageType = selectedImageType === 'upload' ? 'asset' : selectedImageType;
+                        payload.splashImageData = '';
+
+                        if (selectedImageType === 'url') {
+                            payload.splashImageData = document.getElementById('splashImageUrl').value.trim();
+                        } else if (selectedImageType === 'upload') {
+                            const fileInput = document.getElementById('splashImageFile');
+                            if (fileInput && fileInput.files.length > 0) payload.splashImageData = await fileToBase64(fileInput.files[0]);
+                        }
+
+                        const selectedIconType = getRadioValue('iconType');
+                        payload.appIconType = selectedIconType === 'upload' ? 'asset' : selectedIconType;
+                        payload.appIconData = '';
+
+                        if (selectedIconType === 'url') {
+                            payload.appIconData = document.getElementById('appIconUrl').value.trim();
+                        } else if (selectedIconType === 'upload') {
+                            const iconFileInput = document.getElementById('appIconFile');
+                            if (iconFileInput && iconFileInput.files.length > 0) payload.appIconData = await fileToBase64(iconFileInput.files[0]);
+                        }
+
+                        showSection(progressSection);
+                        progressBar.style.width = '5%';
+
+                        const response = await fetch('/api/generate', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify(payload)
+                        });
+
+                        const data = await response.json();
+                        if (data.error) throw new Error(data.error);
+
+                        const jobId = data.jobId;
+                        checkInterval = setInterval(async () => {
+                            try {
+                                const statusRes = await fetch(`/api/status/${jobId}`);
+                                const job = await statusRes.json();
+
+                                statusMessage.textContent = job.message;
+                                progressBar.style.width = `${job.progress}%`;
+
+                                if (job.status === 'completed') {
+                                    clearInterval(checkInterval);
+                                    showSection(resultSection);
+                                    
+                                    const directBtn = document.getElementById('directDownloadBtn');
+                                    if (directBtn) directBtn.href = job.downloadUrl;
+                                    
+                                    const sendBtn = document.getElementById('sendAndDownloadBtn');
+                                    if (sendBtn) {
+                                        sendBtn.onclick = async () => {
+                                            const email = document.getElementById('deliveryEmail').value.trim();
+                                            if (!email.includes('@')) { alert('Masukkan email valid!'); return; }
+                                            sendBtn.disabled = true;
+                                            sendBtn.innerHTML = 'Mengirim...';
+                                            const res = await fetch('/api/send-email', {
+                                                method: 'POST',
+                                                headers: { 'Content-Type': 'application/json' },
+                                                body: JSON.stringify({ email, downloadUrl: job.downloadUrl, appName: currentBuildAppName })
+                                            });
+                                            if (res.ok) { alert('Berhasil dikirim!'); window.location.href = job.downloadUrl; }
+                                            sendBtn.disabled = false;
+                                            sendBtn.innerHTML = 'Kirim ke Email & Download';
+                                        };
+                                    }
+                                } else if (job.status === 'failed') {
+                                    clearInterval(checkInterval);
+                                    errorMessage.textContent = job.message;
+                                    showSection(errorSection);
+                                }
+                            } catch (e) { console.error("Polling Error:", e); }
+                        }, 2000);
+
+                    } catch (err) {
+                        console.error('Build Error:', err);
+                        errorMessage.textContent = 'Terjadi kesalahan: ' + err.message;
+                        showSection(errorSection);
+                    }
+                });
+            }
+
+            // Init call
+            updateSimulator();
+            updateIconPreview();
+        };
+    </script>
 </body>
 </html>
