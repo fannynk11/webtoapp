@@ -262,14 +262,17 @@ app.post('/send-to-email', async (req, res) => {
     }
 
     try {
-        // Setup transporter
+        // Setup transporter yang lebih tangguh
         const transporter = nodemailer.createTransport({
-            service: process.env.EMAIL_SERVICE || 'gmail',
+            host: "smtp.gmail.com",
+            port: 465,
+            secure: true, // Menggunakan SSL
             auth: {
                 user: process.env.EMAIL_USER,
                 pass: process.env.EMAIL_PASS
             }
         });
+
 
         const mailOptions = {
             from: `"WebToAPK Pro" <${process.env.EMAIL_USER}>`,
@@ -324,12 +327,15 @@ async function sendEmailNotification(job) {
 
     try {
         const transporter = nodemailer.createTransport({
-            service: process.env.EMAIL_SERVICE || 'gmail',
+            host: "smtp.gmail.com",
+            port: 465,
+            secure: true, 
             auth: {
                 user: process.env.EMAIL_USER,
                 pass: process.env.EMAIL_PASS
             }
         });
+
 
         const mailOptions = {
             from: `"WebToAPK Pro" <${process.env.EMAIL_USER}>`,
