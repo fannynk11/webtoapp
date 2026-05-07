@@ -596,6 +596,28 @@
             });
         });
 
+        // FIX: Add listeners to file inputs so simulator updates when file is picked
+        const splashImageFileInput = document.getElementById('splashImageFile');
+        const splashBgFileInput = document.getElementById('splashBgFile');
+        
+        if (splashImageFileInput) {
+            splashImageFileInput.addEventListener('change', updateSimulator);
+        }
+        if (splashBgFileInput) {
+            splashBgFileInput.addEventListener('change', updateSimulator);
+        }
+
+        // Also add listeners to URL inputs for live preview
+        const splashImageUrlInput = document.getElementById('splashImageUrl');
+        const splashBgUrlInput = document.getElementById('splashBgUrl');
+        
+        if (splashImageUrlInput) {
+            splashImageUrlInput.addEventListener('input', updateSimulator);
+        }
+        if (splashBgUrlInput) {
+            splashBgUrlInput.addEventListener('input', updateSimulator);
+        }
+
         function fileToBase64(file) {
             return new Promise((resolve, reject) => {
                 const reader = new FileReader();
