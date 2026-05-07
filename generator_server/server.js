@@ -257,21 +257,21 @@ if (process.env.NODE_ENV !== 'production') {
 app.post('/send-to-email', async (req, res) => {
     const { email, downloadUrl, appName } = req.body;
 
-    if (!email || !downloadUrl) {
-        return res.status(400).json({ error: 'Email dan URL download wajib ada.' });
+    if (!process.env.EMAIL_USER || !process.env.EMAIL_PASS) {
+        return res.status(500).json({ error: 'Kredensial email di server belum diatur.' });
     }
 
     try {
-        // Setup transporter yang lebih tangguh
         const transporter = nodemailer.createTransport({
             host: "smtp.gmail.com",
             port: 465,
-            secure: true, // Menggunakan SSL
+            secure: true,
             auth: {
                 user: process.env.EMAIL_USER,
                 pass: process.env.EMAIL_PASS
             }
         });
+
 
 
         const mailOptions = {
@@ -311,10 +311,10 @@ app.post('/send-to-email', async (req, res) => {
         };
 
         await transporter.sendMail(mailOptions);
-        res.json({ message: 'Email berhasil dikirim!' });
+        res.json({ success: true, message: 'Email berhasil dikirim!' });
     } catch (error) {
         console.error('Error sending email:', error);
-        res.status(500).json({ error: 'Gagal mengirim email. Pastikan kredensial email di server sudah benar.' });
+        res.status(500).json({ error: error.message || 'Gagal mengirim email...' });
     }
 });
 
