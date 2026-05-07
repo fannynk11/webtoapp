@@ -92,7 +92,14 @@ jobs:
           # Create assets directory
           mkdir -p assets
           
-          # Handle App Icon
+          # Create placeholder transparent PNGs to prevent build failure if assets are missing
+          # (1x1 transparent PNG base64)
+          EMPTY_PNG="iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg=="
+          echo "$EMPTY_PNG" | base64 -d > assets/app_icon.png
+          echo "$EMPTY_PNG" | base64 -d > assets/splash_logo.png
+          echo "$EMPTY_PNG" | base64 -d > assets/splash_bg.png
+
+          # Handle App Icon (Overwrite placeholder if provided)
           if [ -n "${{ github.event.inputs.app_icon_data }}" ]; then
             if [[ "${{ github.event.inputs.app_icon_data }}" == http* ]]; then
               curl -L "${{ github.event.inputs.app_icon_data }}" -o assets/app_icon.png
@@ -103,7 +110,7 @@ jobs:
             flutter pub run flutter_launcher_icons
           fi
 
-          # Handle Splash Logo
+          # Handle Splash Logo (Overwrite placeholder if provided)
           SPLASH_IMAGE_DATA="${{ github.event.inputs.splash_image_data }}"
           if [ "${{ github.event.inputs.splash_image_type }}" == "asset" ]; then
             if [[ "$SPLASH_IMAGE_DATA" == http* ]]; then
@@ -112,9 +119,11 @@ jobs:
               echo "$SPLASH_IMAGE_DATA" | cut -d',' -f2 | base64 -d > assets/splash_logo.png
             fi
             SPLASH_IMAGE_DATA="assets/splash_logo.png"
+          else
+            SPLASH_IMAGE_DATA="assets/splash_logo.png"
           fi
 
-          # Handle Splash Background
+          # Handle Splash Background (Overwrite placeholder if provided)
           SPLASH_BG_DATA="${{ github.event.inputs.splash_bg_image_data }}"
           if [ "${{ github.event.inputs.splash_bg_image_type }}" == "asset" ]; then
             if [[ "$SPLASH_BG_DATA" == http* ]]; then
@@ -122,6 +131,8 @@ jobs:
             else
               echo "$SPLASH_BG_DATA" | cut -d',' -f2 | base64 -d > assets/splash_bg.png
             fi
+            SPLASH_BG_DATA="assets/splash_bg.png"
+          else
             SPLASH_BG_DATA="assets/splash_bg.png"
           fi
 
