@@ -1011,36 +1011,40 @@
                                     }
 
                                     sendBtn.disabled = true;
-                                    sendBtn.textContent = 'Mengirim...';
+                                    sendBtn.innerHTML = '<span class="animate-spin mr-2">⏳</span> Mengirim...';
 
                                     try {
+                                        console.log('Attempting to send email to:', email);
                                         const res = await fetch('/send-to-email', {
                                             method: 'POST',
                                             headers: { 'Content-Type': 'application/json' },
                                             body: JSON.stringify({ email, downloadUrl, appName })
                                         });
 
-                                        if (res.ok) {
-                                            alert('🚀 Berhasil! Link download APK sudah dikirim ke email kamu.');
-                                        } else {
-                                            const errorData = await res.json();
-                                            alert('Gagal mengirim email: ' + (errorData.error || 'Server error') + '. Tapi kamu tetap bisa download di bawah.');
-                                        }
-                                        // Selalu picu download sebagai fallback
-                                        window.open(downloadUrl, '_blank');
+                                        const data = await res.json();
+                                        console.log('Server response:', data);
 
+                                        if (res.ok) {
+                                            alert('🚀 BERHASIL!\n\nLink download APK sudah dikirim ke email: ' + email);
+                                            // Setelah klik OK di alert, baru download
+                                            window.location.href = downloadUrl;
+                                        } else {
+                                            alert('⚠️ GAGAL MENGIRIM EMAIL\n\nAlasan: ' + (data.error || 'Terjadi kesalahan pada server.'));
+                                            // Biarkan user tetap di halaman ini agar bisa coba email lain atau klik download manual
+                                        }
                                     } catch (err) {
-                                        console.error(err);
-                                        window.location.href = downloadUrl;
+                                        console.error('Fetch error:', err);
+                                        alert('❌ KESALAHAN KONEKSI\n\nTidak dapat terhubung ke server pengirim email. Silakan download langsung melalui tombol di bawah.');
                                     } finally {
                                         sendBtn.disabled = false;
-                                        sendBtn.textContent = 'Kirim ke Email & Download';
+                                        sendBtn.innerHTML = '<span>Kirim ke Email & Download</span>';
                                     }
                                 };
                             }
                             
                             showSection(resultSection);
                         }
+
  else if (job.status === 'failed') {
                             clearInterval(checkInterval);
                             errorMessage.textContent = job.message;
