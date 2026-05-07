@@ -294,7 +294,7 @@
                                                         <span class="text-[10px] font-bold text-slate-500" id="splashTextColorHex">#6C63FF</span>
                                                     </div>
                                                 </div>
-                                                <div>
+                                                <div id="colorPickerContainer" class="opacity-40 pointer-events-none transition-opacity duration-300">
                                                     <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">Warna Progress</label>
                                                     <div class="flex items-center gap-2 p-1.5 bg-slate-50 border border-slate-100 rounded-lg">
                                                         <input type="color" id="splashProgressBarColor" value="#6C63FF" class="w-6 h-6 rounded cursor-pointer border-none bg-transparent">
@@ -577,14 +577,29 @@
             }
         }
 
-        const progressBarColorInput = document.getElementById('progressBarColor');
-        const progressBarColorHex = document.getElementById('progressBarColorHex');
+        const progressBarColorInput = document.getElementById('splashProgressBarColor');
+        const progressBarColorHex = document.getElementById('splashProgressBarColorHex');
         if (progressBarColorInput) {
             progressBarColorInput.addEventListener('input', (e) => {
                 if(progressBarColorHex) progressBarColorHex.textContent = e.target.value.toUpperCase();
                 updateSimulator();
             });
         }
+
+        // Image Type (Logo) selection logic
+        const imageTypeRadios = document.getElementsByName('imageType');
+        imageTypeRadios.forEach(radio => {
+            radio.addEventListener('change', (e) => {
+                const selected = e.target.value;
+                imageUrlInput.classList.toggle('hidden', selected !== 'url');
+                imageUploadInput.classList.toggle('hidden', selected !== 'upload');
+                
+                // Toggle Color Picker (only active if 'spinner' is selected)
+                toggleColorPicker(selected === 'spinner');
+                
+                updateSimulator();
+            });
+        });
 
         function fileToBase64(file) {
             return new Promise((resolve, reject) => {
@@ -951,8 +966,10 @@
                 }
                 console.log("App Name:", appName, "URL:", url);
 
-                const useLoadingSpinner = document.getElementById('useLoadingSpinner').checked;
-                const progressBarColor = useLoadingSpinner ? document.getElementById('progressBarColor').value : '#00000000';
+                const selectedImageType = document.querySelector('input[name="imageType"]:checked').value;
+                const useLoadingSpinner = selectedImageType === 'spinner';
+                const progressBarColorInput = document.getElementById('splashProgressBarColor');
+                const progressBarColor = useLoadingSpinner && progressBarColorInput ? progressBarColorInput.value : '#00000000';
                 
                 let splashLogoBase64 = null;
                 const splashLogoFile = document.getElementById('splashImageFile').files[0];
