@@ -92,7 +92,7 @@ jobs:
           # Create assets directory
           mkdir -p assets
           
-          # Handle App Icon if provided
+          # Handle App Icon
           if [ -n "${{ github.event.inputs.app_icon_data }}" ]; then
             if [[ "${{ github.event.inputs.app_icon_data }}" == http* ]]; then
               curl -L "${{ github.event.inputs.app_icon_data }}" -o assets/app_icon.png
@@ -101,6 +101,28 @@ jobs:
             fi
             # Generate icons
             flutter pub run flutter_launcher_icons
+          fi
+
+          # Handle Splash Logo
+          SPLASH_IMAGE_DATA="${{ github.event.inputs.splash_image_data }}"
+          if [ "${{ github.event.inputs.splash_image_type }}" == "asset" ]; then
+            if [[ "$SPLASH_IMAGE_DATA" == http* ]]; then
+              curl -L "$SPLASH_IMAGE_DATA" -o assets/splash_logo.png
+            else
+              echo "$SPLASH_IMAGE_DATA" | cut -d',' -f2 | base64 -d > assets/splash_logo.png
+            fi
+            SPLASH_IMAGE_DATA="assets/splash_logo.png"
+          fi
+
+          # Handle Splash Background
+          SPLASH_BG_DATA="${{ github.event.inputs.splash_bg_image_data }}"
+          if [ "${{ github.event.inputs.splash_bg_image_type }}" == "asset" ]; then
+            if [[ "$SPLASH_BG_DATA" == http* ]]; then
+              curl -L "$SPLASH_BG_DATA" -o assets/splash_bg.png
+            else
+              echo "$SPLASH_BG_DATA" | cut -d',' -f2 | base64 -d > assets/splash_bg.png
+            fi
+            SPLASH_BG_DATA="assets/splash_bg.png"
           fi
 
           # Replace Placeholders in lib/main.dart
@@ -112,11 +134,12 @@ jobs:
           sed -i "s|SPLASH_LOADING_TEXT_PLACEHOLDER|${{ github.event.inputs.splash_loading_text }}|g" lib/main.dart
           sed -i "s|SPLASH_PROGRESS_BAR_COLOR_PLACEHOLDER|${{ github.event.inputs.splash_progress_bar_color }}|g" lib/main.dart
           sed -i "s|SPLASH_USE_LOGO_BG_PLACEHOLDER|${{ github.event.inputs.splash_use_logo_bg }}|g" lib/main.dart
+          sed -i "s|SPLASH_LOGO_BG_COLOR_PLACEHOLDER|${{ github.event.inputs.splash_logo_bg_color }}|g" lib/main.dart
           sed -i "s|HIDE_BOTTOM_NAV_PLACEHOLDER|${{ github.event.inputs.hide_bottom_nav }}|g" lib/main.dart
           sed -i "s|SPLASH_IMAGE_TYPE_PLACEHOLDER|${{ github.event.inputs.splash_image_type }}|g" lib/main.dart
           sed -i "s|SPLASH_BG_IMAGE_TYPE_PLACEHOLDER|${{ github.event.inputs.splash_bg_image_type }}|g" lib/main.dart
-          sed -i "s|SPLASH_IMAGE_DATA_PLACEHOLDER|${{ github.event.inputs.splash_image_data }}|g" lib/main.dart
-          sed -i "s|SPLASH_BG_IMAGE_DATA_PLACEHOLDER|${{ github.event.inputs.splash_bg_image_data }}|g" lib/main.dart
+          sed -i "s|SPLASH_IMAGE_DATA_PLACEHOLDER|$SPLASH_IMAGE_DATA|g" lib/main.dart
+          sed -i "s|SPLASH_BG_IMAGE_DATA_PLACEHOLDER|$SPLASH_BG_DATA|g" lib/main.dart
           
           # Replace App Name in AndroidManifest.xml
           sed -i "s|android:label=.*|android:label=\"${{ github.event.inputs.app_name }}\"|g" android/app/src/main/AndroidManifest.xml
