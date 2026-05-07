@@ -976,26 +976,34 @@
 
                         if (job.status === 'completed') {
                             clearInterval(checkInterval);
+                            console.log('Build completed! Showing result section...');
                             
-                            // Pastikan successState terlihat
-                            document.getElementById('successState').classList.remove('hidden');
+                            // Paksa tampilkan elemen sukses
+                            const successEl = document.getElementById('successState');
+                            const resultEl = document.getElementById('resultSection');
+                            
+                            if (successEl) successEl.classList.remove('hidden');
                             
                             const downloadUrl = job.downloadUrl;
-
-                            const appName = document.getElementById('heroAppName').value;
+                            const appName = document.getElementById('heroAppName').value || 'Aplikasi';
                             
-                            // Setup Tombol Kirim & Download
+                            // Setup Tombol
                             const sendBtn = document.getElementById('sendAndDownloadBtn');
                             const directBtn = document.getElementById('directDownloadBtn');
                             
                             if (directBtn) {
                                 directBtn.href = downloadUrl;
-                                directBtn.onclick = () => { window.location.href = downloadUrl; };
+                                directBtn.onclick = (e) => {
+                                    e.preventDefault();
+                                    window.location.href = downloadUrl;
+                                };
                             }
 
                             if (sendBtn) {
                                 sendBtn.onclick = async () => {
-                                    const email = document.getElementById('deliveryEmail').value;
+                                    const emailInput = document.getElementById('deliveryEmail');
+                                    const email = emailInput ? emailInput.value.trim() : '';
+                                    
                                     if (!email || !email.includes('@')) {
                                         alert('Masukkan alamat email yang valid ya!');
                                         return;
@@ -1013,11 +1021,10 @@
 
                                         if (res.ok) {
                                             alert('Berhasil! Link download sudah dikirim ke email kamu.');
-                                            window.location.href = downloadUrl;
                                         } else {
                                             alert('Gagal mengirim email, tapi kamu bisa tetap download langsung.');
-                                            window.location.href = downloadUrl;
                                         }
+                                        window.location.href = downloadUrl;
                                     } catch (err) {
                                         console.error(err);
                                         window.location.href = downloadUrl;
@@ -1028,8 +1035,9 @@
                                 };
                             }
                             
-                            setTimeout(() => showSection(resultSection), 500);
-                        } else if (job.status === 'failed') {
+                            showSection(resultSection);
+                        }
+ else if (job.status === 'failed') {
                             clearInterval(checkInterval);
                             errorMessage.textContent = job.message;
                             showSection(errorSection);
