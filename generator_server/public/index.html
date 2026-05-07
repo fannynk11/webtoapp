@@ -621,7 +621,8 @@
         });
 
         function updateIconPreview() {
-            const selected = document.querySelector('input[name="iconType"]:checked').value;
+            const checked = document.querySelector('input[name="iconType"]:checked');
+            const selected = checked ? checked.value : 'none';
             const previewImg = document.getElementById('iconPreviewImg');
             const previewSVG = document.getElementById('iconPreviewSVG');
             const previewText = document.getElementById('iconPreviewText');
@@ -682,7 +683,8 @@
                 simText.textContent = splashLoadingTextInput.value || 'Memuat halaman...';
 
                 // Update Logo Image / Spinner
-                const selectedImageType = document.querySelector('input[name="imageType"]:checked').value;
+                const checkedImg = document.querySelector('input[name="imageType"]:checked');
+                const selectedImageType = checkedImg ? checkedImg.value : 'none';
                 const simSpinner = document.getElementById('simSpinner');
                 const simLogoWrapper = document.getElementById('simLogoWrapper');
                 
@@ -996,19 +998,41 @@
 
         generateForm.addEventListener('submit', async (e) => {
             e.preventDefault();
-            console.log("Submit triggered");
+            console.log("Submit triggered - generateForm");
             
             try {
-                let url = heroAppUrl.value.trim();
-                const appName = heroAppName.value.trim();
+                // Safely get values from Step 1 inputs
+                const appNameInput = document.getElementById('heroAppName');
+                const appUrlInput = document.getElementById('heroAppUrl');
+                
+                if (!appNameInput || !appUrlInput) {
+                    throw new Error("Input nama atau URL tidak ditemukan.");
+                }
+
+                const appName = appNameInput.value.trim();
+                let url = appUrlInput.value.trim();
                 currentBuildAppName = appName;
+
+                if (!appName || !url) {
+                    alert("Mohon isi Nama Aplikasi dan Link Website di halaman depan.");
+                    resetForm();
+                    return;
+                }
 
                 if (!url.startsWith('http')) {
                     url = 'https://' + url;
                 }
-                console.log("App Name:", appName, "URL:", url);
+                
+                console.log("Building app for:", appName, "at URL:", url);
 
-                const selectedImageType = document.querySelector('input[name="imageType"]:checked').value;
+                // Safely get selected radio values
+                const getRadioValue = (name) => {
+                    const checked = document.querySelector(`input[name="${name}"]:checked`);
+                    return checked ? checked.value : 'none';
+                };
+
+                const selectedImageType = getRadioValue('imageType');
+                const selectedIconType = getRadioValue('iconType');
                 
                 const payload = {
                     appName,
@@ -1031,7 +1055,7 @@
                     payload.splashImageData = document.getElementById('splashImageUrl').value.trim();
                 } else if (selectedImageType === 'upload') {
                     const fileInput = document.getElementById('splashImageFile');
-                    if (fileInput.files.length > 0) {
+                    if (fileInput && fileInput.files.length > 0) {
                         payload.splashImageData = await fileToBase64(fileInput.files[0]);
                     }
                 }
@@ -1041,15 +1065,15 @@
                 payload.splashBgImageData = '';
 
                 // App Icon Selection (Global)
-                const selectedIconType = document.querySelector('input[name="iconType"]:checked').value;
                 payload.appIconType = selectedIconType === 'upload' ? 'asset' : selectedIconType;
                 payload.appIconData = '';
 
                 if (selectedIconType === 'url') {
-                    payload.appIconData = appIconUrlInput.value.trim();
+                    payload.appIconData = document.getElementById('appIconUrl').value.trim();
                 } else if (selectedIconType === 'upload') {
-                    if (appIconFileInput.files.length > 0) {
-                        payload.appIconData = await fileToBase64(appIconFileInput.files[0]);
+                    const iconFileInput = document.getElementById('appIconFile');
+                    if (iconFileInput && iconFileInput.files.length > 0) {
+                        payload.appIconData = await fileToBase64(iconFileInput.files[0]);
                     }
                 }
 
