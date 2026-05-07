@@ -252,9 +252,10 @@ async function processBuild(jobId, payload, host) {
     }
 }
 
-if (process.env.NODE_ENV !== 'production') {
     // Endpoint untuk mengirim link APK ke email
-app.post('/send-to-email', async (req, res) => {
+app.post('/api/send-email', async (req, res) => {
+
+
     const { email, downloadUrl, appName } = req.body;
 
     if (!process.env.EMAIL_USER || !process.env.EMAIL_PASS) {
@@ -388,8 +389,7 @@ async function sendEmailNotification(job) {
 app.listen(PORT, () => {
 
 
-        console.log(`🚀 Local Server running on http://localhost:${PORT}`);
     });
-}
 
 module.exports = app;
+
