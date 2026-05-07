@@ -564,11 +564,12 @@
         
         const bgTypeRadios = document.getElementsByName('bgType');
         const bgColorInput = document.getElementById('bgColorInput');
-        const bgUrlInputContainer = document.getElementById('bgUrlInput');
-        const bgUploadInputContainer = document.getElementById('bgUploadInput');
+        const bgUrlInput = document.getElementById('bgUrlInput');
+        const bgUploadInput = document.getElementById('bgUploadInput');
 
         function toggleColorPicker(isVisible) {
             const container = document.getElementById('colorPickerContainer');
+            if (!container) return;
             if (isVisible) {
                 container.classList.remove('opacity-40', 'pointer-events-none');
             } else {
@@ -576,20 +577,12 @@
             }
         }
 
-        function toggleColorPicker(isVisible) {
-            const container = document.getElementById('colorPickerContainer');
-            if (isVisible) {
-                container.classList.remove('opacity-40', 'pointer-events-none');
-            } else {
-                container.classList.add('opacity-40', 'pointer-events-none');
-            }
-        }
-
-        const progressBarColor = document.getElementById('progressBarColor');
+        const progressBarColorInput = document.getElementById('progressBarColor');
         const progressBarColorHex = document.getElementById('progressBarColorHex');
-        if (progressBarColor) {
-            progressBarColor.addEventListener('input', (e) => {
-                progressBarColorHex.textContent = e.target.value.toUpperCase();
+        if (progressBarColorInput) {
+            progressBarColorInput.addEventListener('input', (e) => {
+                if(progressBarColorHex) progressBarColorHex.textContent = e.target.value.toUpperCase();
+                updateSimulator();
             });
         }
 
@@ -926,10 +919,16 @@
             imageUploadInput.classList.add('hidden');
             
             // Reset background
-            bgColorInput.classList.remove('hidden');
-            bgColorInput.classList.add('flex');
-            bgUrlInputContainer.classList.add('hidden');
-            bgUploadInputContainer.classList.add('hidden');
+            const bgColorInputDiv = document.getElementById('bgColorInput');
+            const bgUrlInputDiv = document.getElementById('bgUrlInput');
+            const bgUploadInputDiv = document.getElementById('bgUploadInput');
+
+            if(bgColorInputDiv) {
+                bgColorInputDiv.classList.remove('hidden');
+                bgColorInputDiv.classList.add('flex');
+            }
+            if(bgUrlInputDiv) bgUrlInputDiv.classList.add('hidden');
+            if(bgUploadInputDiv) bgUploadInputDiv.classList.add('hidden');
 
             document.getElementById('splashBgColorHex').textContent = '#FFFFFF';
             document.getElementById('splashTextColorHex').textContent = '#6C63FF';
@@ -940,15 +939,17 @@
 
         generateForm.addEventListener('submit', async (e) => {
             e.preventDefault();
+            console.log("Submit triggered");
             
-            let url = heroAppUrl.value.trim();
-            const appName = heroAppName.value.trim();
-            currentBuildAppName = appName;
+            try {
+                let url = heroAppUrl.value.trim();
+                const appName = heroAppName.value.trim();
+                currentBuildAppName = appName;
 
-
-            if (!url.startsWith('http')) {
-                url = 'https://' + url;
-            }
+                if (!url.startsWith('http')) {
+                    url = 'https://' + url;
+                }
+                console.log("App Name:", appName, "URL:", url);
 
             const useLoadingSpinner = document.getElementById('useLoadingSpinner').checked;
             const progressBarColor = useLoadingSpinner ? document.getElementById('progressBarColor').value : '#00000000';
@@ -993,7 +994,7 @@
                     const bgFileInput = document.getElementById('splashBgFile');
                     if (bgFileInput.files.length > 0) {
                         try {
-                            payload.splashBgImageData = await getBase64(bgFileInput.files[0]);
+                            payload.splashBgImageData = await fileToBase64(bgFileInput.files[0]);
                         } catch (err) {
                             alert("Gagal membaca file background gambar.");
                             return;
@@ -1012,7 +1013,7 @@
                     const fileInput = document.getElementById('splashImageFile');
                     if (fileInput.files.length > 0) {
                         try {
-                            payload.splashImageData = await getBase64(fileInput.files[0]);
+                            payload.splashImageData = await fileToBase64(fileInput.files[0]);
                         } catch (err) {
                             alert("Gagal membaca file logo gambar.");
                             return;
@@ -1028,7 +1029,7 @@
                 } else if (selectedIconType === 'upload') {
                     if (appIconFileInput.files.length > 0) {
                         try {
-                            payload.appIconData = await getBase64(appIconFileInput.files[0]);
+                            payload.appIconData = await fileToBase64(appIconFileInput.files[0]);
                         } catch (err) {
                             alert("Gagal membaca file icon aplikasi.");
                             return;
