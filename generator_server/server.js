@@ -207,12 +207,14 @@ async function processBuild(jobId, payload, host) {
             {
                 ref: 'main',
                 inputs: {
-                    job_id: jobId,
-                    server_url: serverUrl,
-                    webhook_secret: WEBHOOK_SECRET,
-                    app_name: payload.appName,
-                    package_name: packageName,
-                    target_url: payload.url,
+                    metadata: JSON.stringify({
+                        job_id: jobId,
+                        server_url: serverUrl,
+                        webhook_secret: WEBHOOK_SECRET,
+                        app_name: payload.appName,
+                        package_name: packageName,
+                        target_url: payload.url
+                    }),
                     use_custom_splash: String(payload.useCustomSplash || false),
                     splash_bg_color: payload.splashBgColor || '#FFFFFF',
                     splash_text_color: payload.splashTextColor || '#6C63FF',

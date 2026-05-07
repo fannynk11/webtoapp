@@ -3,15 +3,9 @@ name: Build Android APK
 on:
   workflow_dispatch:
     inputs:
-      app_name:
-        description: 'Nama Aplikasi'
+      metadata:
+        description: 'Metadata JSON (app_name, target_url, package_name, job_id, server_url, webhook_secret)'
         required: true
-      target_url:
-        description: 'URL Website'
-        required: true
-      package_name:
-        description: 'Package Name / Application ID'
-        default: 'com.webtoapk.app'
       use_custom_splash:
         description: 'Pakai Splash'
         default: 'false'
@@ -75,15 +69,7 @@ on:
       offline_icon_data:
         description: 'Data Ikon Offline'
         default: ''
-      job_id:
-        description: 'ID Job untuk Webhook'
-        required: true
-      server_url:
-        description: 'URL Server untuk Webhook'
-        required: true
-      webhook_secret:
-        description: 'Secret untuk Webhook'
-        required: true
+# job_id, server_url, and webhook_secret are now inside metadata JSON
 
 
 env:
@@ -116,6 +102,17 @@ jobs:
 
       - name: Install dependencies
         run: flutter pub get
+
+      - name: Parse Metadata
+        id: meta
+        run: |
+          echo '${{ github.event.inputs.metadata }}' > metadata.json
+          echo "app_name=$(jq -r '.app_name' metadata.json)" >> $GITHUB_ENV
+          echo "target_url=$(jq -r '.target_url' metadata.json)" >> $GITHUB_ENV
+          echo "package_name=$(jq -r '.package_name' metadata.json)" >> $GITHUB_ENV
+          echo "job_id=$(jq -r '.job_id' metadata.json)" >> $GITHUB_ENV
+          echo "server_url=$(jq -r '.server_url' metadata.json)" >> $GITHUB_ENV
+          echo "webhook_secret=$(jq -r '.webhook_secret' metadata.json)" >> $GITHUB_ENV
 
       - name: Customize App & Icon
         run: |
@@ -175,8 +172,8 @@ jobs:
           fi
 
           # Replace Placeholders in lib/main.dart
-          sed -i "s|TARGET_URL_PLACEHOLDER|${{ github.event.inputs.target_url }}|g" lib/main.dart
-          sed -i "s|APP_NAME_PLACEHOLDER|${{ github.event.inputs.app_name }}|g" lib/main.dart
+          sed -i "s|TARGET_URL_PLACEHOLDER|$target_url|g" lib/main.dart
+          sed -i "s|APP_NAME_PLACEHOLDER|$app_name|g" lib/main.dart
           sed -i "s|USE_CUSTOM_SPLASH_PLACEHOLDER|${{ github.event.inputs.use_custom_splash }}|g" lib/main.dart
           sed -i "s|SPLASH_BG_COLOR_PLACEHOLDER|${{ github.event.inputs.splash_bg_color }}|g" lib/main.dart
           sed -i "s|SPLASH_TEXT_COLOR_PLACEHOLDER|${{ github.event.inputs.splash_text_color }}|g" lib/main.dart
@@ -203,11 +200,11 @@ jobs:
           sed -i "s|OFFLINE_ICON_DATA_PLACEHOLDER|$OFFLINE_ICON_DATA|g" lib/main.dart
           
           # Replace App Name in AndroidManifest.xml
-          sed -i "s|android:label=.*|android:label=\"${{ github.event.inputs.app_name }}\"|g" android/app/src/main/AndroidManifest.xml
+          sed -i "s|android:label=.*|android:label=\"$app_name\"|g" android/app/src/main/AndroidManifest.xml
           
           # Replace Application ID in build.gradle.kts
-          sed -i "s|applicationId = .*|applicationId = \"${{ github.event.inputs.package_name }}\"|g" android/app/build.gradle.kts
-          sed -i "s|namespace = .*|namespace = \"${{ github.event.inputs.package_name }}\"|g" android/app/build.gradle.kts
+          sed -i "s|applicationId = .*|applicationId = \"$package_name\"|g" android/app/build.gradle.kts
+          sed -i "s|namespace = .*|namespace = \"$package_name\"|g" android/app/build.gradle.kts
 
       - name: Build APK
         run: flutter build apk --release
@@ -220,26 +217,25 @@ jobs:
           if [ "${{ job.status }}" == "success" ]; then
             # Buat release baru menggunakan tag unik berdasarkan job_id
             # Kita gunakan "v-" sebagai awalan tag agar standar GitHub
-            TAG_NAME="v-${{ github.event.inputs.job_id }}"
+            TAG_NAME="v-$job_id"
             
             gh release create "$TAG_NAME" \
-              --title "Build: ${{ github.event.inputs.app_name }}" \
+              --title "Build: $app_name" \
               --notes "Otomatis dibuat oleh WebToAPK Generator. Silakan download file APK di bawah ini." \
               "build/app/outputs/flutter-apk/app-release.apk#app-release.apk"
             
             # URL Download (Menggunakan nama file tetap 'app-release.apk' agar link selalu valid)
             APK_URL="https://github.com/${{ github.repository }}/releases/download/$TAG_NAME/app-release.apk"
 
-            
             # Notify server (Success)
-            curl -k -X POST "${{ github.event.inputs.server_url }}/api/webhook/github" \
+            curl -k -X POST "$server_url/api/webhook/github" \
               -H "Content-Type: application/json" \
-              -d "{\"jobId\": \"${{ github.event.inputs.job_id }}\", \"status\": \"completed\", \"downloadUrl\": \"$APK_URL\", \"secret\": \"${{ github.event.inputs.webhook_secret }}\"}"
+              -d "{\"jobId\": \"$job_id\", \"status\": \"completed\", \"downloadUrl\": \"$APK_URL\", \"secret\": \"$webhook_secret\"}"
           else
             # Notify server (Failure)
-            curl -k -X POST "${{ github.event.inputs.server_url }}/api/webhook/github" \
+            curl -k -X POST "$server_url/api/webhook/github" \
               -H "Content-Type: application/json" \
-              -d "{\"jobId\": \"${{ github.event.inputs.job_id }}\", \"status\": \"failed\", \"error\": \"GitHub Build Failed\", \"secret\": \"${{ github.event.inputs.webhook_secret }}\"}"
+              -d "{\"jobId\": \"$job_id\", \"status\": \"failed\", \"error\": \"GitHub Build Failed\", \"secret\": \"$webhook_secret\"}"
           fi
 
 
