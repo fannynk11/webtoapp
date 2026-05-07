@@ -992,60 +992,55 @@
                 const payload = {
                     appName,
                     url,
-                    useLoadingSpinner,
-                    progressBarColor,
-                    splashLogo: splashLogoBase64,
+                    useCustomSplash: useCustomSplashCheckbox.checked,
+                    splashBgColor: document.getElementById('splashBgColor').value,
+                    splashTextColor: document.getElementById('splashTextColor').value,
+                    splashLoadingText: document.getElementById('splashLoadingText').value || 'Memuat halaman...',
+                    splashProgressBarColor: document.getElementById('splashProgressBarColor').value,
                     splashUseLogoBg: document.getElementById('splashUseLogoBg').checked,
                     splashLogoBgColor: document.getElementById('splashLogoBgColor').value,
                     hideBottomNav: document.getElementById('hideBottomNav').checked
                 };
 
-                if (useCustomSplashCheckbox.checked) {
-                    payload.useCustomSplash = true;
-                    payload.splashBgColor = document.getElementById('splashBgColor').value;
-                    payload.splashTextColor = document.getElementById('splashTextColor').value;
-                    payload.splashLoadingText = document.getElementById('splashLoadingText').value || 'Memuat halaman...';
-                    payload.splashProgressBarColor = document.getElementById('splashProgressBarColor').value;
-                    
-                    const selectedBgType = document.querySelector('input[name="bgType"]:checked').value;
-                    payload.splashBgImageType = selectedBgType === 'upload' ? 'asset' : selectedBgType;
-                    payload.splashBgImageData = '';
+                // Image Selection (Logo)
+                const selectedImageType = document.querySelector('input[name="imageType"]:checked').value;
+                payload.splashImageType = selectedImageType === 'upload' ? 'asset' : selectedImageType;
+                payload.splashImageData = '';
 
-                    if (selectedBgType === 'url') {
-                        payload.splashBgImageData = document.getElementById('splashBgUrl').value.trim();
-                    } else if (selectedBgType === 'upload') {
-                        const bgFileInput = document.getElementById('splashBgFile');
-                        if (bgFileInput.files.length > 0) {
-                            payload.splashBgImageData = await fileToBase64(bgFileInput.files[0]);
-                        }
+                if (selectedImageType === 'url') {
+                    payload.splashImageData = document.getElementById('splashImageUrl').value.trim();
+                } else if (selectedImageType === 'upload') {
+                    const fileInput = document.getElementById('splashImageFile');
+                    if (fileInput.files.length > 0) {
+                        payload.splashImageData = await fileToBase64(fileInput.files[0]);
                     }
+                }
 
-                    const selectedImageType = document.querySelector('input[name="imageType"]:checked').value;
-                    payload.splashImageType = selectedImageType === 'upload' ? 'asset' : selectedImageType;
-                    payload.splashImageData = '';
+                // Background Selection
+                const selectedBgType = document.querySelector('input[name="bgType"]:checked').value;
+                payload.splashBgImageType = selectedBgType === 'upload' ? 'asset' : selectedBgType;
+                payload.splashBgImageData = '';
 
-                    if (selectedImageType === 'url') {
-                        payload.splashImageData = document.getElementById('splashImageUrl').value.trim();
-                    } else if (selectedImageType === 'upload') {
-                        const fileInput = document.getElementById('splashImageFile');
-                        if (fileInput.files.length > 0) {
-                            payload.splashImageData = await fileToBase64(fileInput.files[0]);
-                        }
+                if (selectedBgType === 'url') {
+                    payload.splashBgImageData = document.getElementById('splashBgUrl').value.trim();
+                } else if (selectedBgType === 'upload') {
+                    const bgFileInput = document.getElementById('splashBgFile');
+                    if (bgFileInput.files.length > 0) {
+                        payload.splashBgImageData = await fileToBase64(bgFileInput.files[0]);
                     }
+                }
 
-                    const selectedIconType = document.querySelector('input[name="iconType"]:checked').value;
-                    payload.appIconType = selectedIconType === 'upload' ? 'asset' : selectedIconType;
-                    payload.appIconData = '';
+                // App Icon Selection (Global)
+                const selectedIconType = document.querySelector('input[name="iconType"]:checked').value;
+                payload.appIconType = selectedIconType === 'upload' ? 'asset' : selectedIconType;
+                payload.appIconData = '';
 
-                    if (selectedIconType === 'url') {
-                        payload.appIconData = appIconUrlInput.value.trim();
-                    } else if (selectedIconType === 'upload') {
-                        if (appIconFileInput.files.length > 0) {
-                            payload.appIconData = await fileToBase64(appIconFileInput.files[0]);
-                        }
+                if (selectedIconType === 'url') {
+                    payload.appIconData = appIconUrlInput.value.trim();
+                } else if (selectedIconType === 'upload') {
+                    if (appIconFileInput.files.length > 0) {
+                        payload.appIconData = await fileToBase64(appIconFileInput.files[0]);
                     }
-                } else {
-                    payload.useCustomSplash = false;
                 }
 
                 showSection(progressSection);
