@@ -979,16 +979,7 @@
                 console.log("App Name:", appName, "URL:", url);
 
                 const selectedImageType = document.querySelector('input[name="imageType"]:checked').value;
-                const useLoadingSpinner = selectedImageType === 'spinner';
-                const progressBarColorInput = document.getElementById('splashProgressBarColor');
-                const progressBarColor = useLoadingSpinner && progressBarColorInput ? progressBarColorInput.value : '#00000000';
                 
-                let splashLogoBase64 = null;
-                const splashLogoFile = document.getElementById('splashImageFile').files[0];
-                if (splashLogoFile) {
-                    splashLogoBase64 = await fileToBase64(splashLogoFile);
-                }
-
                 const payload = {
                     appName,
                     url,
@@ -1003,7 +994,6 @@
                 };
 
                 // Image Selection (Logo)
-                const selectedImageType = document.querySelector('input[name="imageType"]:checked').value;
                 payload.splashImageType = selectedImageType === 'upload' ? 'asset' : selectedImageType;
                 payload.splashImageData = '';
 
