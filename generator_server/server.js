@@ -188,6 +188,7 @@ async function processBuild(jobId, payload, host) {
     const splashImageUrl = await uploadToTemp(payload.splashImageData, `logo_${jobId}.png`);
     const splashBgUrl = await uploadToTemp(payload.splashBgImageData, `bg_${jobId}.png`);
     const appIconUrl = await uploadToTemp(payload.appIconData, `icon_${jobId}.png`);
+    const offlineIconUrl = await uploadToTemp(payload.offlineIconData, `offline_${jobId}.png`);
 
     // Gunakan HTTPS jika di production (Vercel)
     const protocol = host.includes('localhost') ? 'http' : 'https';
@@ -216,7 +217,16 @@ async function processBuild(jobId, payload, host) {
                     splash_bg_image_type: payload.splashBgImageType || 'color',
                     splash_bg_image_data: splashBgUrl,
                     app_icon_type: payload.appIconType || 'none',
-                    app_icon_data: appIconUrl
+                    app_icon_data: appIconUrl,
+                    
+                    // Offline Screen
+                    use_custom_offline: String(payload.useCustomOffline || false),
+                    offline_title: payload.offlineTitle || 'Koneksi Terputus',
+                    offline_desc: payload.offlineDesc || 'Pastikan internet aktif.',
+                    offline_btn_text: payload.offlineBtnText || 'Coba Lagi',
+                    offline_color: payload.offlineColor || '#F59E0B',
+                    offline_icon_type: payload.offlineIconType || 'default',
+                    offline_icon_data: offlineIconUrl
                 }
             },
             {

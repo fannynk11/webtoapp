@@ -337,11 +337,87 @@
                                     </div>
                                 </div>
                             </div>
-                        </div>
+
+                            <!-- New: Offline Screen Settings -->
+                            <div class="bg-white rounded-3xl p-6 border border-slate-100 shadow-sm space-y-6">
+                                <div class="flex items-center justify-between">
+                                    <div class="flex items-center gap-4">
+                                        <div class="w-10 h-10 bg-amber-50 text-amber-500 rounded-2xl flex items-center justify-center shadow-sm">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 5.636a9 9 0 010 12.728m0 0l-2.829-2.829m2.829 2.829L21 21M15.536 8.464a5 5 0 010 7.072m0 0l-2.829-2.829m-4.243 4.243a5 5 0 01-7.072 0m0 0l2.829-2.829m-4.243-4.243a9 9 0 0112.728 0m0 0l-2.829 2.829" /></svg>
+                                        </div>
+                                        <div>
+                                            <h3 class="text-lg font-black text-slate-800">Halaman Offline</h3>
+                                            <p class="text-xs font-bold text-slate-400 uppercase tracking-wider">Kustomisasi Tampilan Error</p>
+                                        </div>
+                                    </div>
+                                    <label class="relative inline-flex items-center cursor-pointer">
+                                        <input type="checkbox" id="useCustomOffline" class="sr-only peer">
+                                        <div class="w-10 h-5 bg-slate-200 rounded-full peer peer-checked:bg-amber-500 after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:after:translate-x-5"></div>
+                                    </label>
+                                </div>
+
+                                <div id="customOfflineSettings" class="hidden p-6 space-y-6 animate-fade-in border-t border-slate-50">
+                                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                        <div class="space-y-4">
+                                            <div>
+                                                <label class="block text-sm font-bold text-slate-700 mb-2">Judul Error</label>
+                                                <input type="text" id="offlineTitle" value="Koneksi Terputus" class="w-full px-4 py-2.5 text-sm bg-slate-50 border border-slate-100 rounded-xl outline-none focus:border-amber-500 transition-all">
+                                            </div>
+                                            <div>
+                                                <label class="block text-sm font-bold text-slate-700 mb-2">Pesan Deskripsi</label>
+                                                <textarea id="offlineDesc" class="w-full px-4 py-2.5 text-sm bg-slate-50 border border-slate-100 rounded-xl outline-none focus:border-amber-500 transition-all" rows="2">Pastikan koneksi internet kamu aktif dan coba lagi.</textarea>
+                                            </div>
+                                        </div>
+                                        <div class="space-y-4">
+                                            <div>
+                                                <label class="block text-sm font-bold text-slate-700 mb-2">Teks Tombol</label>
+                                                <input type="text" id="offlineBtnText" value="Coba Lagi" class="w-full px-4 py-2.5 text-sm bg-slate-50 border border-slate-100 rounded-xl outline-none focus:border-amber-500 transition-all">
+                                            </div>
+                                            <div class="flex items-center gap-4">
+                                                <div class="flex-1">
+                                                    <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">Warna Tema</label>
+                                                    <div class="flex items-center gap-2 p-1.5 bg-slate-50 border border-slate-100 rounded-lg">
+                                                        <input type="color" id="offlineColor" value="#F59E0B" class="w-6 h-6 rounded cursor-pointer border-none bg-transparent">
+                                                        <span class="text-[10px] font-bold text-slate-500" id="offlineColorHex">#F59E0B</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="pt-6 border-t border-slate-50">
+                                        <label class="block text-sm font-bold text-slate-700 mb-4">Ikon Offline</label>
+                                        <div class="flex flex-wrap gap-1.5 p-1 bg-slate-100 rounded-xl w-full sm:w-max mb-4">
+                                            <label class="cursor-pointer">
+                                                <input type="radio" name="offlineIconType" value="default" checked class="peer sr-only">
+                                                <span class="inline-block px-4 py-1.5 text-[10px] font-bold text-slate-500 rounded-lg peer-checked:bg-white peer-checked:text-amber-600 peer-checked:shadow-sm">DEFAULT</span>
+                                            </label>
+                                            <label class="cursor-pointer">
+                                                <input type="radio" name="offlineIconType" value="upload" class="peer sr-only">
+                                                <span class="inline-block px-4 py-1.5 text-[10px] font-bold text-slate-500 rounded-lg peer-checked:bg-white peer-checked:text-amber-600 peer-checked:shadow-sm">UPLOAD LOGO</span>
+                                            </label>
+                                        </div>
+                                        <div id="offlineUploadInput" class="hidden animate-fade-in">
+                                            <div class="relative border-2 border-dashed border-slate-200 rounded-2xl p-6 text-center hover:bg-slate-50 hover:border-amber-400 transition-all group">
+                                                <input type="file" id="offlineImageFile" accept="image/*" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer">
+                                                <span class="text-sm font-bold text-slate-600">Unggah Ikon Offline</span>
+                                                <p class="text-[9px] text-slate-400 mt-1 uppercase font-bold tracking-tighter">Maks 1MB</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         
-                        <!-- Right Column: Live Simulator -->
                         <div class="lg:col-span-4 lg:sticky lg:top-6">
-                            <div class="bg-white rounded-[3rem] p-6 border border-slate-100 shadow-xl flex flex-col items-center">
+                            <div class="bg-white rounded-[3rem] p-6 border border-slate-100 shadow-xl flex flex-col items-center relative overflow-hidden">
+                                <!-- Simulator Mode Switcher -->
+                                <div class="absolute top-8 right-8 z-50">
+                                    <button id="btnSwitchSimView" class="p-2.5 bg-slate-900 text-white rounded-xl shadow-lg hover:bg-black transition-all active:scale-95 group flex items-center gap-2">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 group-hover:rotate-180 transition-transform duration-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" /></svg>
+                                        <span id="simModeText" class="text-[10px] font-black uppercase tracking-widest">Splash View</span>
+                                    </button>
+                                </div>
+
                                 <span class="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-6">Android Live Preview</span>
                                 
                                 <!-- Phone Frame (Android Style) -->
@@ -362,7 +438,7 @@
                                     <!-- Android Navigation Bar Simulation -->
                                     <div class="absolute bottom-1 w-20 h-1 bg-slate-300 rounded-full z-20"></div>
 
-                                    <!-- Sim Content -->
+                                    <!-- Sim Content (Splash) -->
                                     <div id="simContent" class="flex flex-col items-center justify-center w-full h-full p-6 text-center hidden relative z-0">
                                         <div id="simLogoWrapper" class="w-24 h-24 flex items-center justify-center mb-6 drop-shadow-xl hidden">
                                             <img id="simImage" src="" class="w-full h-full object-contain" />
@@ -370,10 +446,21 @@
                                         <div id="simSpinner" class="hidden w-10 h-10 border-4 border-slate-100 border-t-blue-600 rounded-full animate-spin mb-6"></div>
                                         <div id="simText" class="text-xs font-black tracking-tight" style="color: #6C63FF">Memuat...</div>
                                     </div>
+
+                                    <!-- Sim Content (Offline) -->
+                                    <div id="simOffline" class="flex flex-col items-center justify-center w-full h-full p-6 text-center hidden relative z-0 bg-white animate-fade-in">
+                                        <div id="simOfflineIcon" class="w-20 h-20 bg-amber-50 text-amber-500 rounded-3xl flex items-center justify-center mb-6 shadow-sm">
+                                            <img id="simOfflineImage" src="" class="w-full h-full object-contain hidden p-3" />
+                                            <svg id="simOfflineSVG" xmlns="http://www.w3.org/2000/svg" class="h-10 w-10" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 5.636a9 9 0 010 12.728m0 0l-2.829-2.829m2.829 2.829L21 21M15.536 8.464a5 5 0 010 7.072m0 0l-2.829-2.829m-4.243 4.243a5 5 0 01-7.072 0m0 0l2.829-2.829m-4.243-4.243a9 9 0 0112.728 0m0 0l-2.829 2.829" /></svg>
+                                        </div>
+                                        <h4 id="simOfflineTitle" class="text-lg font-black text-slate-800 mb-2">Koneksi Terputus</h4>
+                                        <p id="simOfflineDesc" class="text-[10px] text-slate-500 mb-8 leading-relaxed px-4">Pastikan koneksi internet kamu aktif dan coba lagi.</p>
+                                        <div id="simOfflineBtn" class="px-8 py-2.5 bg-amber-500 text-white text-[11px] font-black rounded-xl shadow-lg shadow-amber-200">Coba Lagi</div>
+                                    </div>
                                     
                                     <div id="simDefaultContent" class="flex flex-col items-center justify-center text-center px-6 opacity-20">
                                         <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-slate-400 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" /></svg>
-                                        <p class="text-[10px] font-bold text-slate-500 italic">Aktifkan Splash Screen</p>
+                                        <p class="text-[10px] font-bold text-slate-500 italic">Android Simulation</p>
                                     </div>
                                 </div>
                                 
@@ -509,18 +596,19 @@
             const progressBar = document.getElementById('progressBar');
             const errorMessage = document.getElementById('errorMessage');
 
-            const useCustomSplashCheckbox = document.getElementById('useCustomSplash');
-            const customSplashSettings = document.getElementById('customSplashSettings');
-            
-            const imageUrlInput = document.getElementById('imageUrlInput');
-            const imageUploadInput = document.getElementById('imageUploadInput');
+            const useCustomOfflineCheckbox = document.getElementById('useCustomOffline');
+            const customOfflineSettings = document.getElementById('customOfflineSettings');
+            const offlineUploadInput = document.getElementById('offlineUploadInput');
             
             // Simulator Elements
             const simContainer = document.getElementById('simContainer');
             const simContent = document.getElementById('simContent');
+            const simOffline = document.getElementById('simOffline');
             const simDefaultContent = document.getElementById('simDefaultContent');
             const simImage = document.getElementById('simImage');
             const simText = document.getElementById('simText');
+            const btnSwitchSimView = document.getElementById('btnSwitchSimView');
+            const simModeText = document.getElementById('simModeText');
             
             const splashBgColorInput = document.getElementById('splashBgColor');
             const splashTextColorInput = document.getElementById('splashTextColor');
@@ -530,8 +618,20 @@
             const splashLogoBgColorInput = document.getElementById('splashLogoBgColor');
             const logoBgColorContainer = document.getElementById('logoBgColorContainer');
 
+            const offlineTitleInput = document.getElementById('offlineTitle');
+            const offlineDescInput = document.getElementById('offlineDesc');
+            const offlineBtnTextInput = document.getElementById('offlineBtnText');
+            const offlineColorInput = document.getElementById('offlineColor');
+            const simOfflineTitle = document.getElementById('simOfflineTitle');
+            const simOfflineDesc = document.getElementById('simOfflineDesc');
+            const simOfflineBtn = document.getElementById('simOfflineBtn');
+            const simOfflineIcon = document.getElementById('simOfflineIcon');
+            const simOfflineImage = document.getElementById('simOfflineImage');
+            const simOfflineSVG = document.getElementById('simOfflineSVG');
+
             let checkInterval;
             let currentBuildAppName = '';
+            let currentSimMode = 'splash'; // 'splash' or 'offline'
 
             // --- FUNCTIONS ---
             
@@ -541,6 +641,12 @@
                 resultSection.classList.add('hidden');
                 errorSection.classList.add('hidden');
                 if(section) section.classList.remove('hidden');
+            }
+
+            function switchSimulatorView() {
+                currentSimMode = currentSimMode === 'splash' ? 'offline' : 'splash';
+                simModeText.innerText = currentSimMode === 'splash' ? 'Splash View' : 'Offline View';
+                updateSimulator();
             }
 
             function resetForm() {
@@ -555,7 +661,12 @@
                 if(step2Section) step2Section.classList.add('opacity-0', 'translate-x-4');
 
                 if(customSplashSettings) customSplashSettings.classList.add('hidden');
+                if(customOfflineSettings) customOfflineSettings.classList.add('hidden');
                 if(successState) successState.classList.add('hidden');
+                
+                currentSimMode = 'splash';
+                if(simModeText) simModeText.innerText = 'Splash View';
+                
                 showSection(formSection);
                 updateSimulator();
                 if(checkInterval) clearInterval(checkInterval);
@@ -564,61 +675,91 @@
 
             function updateSimulator() {
                 try {
-                    if (!useCustomSplashCheckbox || !simContainer) return;
-
-                    if (useCustomSplashCheckbox.checked) {
+                    if ((useCustomSplashCheckbox && useCustomSplashCheckbox.checked) || (useCustomOfflineCheckbox && useCustomOfflineCheckbox.checked)) {
                         simDefaultContent.classList.add('hidden');
-                        simContent.classList.remove('hidden');
                         
-                        simContainer.style.backgroundImage = 'none';
-                        simContainer.style.backgroundColor = splashBgColorInput.value;
-                        simText.style.color = splashTextColorInput.value;
-                        simText.textContent = splashLoadingTextInput.value || 'Memuat halaman...';
-                        
-                        const checkedImg = document.querySelector('input[name="imageType"]:checked');
-                        const selectedImageType = checkedImg ? checkedImg.value : 'none';
-                        
-                        const simSpinner = document.getElementById('simSpinner');
-                        const simLogoWrapper = document.getElementById('simLogoWrapper');
-                        
-                        simLogoWrapper.classList.add('hidden');
-                        simImage.classList.add('hidden');
-                        simSpinner.classList.add('hidden');
+                        if (currentSimMode === 'splash') {
+                            simContent.classList.remove('hidden');
+                            simOffline.classList.add('hidden');
+                            
+                            simContainer.style.backgroundColor = splashBgColorInput.value;
+                            simText.innerText = splashLoadingTextInput.value || 'Memuat halaman...';
+                            simText.style.color = splashTextColorInput.value;
 
-                        if (selectedImageType === 'spinner') {
-                            simSpinner.classList.remove('hidden');
-                            simSpinner.style.borderTopColor = splashProgressBarColorInput.value;
-                        } else if (selectedImageType === 'url') {
-                            const url = document.getElementById('splashImageUrl').value.trim();
-                            if (url) {
-                                simImage.src = url;
-                                simImage.classList.remove('hidden');
-                                simLogoWrapper.classList.remove('hidden');
-                            }
-                        } else if (selectedImageType === 'upload') {
-                            const fileInput = document.getElementById('splashImageFile');
-                            if (fileInput && fileInput.files.length > 0) {
-                                const url = URL.createObjectURL(fileInput.files[0]);
-                                simImage.src = url;
-                                simImage.classList.remove('hidden');
-                                simLogoWrapper.classList.remove('hidden');
-                            }
-                        }
+                            const selectedImageType = document.querySelector('input[name="imageType"]:checked')?.value || 'none';
+                            const simSpinner = document.getElementById('simSpinner');
+                            const simLogoWrapper = document.getElementById('simLogoWrapper');
+                            
+                            simLogoWrapper.classList.add('hidden');
+                            simImage.classList.add('hidden');
+                            simSpinner.classList.add('hidden');
 
-                        if (splashUseLogoBgCheckbox.checked && selectedImageType !== 'spinner' && selectedImageType !== 'none') {
-                            simImage.style.backgroundColor = splashLogoBgColorInput.value;
-                            simImage.classList.add('p-2', 'rounded-2xl');
+                            if (selectedImageType === 'spinner') {
+                                simSpinner.classList.remove('hidden');
+                                simSpinner.style.borderTopColor = splashProgressBarColorInput.value;
+                            } else if (selectedImageType === 'url') {
+                                const url = document.getElementById('splashImageUrl').value.trim();
+                                if (url) {
+                                    simImage.src = url;
+                                    simImage.classList.remove('hidden');
+                                    simLogoWrapper.classList.remove('hidden');
+                                }
+                            } else if (selectedImageType === 'upload') {
+                                const fileInput = document.getElementById('splashImageFile');
+                                if (fileInput && fileInput.files.length > 0) {
+                                    const url = URL.createObjectURL(fileInput.files[0]);
+                                    simImage.src = url;
+                                    simImage.classList.remove('hidden');
+                                    simLogoWrapper.classList.remove('hidden');
+                                }
+                            }
+
+                            if (splashUseLogoBgCheckbox.checked && selectedImageType !== 'spinner' && selectedImageType !== 'none') {
+                                simImage.style.backgroundColor = splashLogoBgColorInput.value;
+                                simImage.classList.add('p-2', 'rounded-2xl');
+                            } else {
+                                simImage.style.backgroundColor = 'transparent';
+                                simImage.classList.remove('p-2', 'rounded-2xl');
+                            }
                         } else {
-                            simImage.style.backgroundColor = 'transparent';
-                            simImage.classList.remove('p-2', 'rounded-2xl');
+                            // Offline Mode Preview
+                            simContent.classList.add('hidden');
+                            simOffline.classList.remove('hidden');
+                            
+                            simContainer.style.backgroundColor = '#FFFFFF';
+                            simOfflineTitle.innerText = offlineTitleInput.value;
+                            simOfflineDesc.innerText = offlineDescInput.value;
+                            simOfflineBtn.innerText = offlineBtnTextInput.value;
+                            simOfflineBtn.style.backgroundColor = offlineColorInput.value;
+                            simOfflineIcon.style.color = offlineColorInput.value;
+                            simOfflineIcon.style.backgroundColor = offlineColorInput.value + '15'; // 15 = opacity
+
+                            const selectedOfflineIcon = document.querySelector('input[name="offlineIconType"]:checked')?.value || 'default';
+                            if (selectedOfflineIcon === 'default') {
+                                simOfflineSVG.classList.remove('hidden');
+                                simOfflineImage.classList.add('hidden');
+                            } else {
+                                const fileInput = document.getElementById('offlineImageFile');
+                                if (fileInput && fileInput.files.length > 0) {
+                                    simOfflineImage.src = URL.createObjectURL(fileInput.files[0]);
+                                    simOfflineImage.classList.remove('hidden');
+                                    simOfflineSVG.classList.add('hidden');
+                                } else {
+                                    simOfflineSVG.classList.remove('hidden');
+                                    simOfflineImage.classList.add('hidden');
+                                }
+                            }
                         }
                     } else {
                         simDefaultContent.classList.remove('hidden');
                         simContent.classList.add('hidden');
+                        simOffline.classList.add('hidden');
                         simContainer.style.backgroundColor = '#ffffff';
                     }
                 } catch (e) { console.error("Simulator Error:", e); }
             }
+
+            if(btnSwitchSimView) btnSwitchSimView.addEventListener('click', switchSimulatorView);
 
             function updateIconPreview() {
                 try {
@@ -711,6 +852,28 @@
                 });
             }
 
+            if(useCustomOfflineCheckbox) {
+                useCustomOfflineCheckbox.addEventListener('change', (e) => {
+                    customOfflineSettings.classList.toggle('hidden', !e.target.checked);
+                    if(e.target.checked) {
+                        currentSimMode = 'offline';
+                        if(simModeText) simModeText.innerText = 'Offline View';
+                    }
+                    updateSimulator();
+                });
+            }
+
+            [offlineTitleInput, offlineDescInput, offlineBtnTextInput, offlineColorInput].forEach(el => {
+                if(el) el.addEventListener('input', updateSimulator);
+            });
+
+            document.querySelectorAll('input[name="offlineIconType"]').forEach(r => r.addEventListener('change', (e) => {
+                if(offlineUploadInput) offlineUploadInput.classList.toggle('hidden', e.target.value !== 'upload');
+                updateSimulator();
+            }));
+
+            document.getElementById('offlineImageFile').addEventListener('change', updateSimulator);
+
             document.querySelectorAll('input[name="imageType"]').forEach(r => r.addEventListener('change', (e) => {
                 if(imageUrlInput) imageUrlInput.classList.toggle('hidden', e.target.value !== 'url');
                 if(imageUploadInput) imageUploadInput.classList.toggle('hidden', e.target.value !== 'upload');
@@ -786,7 +949,16 @@
                             
                             // App Icon
                             appIconType: selectedIconType === 'upload' ? 'asset' : selectedIconType,
-                            appIconData: ''
+                            appIconData: '',
+
+                            // Offline Screen
+                            useCustomOffline: useCustomOfflineCheckbox.checked,
+                            offlineTitle: offlineTitleInput.value,
+                            offlineDesc: offlineDescInput.value,
+                            offlineBtnText: offlineBtnTextInput.value,
+                            offlineColor: offlineColorInput.value,
+                            offlineIconType: getRadioValue('offlineIconType') === 'upload' ? 'asset' : 'default',
+                            offlineIconData: ''
                         };
 
                         if (selectedImageType === 'url') {
@@ -801,6 +973,11 @@
                         } else if (selectedIconType === 'upload') {
                             const iconFileInput = document.getElementById('appIconFile');
                             if (iconFileInput && iconFileInput.files.length > 0) payload.appIconData = await fileToBase64(iconFileInput.files[0]);
+                        }
+
+                        if (getRadioValue('offlineIconType') === 'upload') {
+                            const offlineFileInput = document.getElementById('offlineImageFile');
+                            if (offlineFileInput && offlineFileInput.files.length > 0) payload.offlineIconData = await fileToBase64(offlineFileInput.files[0]);
                         }
 
                         showSection(progressSection);

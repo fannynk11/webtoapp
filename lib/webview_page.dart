@@ -285,74 +285,144 @@ class _WebViewPageState extends State<WebViewPage> {
   }
 
   Widget _buildErrorPage() {
+    // If not using custom offline, use the legacy design
+    if (!useCustomOffline) {
+      return Container(
+        color: Colors.white,
+        child: Center(
+          child: Padding(
+            padding: const EdgeInsets.all(32),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Container(
+                  width: 80,
+                  height: 80,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(24),
+                    color: Colors.red.shade50,
+                  ),
+                  child: Icon(
+                    Icons.wifi_off_rounded,
+                    size: 40,
+                    color: Colors.red.shade400,
+                  ),
+                ),
+                const SizedBox(height: 24),
+                const Text(
+                  'Gagal Memuat Halaman',
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                    color: Color(0xFF302B63),
+                  ),
+                ),
+                const SizedBox(height: 12),
+                Text(
+                  'Pastikan koneksi internet kamu aktif\ndan URL yang dimasukkan benar.',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: 14,
+                    color: Colors.grey.shade600,
+                    height: 1.5,
+                  ),
+                ),
+                const SizedBox(height: 32),
+                SizedBox(
+                  width: 180,
+                  height: 48,
+                  child: ElevatedButton.icon(
+                    onPressed: _reload,
+                    icon: const Icon(Icons.refresh_rounded, size: 20),
+                    label: const Text(
+                      'Coba Lagi',
+                      style: TextStyle(fontWeight: FontWeight.w600),
+                    ),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xFF6C63FF),
+                      foregroundColor: Colors.white,
+                      elevation: 0,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(14),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      );
+    }
+
+    // Custom Design
+    final Color themeColor = _hexToColor(offlineColor);
+    
     return Container(
       color: Colors.white,
       child: Center(
         child: Padding(
-          padding: const EdgeInsets.all(32),
+          padding: const EdgeInsets.all(40),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
+              // Icon Section
               Container(
-                width: 80,
-                height: 80,
+                width: 100,
+                height: 100,
                 decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(24),
-                  color: Colors.red.shade50,
+                  borderRadius: BorderRadius.circular(30),
+                  color: themeColor.withOpacity(0.1),
                 ),
-                child: Icon(
-                  Icons.wifi_off_rounded,
-                  size: 40,
-                  color: Colors.red.shade400,
-                ),
+                child: _buildOfflineIcon(themeColor),
               ),
-              const SizedBox(height: 24),
-              const Text(
-                'Gagal Memuat Halaman',
-                style: TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                  color: Color(0xFF302B63),
-                ),
-              ),
-              const SizedBox(height: 12),
+              const SizedBox(height: 32),
+              
+              // Text Section
               Text(
-                'Pastikan koneksi internet kamu aktif\ndan URL yang dimasukkan benar.',
+                offlineTitle,
+                textAlign: TextAlign.center,
+                style: const TextStyle(
+                  fontSize: 24,
+                  fontWeight: FontWeight.w900,
+                  color: Color(0xFF1E293B),
+                  letterSpacing: -0.5,
+                ),
+              ),
+              const SizedBox(height: 16),
+              Text(
+                offlineDesc,
                 textAlign: TextAlign.center,
                 style: TextStyle(
-                  fontSize: 14,
-                  color: Colors.grey.shade600,
-                  height: 1.5,
+                  fontSize: 15,
+                  color: Colors.slate.shade500,
+                  height: 1.6,
+                  fontWeight: FontWeight.w500,
                 ),
               ),
-              if (errorMessage.isNotEmpty) ...[
-                const SizedBox(height: 8),
-                Text(
-                  errorMessage,
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontSize: 12,
-                    color: Colors.grey.shade400,
-                  ),
-                ),
-              ],
-              const SizedBox(height: 32),
+              const SizedBox(height: 48),
+              
+              // Button Section
               SizedBox(
-                width: 180,
-                height: 48,
-                child: ElevatedButton.icon(
+                width: double.infinity,
+                height: 56,
+                child: ElevatedButton(
                   onPressed: _reload,
-                  icon: const Icon(Icons.refresh_rounded, size: 20),
-                  label: const Text(
-                    'Coba Lagi',
-                    style: TextStyle(fontWeight: FontWeight.w600),
-                  ),
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFF6C63FF),
+                    backgroundColor: themeColor,
                     foregroundColor: Colors.white,
-                    elevation: 0,
+                    elevation: 8,
+                    shadowColor: themeColor.withOpacity(0.4),
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(14),
+                      borderRadius: BorderRadius.circular(18),
+                    ),
+                  ),
+                  child: Text(
+                    offlineBtnText,
+                    style: const TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w800,
+                      letterSpacing: 0.5,
                     ),
                   ),
                 ),
@@ -361,6 +431,28 @@ class _WebViewPageState extends State<WebViewPage> {
           ),
         ),
       ),
+    );
+  }
+
+  Widget _buildOfflineIcon(Color themeColor) {
+    if (offlineIconType == 'asset') {
+      return Padding(
+        padding: const EdgeInsets.all(20),
+        child: Image.asset(
+          'assets/offline_icon.png',
+          fit: BoxFit.contain,
+          errorBuilder: (context, error, stackTrace) => Icon(
+            Icons.wifi_off_rounded,
+            size: 40,
+            color: themeColor,
+          ),
+        ),
+      );
+    }
+    return Icon(
+      Icons.wifi_off_rounded,
+      size: 40,
+      color: themeColor,
     );
   }
 

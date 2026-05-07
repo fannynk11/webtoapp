@@ -18,6 +18,15 @@ const String splashImageData = "SPLASH_IMAGE_DATA_PLACEHOLDER";
 const String splashBgImageType = "SPLASH_BG_IMAGE_TYPE_PLACEHOLDER";
 const String splashBgImageData = "SPLASH_BG_IMAGE_DATA_PLACEHOLDER";
 
+// Offline Screen Config
+const bool useCustomOffline = USE_CUSTOM_OFFLINE_PLACEHOLDER;
+const String offlineTitle = "OFFLINE_TITLE_PLACEHOLDER";
+const String offlineDesc = "OFFLINE_DESC_PLACEHOLDER";
+const String offlineBtnText = "OFFLINE_BTN_TEXT_PLACEHOLDER";
+const String offlineColor = "OFFLINE_COLOR_PLACEHOLDER";
+const String offlineIconType = "OFFLINE_ICON_TYPE_PLACEHOLDER";
+const String offlineIconData = "OFFLINE_ICON_DATA_PLACEHOLDER";
+
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
   SystemChrome.setSystemUIOverlayStyle(

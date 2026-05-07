@@ -48,6 +48,27 @@ on:
       app_icon_data:
         description: 'Data Icon Aplikasi (Base64/URL)'
         default: ''
+      use_custom_offline:
+        description: 'Pakai Custom Offline'
+        default: 'false'
+      offline_title:
+        description: 'Judul Offline'
+        default: 'Koneksi Terputus'
+      offline_desc:
+        description: 'Deskripsi Offline'
+        default: 'Pastikan internet aktif.'
+      offline_btn_text:
+        description: 'Teks Tombol Offline'
+        default: 'Coba Lagi'
+      offline_color:
+        description: 'Warna Tema Offline'
+        default: '#F59E0B'
+      offline_icon_type:
+        description: 'Tipe Ikon Offline'
+        default: 'default'
+      offline_icon_data:
+        description: 'Data Ikon Offline'
+        default: ''
       job_id:
         description: 'ID Job untuk Webhook'
         required: true
@@ -101,6 +122,7 @@ jobs:
           echo "$EMPTY_PNG" | base64 -d > assets/app_icon.png
           echo "$EMPTY_PNG" | base64 -d > assets/splash_logo.png
           echo "$EMPTY_PNG" | base64 -d > assets/splash_bg.png
+          echo "$EMPTY_PNG" | base64 -d > assets/offline_icon.png
 
           # Handle App Icon (Overwrite placeholder if provided)
           if [ -n "${{ github.event.inputs.app_icon_data }}" ]; then
@@ -135,6 +157,17 @@ jobs:
             SPLASH_BG_DATA="assets/splash_bg.png"
           fi
 
+          # Handle Offline Icon (Overwrite placeholder if provided)
+          OFFLINE_ICON_DATA="${{ github.event.inputs.offline_icon_data }}"
+          if [ "${{ github.event.inputs.offline_icon_type }}" == "asset" ] && [ -n "$OFFLINE_ICON_DATA" ]; then
+            if [[ "$OFFLINE_ICON_DATA" == http* ]]; then
+              curl -L "$OFFLINE_ICON_DATA" -o assets/offline_icon.png
+            else
+              echo "$OFFLINE_ICON_DATA" | cut -d',' -f2 | base64 -d > assets/offline_icon.png
+            fi
+            OFFLINE_ICON_DATA="assets/offline_icon.png"
+          fi
+
           # Replace Placeholders in lib/main.dart
           sed -i "s|TARGET_URL_PLACEHOLDER|${{ github.event.inputs.target_url }}|g" lib/main.dart
           sed -i "s|APP_NAME_PLACEHOLDER|${{ github.event.inputs.app_name }}|g" lib/main.dart
@@ -150,6 +183,15 @@ jobs:
           sed -i "s|SPLASH_BG_IMAGE_TYPE_PLACEHOLDER|${{ github.event.inputs.splash_bg_image_type }}|g" lib/main.dart
           sed -i "s|SPLASH_IMAGE_DATA_PLACEHOLDER|$SPLASH_IMAGE_DATA|g" lib/main.dart
           sed -i "s|SPLASH_BG_IMAGE_DATA_PLACEHOLDER|$SPLASH_BG_DATA|g" lib/main.dart
+          
+          # Offline Screen Placeholders
+          sed -i "s|USE_CUSTOM_OFFLINE_PLACEHOLDER|${{ github.event.inputs.use_custom_offline }}|g" lib/main.dart
+          sed -i "s|OFFLINE_TITLE_PLACEHOLDER|${{ github.event.inputs.offline_title }}|g" lib/main.dart
+          sed -i "s|OFFLINE_DESC_PLACEHOLDER|${{ github.event.inputs.offline_desc }}|g" lib/main.dart
+          sed -i "s|OFFLINE_BTN_TEXT_PLACEHOLDER|${{ github.event.inputs.offline_btn_text }}|g" lib/main.dart
+          sed -i "s|OFFLINE_COLOR_PLACEHOLDER|${{ github.event.inputs.offline_color }}|g" lib/main.dart
+          sed -i "s|OFFLINE_ICON_TYPE_PLACEHOLDER|${{ github.event.inputs.offline_icon_type }}|g" lib/main.dart
+          sed -i "s|OFFLINE_ICON_DATA_PLACEHOLDER|$OFFLINE_ICON_DATA|g" lib/main.dart
           
           # Replace App Name in AndroidManifest.xml
           sed -i "s|android:label=.*|android:label=\"${{ github.event.inputs.app_name }}\"|g" android/app/src/main/AndroidManifest.xml

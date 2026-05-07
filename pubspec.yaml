@@ -66,6 +66,7 @@ flutter:
     - assets/app_icon.png
     - assets/splash_logo.png
     - assets/splash_bg.png
+    - assets/offline_icon.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images
