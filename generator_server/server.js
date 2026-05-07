@@ -70,10 +70,13 @@ app.post('/api/webhook/github', async (req, res) => {
 
     try {
         await connectDB();
-        const updateData = { status, message: status === 'completed' ? 'Build Berhasil!' : 'Build Gagal' };
+        const updateData = { 
+            status, 
+            message: status === 'completed' ? 'Build Berhasil!' : `Build Gagal: ${error || 'Kesalahan pada sistem build GitHub'}`,
+            progress: status === 'completed' ? 100 : 0
+        };
         if (downloadUrl) updateData.downloadUrl = downloadUrl;
         if (error) updateData.errorLog = error;
-        if (status === 'completed') updateData.progress = 100;
 
         const updatedJob = await Job.findOneAndUpdate({ jobId }, updateData, { new: true });
         
@@ -194,6 +197,10 @@ async function processBuild(jobId, payload, host) {
     const protocol = host.includes('localhost') ? 'http' : 'https';
     const serverUrl = `${protocol}://${host}`;
 
+    // Generate sanitized package name (slug)
+    const packageSlug = payload.appName.toLowerCase().replace(/[^a-z0-9]/g, '').substring(0, 20) || 'app';
+    const packageName = `com.webtoapk.${packageSlug}`;
+
     try {
         await axios.post(
             `https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/actions/workflows/build-apk.yml/dispatches`,
@@ -204,6 +211,7 @@ async function processBuild(jobId, payload, host) {
                     server_url: serverUrl,
                     webhook_secret: WEBHOOK_SECRET,
                     app_name: payload.appName,
+                    package_name: packageName,
                     target_url: payload.url,
                     use_custom_splash: String(payload.useCustomSplash || false),
                     splash_bg_color: payload.splashBgColor || '#FFFFFF',

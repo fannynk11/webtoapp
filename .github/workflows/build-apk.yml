@@ -9,6 +9,9 @@ on:
       target_url:
         description: 'URL Website'
         required: true
+      package_name:
+        description: 'Package Name / Application ID'
+        default: 'com.webtoapk.app'
       use_custom_splash:
         description: 'Pakai Splash'
         default: 'false'
@@ -185,9 +188,12 @@ jobs:
           sed -i "s|SPLASH_BG_IMAGE_DATA_PLACEHOLDER|$SPLASH_BG_DATA|g" lib/main.dart
           
           # Offline Screen Placeholders
+          OFFLINE_TITLE=$(echo "${{ github.event.inputs.offline_title }}" | sed 's/"/\\"/g')
+          OFFLINE_DESC=$(echo "${{ github.event.inputs.offline_desc }}" | sed 's/"/\\"/g')
+          
           sed -i "s|USE_CUSTOM_OFFLINE_PLACEHOLDER|${{ github.event.inputs.use_custom_offline }}|g" lib/main.dart
-          sed -i "s|OFFLINE_TITLE_PLACEHOLDER|${{ github.event.inputs.offline_title }}|g" lib/main.dart
-          sed -i "s|OFFLINE_DESC_PLACEHOLDER|${{ github.event.inputs.offline_desc }}|g" lib/main.dart
+          sed -i "s|OFFLINE_TITLE_PLACEHOLDER|$OFFLINE_TITLE|g" lib/main.dart
+          sed -i "s|OFFLINE_DESC_PLACEHOLDER|$OFFLINE_DESC|g" lib/main.dart
           sed -i "s|OFFLINE_BTN_TEXT_PLACEHOLDER|${{ github.event.inputs.offline_btn_text }}|g" lib/main.dart
           sed -i "s|OFFLINE_COLOR_PLACEHOLDER|${{ github.event.inputs.offline_color }}|g" lib/main.dart
           sed -i "s|OFFLINE_ICON_TYPE_PLACEHOLDER|${{ github.event.inputs.offline_icon_type }}|g" lib/main.dart
@@ -195,6 +201,10 @@ jobs:
           
           # Replace App Name in AndroidManifest.xml
           sed -i "s|android:label=.*|android:label=\"${{ github.event.inputs.app_name }}\"|g" android/app/src/main/AndroidManifest.xml
+          
+          # Replace Application ID in build.gradle.kts
+          sed -i "s|applicationId = .*|applicationId = \"${{ github.event.inputs.package_name }}\"|g" android/app/build.gradle.kts
+          sed -i "s|namespace = .*|namespace = \"${{ github.event.inputs.package_name }}\"|g" android/app/build.gradle.kts
 
       - name: Build APK
         run: flutter build apk --release
