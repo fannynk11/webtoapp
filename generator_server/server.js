@@ -317,6 +317,11 @@ app.post('/send-to-email', async (req, res) => {
 
 // Fungsi bantuan untuk mengirim email notifikasi otomatis
 async function sendEmailNotification(job) {
+    if (!process.env.EMAIL_USER || !process.env.EMAIL_PASS) {
+        console.error('❌ Gagal mengirim email: Kredensial EMAIL_USER atau EMAIL_PASS belum diatur di .env');
+        return;
+    }
+
     try {
         const transporter = nodemailer.createTransport({
             service: process.env.EMAIL_SERVICE || 'gmail',
@@ -331,32 +336,33 @@ async function sendEmailNotification(job) {
             to: job.email,
             subject: `🎁 Aplikasi ${job.appName} Kamu Sudah Siap!`,
             html: `
-                <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e2e8f0; border-radius: 12px;">
+                <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e2e8f0; border-radius: 12px; background-color: white;">
                     <div style="text-align: center; margin-bottom: 30px;">
-                        <h1 style="color: #2563eb; margin-bottom: 10px;">WebToAPK Pro</h1>
-                        <p style="color: #64748b;">Transformasi Website ke Aplikasi Android</p>
+                        <h1 style="color: #2563eb; margin-bottom: 5px; font-size: 28px;">WebToAPK Pro</h1>
+                        <p style="color: #64748b; font-size: 14px;">Transformasi Website ke Aplikasi Android</p>
                     </div>
                     
-                    <div style="background-color: #f8fafc; padding: 30px; border-radius: 12px; text-align: center;">
-                        <h2 style="color: #1e293b; margin-top: 0;">Halo! 👋</h2>
-                        <p style="color: #475569; line-height: 1.6;">
+                    <div style="background-color: #f8fafc; padding: 30px; border-radius: 12px; text-align: center; border: 1px dashed #cbd5e1;">
+                        <h2 style="color: #1e293b; margin-top: 0; font-size: 22px;">Halo! 👋</h2>
+                        <p style="color: #475569; line-height: 1.6; font-size: 16px;">
                             Kabar gembira! Aplikasi <strong>${job.appName}</strong> yang kamu buat sudah berhasil kami proses dan siap untuk diunduh.
                         </p>
                         
-                        <div style="margin: 30px 0;">
-                            <a href="${job.downloadUrl}" style="background-color: #2563eb; color: white; padding: 14px 28px; border-radius: 8px; text-decoration: none; font-weight: bold; display: inline-block;">
+                        <div style="margin: 35px 0;">
+                            <a href="${job.downloadUrl}" style="background-color: #2563eb; color: white; padding: 16px 32px; border-radius: 12px; text-decoration: none; font-weight: bold; display: inline-block; box-shadow: 0 4px 6px -1px rgba(37, 99, 235, 0.2);">
                                 Download APK Sekarang
                             </a>
                         </div>
                         
-                        <p style="color: #94a3b8; font-size: 12px;">
-                            Jika tombol di atas tidak berfungsi, copy link berikut ke browser kamu:<br/>
-                            <span style="color: #3b82f6;">${job.downloadUrl}</span>
+                        <p style="color: #94a3b8; font-size: 12px; margin-top: 20px;">
+                            Jika tombol di atas tidak berfungsi, gunakan link ini:<br/>
+                            <a href="${job.downloadUrl}" style="color: #3b82f6; word-break: break-all;">${job.downloadUrl}</a>
                         </p>
                     </div>
                     
-                    <div style="text-align: center; margin-top: 30px; color: #94a3b8; font-size: 12px;">
-                        <p>&copy; 2026 WebToAPK. Dibuat dengan ❤️ untuk kemudahan transformasi digital.</p>
+                    <div style="text-align: center; margin-top: 30px; color: #94a3b8; font-size: 11px;">
+                        <p>&copy; 2026 WebToAPK &bull; Layanan Pembuat APK Instan</p>
+                        <p>Pesan ini dikirim secara otomatis, mohon tidak membalas email ini.</p>
                     </div>
                 </div>
             `
@@ -365,9 +371,13 @@ async function sendEmailNotification(job) {
         await transporter.sendMail(mailOptions);
         console.log(`✅ Email berhasil dikirim ke ${job.email}`);
     } catch (error) {
-        console.error('❌ Gagal mengirim email otomatis:', error);
+        console.error('❌ Gagal mengirim email otomatis:', error.message);
+        if (error.message.includes('Invalid login')) {
+            console.error('👉 Tip: Pastikan kamu menggunakan APP PASSWORD (16 digit), bukan password Gmail biasa.');
+        }
     }
 }
+
 
 app.listen(PORT, () => {
 
