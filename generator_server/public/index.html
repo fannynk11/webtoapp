@@ -229,18 +229,6 @@
                                         </div>
                                     </div>
 
-                                    <!-- Options -->
-                                    <div class="pt-4 border-t border-slate-50">
-                                        <label class="flex items-center gap-3 cursor-pointer group">
-                                            <div class="relative flex items-center justify-center">
-                                                <input type="checkbox" id="hideBottomNav" class="peer sr-only">
-                                                <div class="w-10 h-5 bg-slate-200 rounded-full peer peer-checked:bg-blue-600 after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:after:translate-x-5"></div>
-                                            </div>
-                                            <div class="flex flex-col">
-                                                <span class="text-sm font-bold text-slate-700 group-hover:text-blue-600 transition-colors">Sembunyikan Navigasi Bawah</span>
-                                                <span class="text-[10px] font-medium text-slate-400">Aktifkan untuk tampilan Full Screen</span>
-                                            </div>
-                                        </label>
                                     </div>
                                 </div>
                             </div>
@@ -621,11 +609,18 @@
             const useCustomSplashCheckbox = document.getElementById('useCustomSplash');
             const customSplashSettings = document.getElementById('customSplashSettings');
             const offlineUploadInput = document.getElementById('offlineUploadInput');
-            const imageUrlInput = document.getElementById('iconUrlInput');
-            const imageUploadInput = document.getElementById('iconUploadInput');
+            
+            // Icon Mapping
+            const iconUrlInput = document.getElementById('iconUrlInput');
+            const iconUploadInput = document.getElementById('iconUploadInput');
+            const appIconUrl = document.getElementById('appIconUrl');
+            const appIconFile = document.getElementById('appIconFile');
+            
+            // Splash Mapping
             const splashImageUrlInput = document.getElementById('splashImageUrl');
             const splashImageUploadDiv = document.getElementById('imageUploadInput');
             const splashImageUrlDiv = document.getElementById('imageUrlInput');
+            const splashImageFile = document.getElementById('splashImageFile');
             
             // Simulator Elements
             const simSplashContainer = document.getElementById('simSplashContainer');
@@ -636,13 +631,6 @@
             const simLogoWrapper = document.getElementById('simLogoWrapper');
 
             const simOfflineContainer = document.getElementById('simOfflineContainer');
-            const simOfflineTitle = document.getElementById('simOfflineTitle');
-            const simOfflineDesc = document.getElementById('simOfflineDesc');
-            const simOfflineBtn = document.getElementById('simOfflineBtn');
-            const simOfflineIcon = document.getElementById('simOfflineIcon');
-            const simOfflineImage = document.getElementById('simOfflineImage');
-            const simOfflineSVG = document.getElementById('simOfflineSVG');
-            
             const splashBgColorInput = document.getElementById('splashBgColor');
             const splashTextColorInput = document.getElementById('splashTextColor');
             const splashLoadingTextInput = document.getElementById('splashLoadingText');
@@ -668,10 +656,10 @@
             // --- FUNCTIONS ---
             
             function showSection(section) {
-                formSection.classList.add('hidden');
-                progressSection.classList.add('hidden');
-                resultSection.classList.add('hidden');
-                errorSection.classList.add('hidden');
+                if(formSection) formSection.classList.add('hidden');
+                if(progressSection) progressSection.classList.add('hidden');
+                if(resultSection) resultSection.classList.add('hidden');
+                if(errorSection) errorSection.classList.add('hidden');
                 if(section) section.classList.remove('hidden');
             }
 
@@ -814,12 +802,15 @@
             if (heroForm) {
                 heroForm.addEventListener('submit', (e) => {
                     e.preventDefault();
+                    if (!heroAppName || !heroAppUrl) return;
                     if (!heroAppName.value.trim() || !heroAppUrl.value.trim()) return;
 
-                    landingPage.classList.add('opacity-0', 'transition-opacity', 'duration-500');
+                    console.log("Landing Page: Transitioning to Builder");
+                    if (landingPage) landingPage.classList.add('opacity-0', 'transition-opacity', 'duration-500');
+                    
                     setTimeout(() => {
-                        landingPage.classList.add('hidden');
-                        appBuilder.classList.remove('hidden');
+                        if (landingPage) landingPage.classList.add('hidden');
+                        if (appBuilder) appBuilder.classList.remove('hidden');
                         const step2 = document.getElementById('step2Section');
                         if (step2) {
                             step2.classList.remove('hidden');
@@ -834,20 +825,23 @@
                     const step2 = document.getElementById('step2Section');
                     if (step2) step2.classList.add('opacity-0', 'translate-x-4');
                     setTimeout(() => {
-                        appBuilder.classList.add('hidden');
-                        landingPage.classList.remove('hidden');
-                        setTimeout(() => landingPage.classList.remove('opacity-0'), 10);
+                        if (appBuilder) appBuilder.classList.add('hidden');
+                        if (landingPage) {
+                            landingPage.classList.remove('hidden');
+                            setTimeout(() => landingPage.classList.remove('opacity-0'), 10);
+                        }
                     }, 300);
                 });
             }
 
             // Sync Simulator on Input
-            [splashBgColorInput, splashTextColorInput, splashProgressBarColorInput, splashLogoBgColorInput, splashLoadingTextInput].forEach(el => {
+            [splashBgColorInput, splashTextColorInput, splashProgressBarColorInput, splashLogoBgColorInput, splashLoadingTextInput, offlineTitleInput, offlineDescInput, offlineBtnTextInput, offlineColorInput].forEach(el => {
                 if(el) el.addEventListener('input', updateSimulator);
             });
+
             if(useCustomSplashCheckbox) {
                 useCustomSplashCheckbox.addEventListener('change', (e) => {
-                    customSplashSettings.classList.toggle('hidden', !e.target.checked);
+                    if(customSplashSettings) customSplashSettings.classList.toggle('hidden', !e.target.checked);
                     updateSimulator();
                 });
             }
@@ -857,27 +851,20 @@
                     updateSimulator();
                 });
             }
-
             if(useCustomOfflineCheckbox) {
                 useCustomOfflineCheckbox.addEventListener('change', (e) => {
-                    customOfflineSettings.classList.toggle('hidden', !e.target.checked);
-                    if(e.target.checked) {
-                        // Switch logic removed since dual simulators are always visible
-                    }
+                    if(customOfflineSettings) customOfflineSettings.classList.toggle('hidden', !e.target.checked);
                     updateSimulator();
                 });
             }
-
-            [offlineTitleInput, offlineDescInput, offlineBtnTextInput, offlineColorInput].forEach(el => {
-                if(el) el.addEventListener('input', updateSimulator);
-            });
 
             document.querySelectorAll('input[name="offlineIconType"]').forEach(r => r.addEventListener('change', (e) => {
                 if(offlineUploadInput) offlineUploadInput.classList.toggle('hidden', e.target.value !== 'asset');
                 updateSimulator();
             }));
 
-            document.getElementById('offlineImageFile').addEventListener('change', updateSimulator);
+            const offlineImageFile = document.getElementById('offlineImageFile');
+            if(offlineImageFile) offlineImageFile.addEventListener('change', updateSimulator);
 
             document.querySelectorAll('input[name="imageType"]').forEach(r => r.addEventListener('change', (e) => {
                 if(splashImageUrlDiv) splashImageUrlDiv.classList.toggle('hidden', e.target.value !== 'url');
@@ -896,16 +883,18 @@
 
             document.querySelectorAll('input[name="iconType"]').forEach(r => {
                 r.addEventListener('change', (e) => {
-                    document.getElementById('iconUrlInput').classList.toggle('hidden', e.target.value !== 'url');
-                    document.getElementById('iconUploadInput').classList.toggle('hidden', e.target.value !== 'upload');
+                    if(iconUrlInput) iconUrlInput.classList.toggle('hidden', e.target.value !== 'url');
+                    if(iconUploadInput) iconUploadInput.classList.toggle('hidden', e.target.value !== 'upload');
                     updateIconPreview();
                 });
             });
 
-            document.getElementById('splashImageUrl').addEventListener('input', updateSimulator);
-            document.getElementById('splashImageFile').addEventListener('change', updateSimulator);
-            document.getElementById('appIconUrl').addEventListener('input', updateIconPreview);
-            document.getElementById('appIconFile').addEventListener('change', updateIconPreview);
+            if(splashImageUrlInput) splashImageUrlInput.addEventListener('input', updateSimulator);
+            if(splashImageFile) splashImageFile.addEventListener('change', updateSimulator);
+            const appIconUrlInput = document.getElementById('appIconUrl');
+            const appIconFileInput = document.getElementById('appIconFile');
+            if(appIconUrlInput) appIconUrlInput.addEventListener('input', updateIconPreview);
+            if(appIconFileInput) appIconFileInput.addEventListener('change', updateIconPreview);
 
             // --- BUILD PROCESS ---
 
