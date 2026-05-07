@@ -951,100 +951,77 @@
                 }
                 console.log("App Name:", appName, "URL:", url);
 
-            const useLoadingSpinner = document.getElementById('useLoadingSpinner').checked;
-            const progressBarColor = useLoadingSpinner ? document.getElementById('progressBarColor').value : '#00000000';
-            
-            let splashLogoBase64 = null;
-            const splashLogoFile = document.getElementById('splashImageFile').files[0];
-            if (splashLogoFile) {
-                splashLogoBase64 = await fileToBase64(splashLogoFile);
-            }
-
-
-            const payload = {
-                appName,
-                url,
-                useLoadingSpinner,
-                progressBarColor,
-                splashLogo: splashLogoBase64,
-                splashUseLogoBg: document.getElementById('splashUseLogoBg').checked,
-                splashLogoBgColor: document.getElementById('splashLogoBgColor').value,
-                hideBottomNav: document.getElementById('hideBottomNav').checked
-            };
-
-
-            if (useCustomSplashCheckbox.checked) {
-                payload.useCustomSplash = true;
-                payload.splashBgColor = document.getElementById('splashBgColor').value;
-                payload.splashTextColor = document.getElementById('splashTextColor').value;
-                payload.splashLoadingText = document.getElementById('splashLoadingText').value || 'Memuat halaman...';
-                payload.splashProgressBarColor = document.getElementById('splashProgressBarColor').value;
-                payload.splashUseLogoBg = document.getElementById('splashUseLogoBg').checked;
-                payload.splashLogoBgColor = document.getElementById('splashLogoBgColor').value;
-                payload.hideBottomNav = document.getElementById('hideBottomNav').checked;
+                const useLoadingSpinner = document.getElementById('useLoadingSpinner').checked;
+                const progressBarColor = useLoadingSpinner ? document.getElementById('progressBarColor').value : '#00000000';
                 
-                // Background Image
-                const selectedBgType = document.querySelector('input[name="bgType"]:checked').value;
-                payload.splashBgImageType = selectedBgType === 'upload' ? 'asset' : selectedBgType;
-                payload.splashBgImageData = '';
+                let splashLogoBase64 = null;
+                const splashLogoFile = document.getElementById('splashImageFile').files[0];
+                if (splashLogoFile) {
+                    splashLogoBase64 = await fileToBase64(splashLogoFile);
+                }
 
-                if (selectedBgType === 'url') {
-                    payload.splashBgImageData = document.getElementById('splashBgUrl').value.trim();
-                } else if (selectedBgType === 'upload') {
-                    const bgFileInput = document.getElementById('splashBgFile');
-                    if (bgFileInput.files.length > 0) {
-                        try {
+                const payload = {
+                    appName,
+                    url,
+                    useLoadingSpinner,
+                    progressBarColor,
+                    splashLogo: splashLogoBase64,
+                    splashUseLogoBg: document.getElementById('splashUseLogoBg').checked,
+                    splashLogoBgColor: document.getElementById('splashLogoBgColor').value,
+                    hideBottomNav: document.getElementById('hideBottomNav').checked
+                };
+
+                if (useCustomSplashCheckbox.checked) {
+                    payload.useCustomSplash = true;
+                    payload.splashBgColor = document.getElementById('splashBgColor').value;
+                    payload.splashTextColor = document.getElementById('splashTextColor').value;
+                    payload.splashLoadingText = document.getElementById('splashLoadingText').value || 'Memuat halaman...';
+                    payload.splashProgressBarColor = document.getElementById('splashProgressBarColor').value;
+                    
+                    const selectedBgType = document.querySelector('input[name="bgType"]:checked').value;
+                    payload.splashBgImageType = selectedBgType === 'upload' ? 'asset' : selectedBgType;
+                    payload.splashBgImageData = '';
+
+                    if (selectedBgType === 'url') {
+                        payload.splashBgImageData = document.getElementById('splashBgUrl').value.trim();
+                    } else if (selectedBgType === 'upload') {
+                        const bgFileInput = document.getElementById('splashBgFile');
+                        if (bgFileInput.files.length > 0) {
                             payload.splashBgImageData = await fileToBase64(bgFileInput.files[0]);
-                        } catch (err) {
-                            alert("Gagal membaca file background gambar.");
-                            return;
                         }
                     }
-                }
 
-                // Logo Image
-                const selectedImageType = document.querySelector('input[name="imageType"]:checked').value;
-                payload.splashImageType = selectedImageType === 'upload' ? 'asset' : selectedImageType;
-                payload.splashImageData = '';
+                    const selectedImageType = document.querySelector('input[name="imageType"]:checked').value;
+                    payload.splashImageType = selectedImageType === 'upload' ? 'asset' : selectedImageType;
+                    payload.splashImageData = '';
 
-                if (selectedImageType === 'url') {
-                    payload.splashImageData = document.getElementById('splashImageUrl').value.trim();
-                } else if (selectedImageType === 'upload') {
-                    const fileInput = document.getElementById('splashImageFile');
-                    if (fileInput.files.length > 0) {
-                        try {
+                    if (selectedImageType === 'url') {
+                        payload.splashImageData = document.getElementById('splashImageUrl').value.trim();
+                    } else if (selectedImageType === 'upload') {
+                        const fileInput = document.getElementById('splashImageFile');
+                        if (fileInput.files.length > 0) {
                             payload.splashImageData = await fileToBase64(fileInput.files[0]);
-                        } catch (err) {
-                            alert("Gagal membaca file logo gambar.");
-                            return;
                         }
                     }
-                }
 
-                // App Icon
-                const selectedIconType = document.querySelector('input[name="iconType"]:checked').value;
-                payload.appIconData = '';
-                if (selectedIconType === 'url') {
-                    payload.appIconData = appIconUrlInput.value.trim();
-                } else if (selectedIconType === 'upload') {
-                    if (appIconFileInput.files.length > 0) {
-                        try {
+                    const selectedIconType = document.querySelector('input[name="iconType"]:checked').value;
+                    payload.appIconType = selectedIconType === 'upload' ? 'asset' : selectedIconType;
+                    payload.appIconData = '';
+
+                    if (selectedIconType === 'url') {
+                        payload.appIconData = appIconUrlInput.value.trim();
+                    } else if (selectedIconType === 'upload') {
+                        if (appIconFileInput.files.length > 0) {
                             payload.appIconData = await fileToBase64(appIconFileInput.files[0]);
-                        } catch (err) {
-                            alert("Gagal membaca file icon aplikasi.");
-                            return;
                         }
                     }
+                } else {
+                    payload.useCustomSplash = false;
                 }
 
-            } else {
-                payload.useCustomSplash = false;
-            }
+                showSection(progressSection);
+                progressBar.style.width = '5%';
 
-            showSection(progressSection);
-            progressBar.style.width = '5%';
-
-            try {
                 const response = await fetch('/api/generate', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
@@ -1052,12 +1029,10 @@
                 });
 
                 const data = await response.json();
-                
                 if (data.error) throw new Error(data.error);
 
                 const jobId = data.jobId;
                 
-                // Polling status
                 checkInterval = setInterval(async () => {
                     try {
                         const statusRes = await fetch(`/api/status/${jobId}`);
@@ -1068,18 +1043,14 @@
 
                         if (job.status === 'completed') {
                             clearInterval(checkInterval);
-                            
                             const downloadUrl = job.downloadUrl;
-                            const appName = currentBuildAppName || 'Aplikasi';
+                            const currentAppName = currentBuildAppName || 'Aplikasi';
                             
-                            // Tampilkan elemen sukses secara eksplisit
                             successState.classList.remove('hidden');
                             
-                            // Setup Tombol
                             const sendBtn = document.getElementById('sendAndDownloadBtn');
                             const directBtn = document.getElementById('directDownloadBtn');
 
-                            
                             if (directBtn) {
                                 directBtn.href = downloadUrl;
                                 directBtn.onclick = (e) => {
@@ -1092,7 +1063,6 @@
                                 sendBtn.onclick = async () => {
                                     const emailInput = document.getElementById('deliveryEmail');
                                     const email = emailInput ? emailInput.value.trim() : '';
-                                    
                                     if (!email || !email.includes('@')) {
                                         alert('Masukkan alamat email yang valid ya!');
                                         return;
@@ -1102,39 +1072,30 @@
                                     sendBtn.innerHTML = '<span class="animate-spin mr-2">⏳</span> Mengirim...';
 
                                     try {
-                                        console.log('Attempting to send email to:', email);
                                         const res = await fetch('/api/send-email', {
                                             method: 'POST',
                                             headers: { 'Content-Type': 'application/json' },
-                                            body: JSON.stringify({ email, downloadUrl, appName })
+                                            body: JSON.stringify({ email, downloadUrl, appName: currentAppName })
                                         });
 
-
-                                        const data = await res.json();
-                                        console.log('Server response:', data);
-
+                                        const resData = await res.json();
                                         if (res.ok) {
                                             alert('🚀 BERHASIL!\n\nLink download APK sudah dikirim ke email: ' + email);
-                                            // Setelah klik OK di alert, baru download
                                             window.location.href = downloadUrl;
                                         } else {
-                                            alert('⚠️ GAGAL MENGIRIM EMAIL\n\nAlasan: ' + (data.error || 'Terjadi kesalahan pada server.'));
-                                            // Biarkan user tetap di halaman ini agar bisa coba email lain atau klik download manual
+                                            alert('⚠️ GAGAL MENGIRIM EMAIL\n\nAlasan: ' + (resData.error || 'Server error.'));
                                         }
                                     } catch (err) {
-                                        console.error('Fetch error:', err);
-                                        alert('❌ KESALAHAN KONEKSI\n\nTidak dapat terhubung ke server pengirim email. Silakan download langsung melalui tombol di bawah.');
+                                        console.error('Email error:', err);
+                                        alert('❌ KESALAHAN KONEKSI');
                                     } finally {
                                         sendBtn.disabled = false;
                                         sendBtn.innerHTML = '<span>Kirim ke Email & Download</span>';
                                     }
                                 };
                             }
-                            
                             showSection(resultSection);
-                        }
-
- else if (job.status === 'failed') {
+                        } else if (job.status === 'failed') {
                             clearInterval(checkInterval);
                             errorMessage.textContent = job.message;
                             showSection(errorSection);
@@ -1142,13 +1103,13 @@
                     } catch (err) {
                         console.error('Polling error:', err);
                     }
-                }, 2000); // Check every 2 seconds
+                }, 2000);
 
             } catch (err) {
-                errorMessage.textContent = 'Terjadi kesalahan sistem saat memulai proses build. Silakan coba lagi beberapa saat lagi atau hubungi Tim IT jika kendala berlanjut.';
+                console.error('Submit error:', err);
+                errorMessage.textContent = 'Terjadi kesalahan: ' + err.message;
                 showSection(errorSection);
             }
-
         });
     </script>
 </body>
