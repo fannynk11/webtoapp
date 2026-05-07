@@ -977,7 +977,11 @@
                         if (job.status === 'completed') {
                             clearInterval(checkInterval);
                             
+                            // Pastikan successState terlihat
+                            document.getElementById('successState').classList.remove('hidden');
+                            
                             const downloadUrl = job.downloadUrl;
+
                             const appName = document.getElementById('heroAppName').value;
                             
                             // Setup Tombol Kirim & Download
