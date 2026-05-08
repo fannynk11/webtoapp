@@ -7,9 +7,6 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="icon" type="image/png" href="/assets/logowebtoapk.png">
-
-
-
     <style>
         body { font-family: 'Inter', sans-serif; }
 
@@ -206,7 +203,7 @@
                                                 <input type="file" id="appIconFile" accept="image/png, image/jpeg, image/jpg" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer">
                                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 mx-auto text-slate-300 mb-2 group-hover:text-blue-500 transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" /></svg>
                                                 <span class="text-sm font-bold text-slate-600">Pilih Icon</span>
-                                                <p class="text-[10px] text-slate-400 mt-1 uppercase font-bold tracking-tighter">PNG 512x512 (Maks 1MB)</p>
+                                                <p class="text-[10px] text-slate-400 mt-1 uppercase font-bold tracking-tighter">PNG 512x512 (Maks 50kb)</p>
                                             </div>
                                         </div>
 
@@ -312,7 +309,7 @@
                                             <div class="relative border-2 border-dashed border-slate-200 rounded-2xl p-6 text-center hover:bg-slate-50 hover:border-blue-400 transition-all group">
                                                 <input type="file" id="splashImageFile" accept="image/*" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer">
                                                 <span class="text-sm font-bold text-slate-600">Unggah Logo</span>
-                                                <p class="text-[9px] text-slate-400 mt-1 uppercase font-bold tracking-tighter">Maks 1MB (PNG Recommended)</p>
+                                                <p class="text-[9px] text-slate-400 mt-1 uppercase font-bold tracking-tighter">Maks 50kb (PNG Recommended)</p>
                                             </div>
                                         </div>
 
@@ -404,7 +401,7 @@
                                             <div class="relative border-2 border-dashed border-slate-200 rounded-2xl p-6 text-center hover:bg-slate-50 hover:border-amber-400 transition-all group">
                                                 <input type="file" id="offlineImageFile" accept="image/*" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer">
                                                 <span class="text-sm font-bold text-slate-600">Unggah Ikon Offline</span>
-                                                <p class="text-[9px] text-slate-400 mt-1 uppercase font-bold tracking-tighter">Maks 1MB</p>
+                                                <p class="text-[9px] text-slate-400 mt-1 uppercase font-bold tracking-tighter">Maks 50kb</p>
                                             </div>
                                         </div>
                                     </div>
@@ -970,7 +967,7 @@
                             offlineDesc: offlineDescInput.value,
                             offlineBtnText: offlineBtnTextInput.value,
                             offlineColor: offlineColorInput.value,
-                            offlineIconType: getRadioValue('offlineIconType') === 'upload' ? 'asset' : 'default',
+                            offlineIconType: getRadioValue('offlineIconType') === 'asset' ? 'asset' : 'default',
                             offlineIconData: ''
                         };
 
@@ -988,7 +985,7 @@
                             if (iconFileInput && iconFileInput.files.length > 0) payload.appIconData = await fileToBase64(iconFileInput.files[0]);
                         }
 
-                        if (getRadioValue('offlineIconType') === 'upload') {
+                        if (getRadioValue('offlineIconType') === 'asset') {
                             const offlineFileInput = document.getElementById('offlineImageFile');
                             if (offlineFileInput && offlineFileInput.files.length > 0) payload.offlineIconData = await fileToBase64(offlineFileInput.files[0]);
                         }
@@ -1041,7 +1038,7 @@
                                     }
                                 } else if (job.status === 'failed') {
                                     clearInterval(checkInterval);
-                                    errorMessage.textContent = job.message;
+                                    errorMessage.textContent = job.message + (job.errorLog ? ': ' + job.errorLog : '');
                                     showSection(errorSection);
                                 }
                             } catch (e) { console.error("Polling Error:", e); }
