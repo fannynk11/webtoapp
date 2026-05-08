@@ -128,11 +128,13 @@ jobs:
           echo "$EMPTY_PNG" | base64 -d > assets/offline_icon.png
 
           # Handle App Icon (Overwrite placeholder if provided)
-          if [ -n "${{ github.event.inputs.app_icon_data }}" ]; then
-            if [[ "${{ github.event.inputs.app_icon_data }}" == http* ]]; then
-              curl -L "${{ github.event.inputs.app_icon_data }}" -o assets/app_icon.png
+          APP_ICON_DATA="${{ github.event.inputs.app_icon_data }}"
+          if [ -n "$APP_ICON_DATA" ]; then
+            if [[ "$APP_ICON_DATA" == http* ]]; then
+              curl -L "$APP_ICON_DATA" -o assets/app_icon.png
             else
-              echo "${{ github.event.inputs.app_icon_data }}" | cut -d',' -f2 | base64 -d > assets/app_icon.png
+              echo "$APP_ICON_DATA" > app_icon_base64.txt
+              cut -d',' -f2 app_icon_base64.txt | base64 -d > assets/app_icon.png
             fi
             # Generate icons
             flutter pub run flutter_launcher_icons
@@ -166,7 +168,8 @@ jobs:
             if [[ "$OFFLINE_ICON_DATA" == http* ]]; then
               curl -L "$OFFLINE_ICON_DATA" -o assets/offline_icon.png
             else
-              echo "$OFFLINE_ICON_DATA" | cut -d',' -f2 | base64 -d > assets/offline_icon.png
+              echo "$OFFLINE_ICON_DATA" > offline_icon_base64.txt
+              cut -d',' -f2 offline_icon_base64.txt | base64 -d > assets/offline_icon.png
             fi
             OFFLINE_ICON_DATA="assets/offline_icon.png"
           fi
