@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="id">
 <head>
     <meta charset="UTF-8">
@@ -426,7 +426,7 @@
                                     <div class="absolute bottom-1.5 w-20 h-1 bg-slate-300 rounded-full z-20"></div>
 
                                     <!-- VIEW 1: Splash Screen -->
-                                    <div id="simSplashView" class="absolute inset-0 flex flex-col items-center justify-center p-6 text-center z-10 transition-all duration-500 bg-white" id="simSplashContainer">
+                                    <div id="simSplashView" class="absolute inset-0 flex flex-col items-center justify-center p-6 text-center z-10 transition-all duration-500 bg-white">
                                         <div id="simLogoWrapper" class="w-24 h-24 flex items-center justify-center mb-6 drop-shadow-2xl hidden">
                                             <img id="simImage" src="" class="w-full h-full object-contain" />
                                         </div>
@@ -463,12 +463,12 @@
                     </div>
                 </div> <!-- Closing step2Section -->
 
-            </form>
+            </div> <!-- Closing formSection -->
         </div>
 
 
         <!-- Progress Section -->
-        <div id="progressSection" class="p-8 hidden text-center">
+        <div id="progressSection" class="p-8 hidden text-center max-w-2xl mx-auto">
             <div class="mb-8 relative w-28 h-28 mx-auto flex items-center justify-center">
                 <div class="absolute inset-0 border-4 border-slate-100 rounded-full"></div>
                 <div class="absolute inset-0 border-4 border-slate-800 rounded-full border-t-transparent animate-spin"></div>
@@ -550,17 +550,18 @@
     </div>
 
 
+
+
     <script>
         window.onload = function() {
-            console.log("WebToAPK: Script Initializing...");
+            console.log("WebToAPK: Script Loaded v2");
 
-            // --- VARIABLES ---
+            // --- DOM REFERENCES ---
             const heroForm = document.getElementById('heroForm');
             const heroAppName = document.getElementById('heroAppName');
             const heroAppUrl = document.getElementById('heroAppUrl');
             const landingPage = document.getElementById('landingPage');
             const appBuilder = document.getElementById('appBuilder');
-            
             const formSection = document.getElementById('formSection');
             const progressSection = document.getElementById('progressSection');
             const resultSection = document.getElementById('resultSection');
@@ -568,42 +569,20 @@
             const successState = document.getElementById('successState');
             const btnBuild = document.getElementById('btnBuild');
             const btnBack = document.getElementById('btnBack');
-
             const statusMessage = document.getElementById('statusMessage');
             const progressBar = document.getElementById('progressBar');
             const errorMessage = document.getElementById('errorMessage');
 
-            const useCustomOfflineCheckbox = document.getElementById('useCustomOffline');
-            const customOfflineSettings = document.getElementById('customOfflineSettings');
             const useCustomSplashCheckbox = document.getElementById('useCustomSplash');
             const customSplashSettings = document.getElementById('customSplashSettings');
-            const offlineUploadInput = document.getElementById('offlineUploadInput');
-            
-            // Icon Mapping
+            const useCustomOfflineCheckbox = document.getElementById('useCustomOffline');
+            const customOfflineSettings = document.getElementById('customOfflineSettings');
+
             const iconUrlInput = document.getElementById('iconUrlInput');
             const iconUploadInput = document.getElementById('iconUploadInput');
-            const appIconUrl = document.getElementById('appIconUrl');
-            const appIconFile = document.getElementById('appIconFile');
-            
-            // Splash Mapping
-            const splashImageUrlInput = document.getElementById('splashImageUrl');
-            const splashImageUploadDiv = document.getElementById('imageUploadInput');
             const splashImageUrlDiv = document.getElementById('imageUrlInput');
-            const splashImageFile = document.getElementById('splashImageFile');
-            
-            // Simulator Elements
-            const simSplashView = document.getElementById('simSplashView');
-            const simOfflineView = document.getElementById('simOfflineView');
-            const simModeText = document.getElementById('simModeText');
-            const btnSwitchSimView = document.getElementById('btnSwitchSimView');
-            
-            const simSplashContainer = document.getElementById('simSplashView'); // Legacy alias for updateSimulator
-            const simImage = document.getElementById('simImage');
-            const simText = document.getElementById('simText');
-            const simSpinner = document.getElementById('simSpinner');
-            const simLogoWrapper = document.getElementById('simLogoWrapper');
+            const splashImageUploadDiv = document.getElementById('imageUploadInput');
 
-            const simOfflineContainer = document.getElementById('simOfflineView'); // Legacy alias for updateSimulator
             const splashBgColorInput = document.getElementById('splashBgColor');
             const splashTextColorInput = document.getElementById('splashTextColor');
             const splashLoadingTextInput = document.getElementById('splashLoadingText');
@@ -616,141 +595,141 @@
             const offlineDescInput = document.getElementById('offlineDesc');
             const offlineBtnTextInput = document.getElementById('offlineBtnText');
             const offlineColorInput = document.getElementById('offlineColor');
+
+            // Simulator
+            const simSplashView = document.getElementById('simSplashView');
+            const simOfflineView = document.getElementById('simOfflineView');
+            const simModeText = document.getElementById('simModeText');
+            const btnSwitchSimView = document.getElementById('btnSwitchSimView');
+            const simImage = document.getElementById('simImage');
+            const simText = document.getElementById('simText');
+            const simSpinner = document.getElementById('simSpinner');
+            const simLogoWrapper = document.getElementById('simLogoWrapper');
             const simOfflineTitle = document.getElementById('simOfflineTitle');
             const simOfflineDesc = document.getElementById('simOfflineDesc');
             const simOfflineBtn = document.getElementById('simOfflineBtn');
             const simOfflineIcon = document.getElementById('simOfflineIcon');
-            const simOfflineImage = document.getElementById('simOfflineImage');
-            const simOfflineSVG = document.getElementById('simOfflineSVG');
 
             let checkInterval;
             let currentBuildAppName = '';
             let currentSimMode = 'splash';
 
-            // --- FUNCTIONS ---
-            
+            // --- Color hex sync ---
+            function syncColorHex(colorInput, hexSpanId) {
+                const hexSpan = document.getElementById(hexSpanId);
+                if (colorInput && hexSpan) {
+                    hexSpan.textContent = colorInput.value.toUpperCase();
+                    colorInput.addEventListener('input', () => {
+                        hexSpan.textContent = colorInput.value.toUpperCase();
+                    });
+                }
+            }
+            syncColorHex(splashBgColorInput, 'splashBgColorHex');
+            syncColorHex(splashTextColorInput, 'splashTextColorHex');
+            syncColorHex(splashProgressBarColorInput, 'splashProgressBarColorHex');
+            syncColorHex(splashLogoBgColorInput, 'splashLogoBgColorHex');
+            syncColorHex(offlineColorInput, 'offlineColorHex');
+
+            // --- File to Base64 ---
+            function fileToBase64(file) {
+                return new Promise((resolve, reject) => {
+                    const reader = new FileReader();
+                    reader.onload = () => resolve(reader.result);
+                    reader.onerror = reject;
+                    reader.readAsDataURL(file);
+                });
+            }
+
+            // --- Section Visibility ---
+            function showSection(sectionToShow) {
+                [formSection, progressSection, resultSection, errorSection].forEach(s => {
+                    if (s) s.classList.add('hidden');
+                });
+                if (sectionToShow) sectionToShow.classList.remove('hidden');
+            }
+
+            // --- Simulator ---
             function switchSimulatorView(mode) {
                 if (!simSplashView || !simOfflineView || !simModeText) return;
-                
+                currentSimMode = mode;
                 if (mode === 'splash') {
                     simSplashView.classList.remove('opacity-0', 'translate-y-10', 'z-0');
                     simSplashView.classList.add('z-10');
                     simOfflineView.classList.add('opacity-0', 'translate-y-10', 'z-0');
                     simOfflineView.classList.remove('z-10');
                     simModeText.innerText = 'Splash View';
-                    currentSimMode = 'splash';
                 } else {
                     simOfflineView.classList.remove('opacity-0', 'translate-y-10', 'z-0');
                     simOfflineView.classList.add('z-10');
                     simSplashView.classList.add('opacity-0', 'translate-y-10', 'z-0');
                     simSplashView.classList.remove('z-10');
                     simModeText.innerText = 'Offline View';
-                    currentSimMode = 'offline';
                 }
             }
-            window.switchSimulatorView = switchSimulatorView;
-
-            function showSection(section) {
-                if(formSection) formSection.classList.add('hidden');
-                if(progressSection) progressSection.classList.add('hidden');
-                if(resultSection) resultSection.classList.add('hidden');
-                if(errorSection) errorSection.classList.add('hidden');
-                if(section) section.classList.remove('hidden');
-            }
-
-
-            function resetForm() {
-                if(heroForm) heroForm.reset();
-                
-                // Reset to Landing Page
-                if(appBuilder) appBuilder.classList.add('hidden');
-                if(landingPage) {
-                    landingPage.classList.remove('hidden');
-                    landingPage.classList.remove('opacity-0');
-                }
-                
-                const step2Section = document.getElementById('step2Section');
-                if(step2Section) step2Section.classList.add('opacity-0', 'translate-x-4');
-
-                if(customSplashSettings) customSplashSettings.classList.add('hidden');
-                if(customOfflineSettings) customOfflineSettings.classList.add('hidden');
-                if(successState) successState.classList.add('hidden');
-                
-                showSection(formSection);
-                switchSimulatorView('splash');
-                updateSimulator();
-                if(checkInterval) clearInterval(checkInterval);
-            }
-            window.resetForm = resetForm; // Make global for onclick handlers
 
             function updateSimulator() {
                 try {
-                    // Update Splash Simulator
-                    if (simSplashContainer) {
-                        simSplashContainer.style.backgroundColor = splashBgColorInput.value;
-                        simText.innerText = splashLoadingTextInput.value || 'Memuat halaman...';
-                        simText.style.color = splashTextColorInput.value;
+                    // Splash view
+                    if (simSplashView) {
+                        simSplashView.style.backgroundColor = splashBgColorInput ? splashBgColorInput.value : '#FFFFFF';
+                        if (simText) {
+                            simText.innerText = splashLoadingTextInput ? (splashLoadingTextInput.value || 'Memuat halaman...') : 'Memuat halaman...';
+                            simText.style.color = splashTextColorInput ? splashTextColorInput.value : '#6C63FF';
+                        }
 
-                        const selectedImageType = document.querySelector('input[name="imageType"]:checked')?.value || 'none';
-                        
-                        simLogoWrapper.classList.add('hidden');
-                        simImage.classList.add('hidden');
-                        simSpinner.classList.add('hidden');
+                        const selectedImageType = document.querySelector('input[name="imageType"]:checked');
+                        const imgType = selectedImageType ? selectedImageType.value : 'none';
 
-                        if (selectedImageType === 'spinner') {
-                            simSpinner.classList.remove('hidden');
-                            simSpinner.style.borderTopColor = splashProgressBarColorInput.value;
-                        } else if (selectedImageType === 'url') {
-                            const url = document.getElementById('splashImageUrl').value.trim();
-                            if (url) {
-                                simImage.src = url;
+                        if (simLogoWrapper) simLogoWrapper.classList.add('hidden');
+                        if (simImage) simImage.classList.add('hidden');
+                        if (simSpinner) simSpinner.classList.add('hidden');
+
+                        if (imgType === 'spinner') {
+                            if (simSpinner) {
+                                simSpinner.classList.remove('hidden');
+                                simSpinner.style.borderTopColor = splashProgressBarColorInput ? splashProgressBarColorInput.value : '#6C63FF';
+                            }
+                        } else if (imgType === 'url') {
+                            const url = document.getElementById('splashImageUrl');
+                            if (url && url.value.trim() && simImage && simLogoWrapper) {
+                                simImage.src = url.value.trim();
                                 simImage.classList.remove('hidden');
                                 simLogoWrapper.classList.remove('hidden');
                             }
-                        } else if (selectedImageType === 'upload') {
+                        } else if (imgType === 'upload') {
                             const fileInput = document.getElementById('splashImageFile');
-                            if (fileInput && fileInput.files.length > 0) {
+                            if (fileInput && fileInput.files.length > 0 && simImage && simLogoWrapper) {
                                 simImage.src = URL.createObjectURL(fileInput.files[0]);
                                 simImage.classList.remove('hidden');
                                 simLogoWrapper.classList.remove('hidden');
                             }
                         }
 
-                        if (splashUseLogoBgCheckbox.checked && selectedImageType !== 'spinner' && selectedImageType !== 'none') {
-                            simImage.style.backgroundColor = splashLogoBgColorInput.value;
+                        // Logo background
+                        if (simImage && splashUseLogoBgCheckbox && splashUseLogoBgCheckbox.checked && imgType !== 'spinner' && imgType !== 'none') {
+                            simImage.style.backgroundColor = splashLogoBgColorInput ? splashLogoBgColorInput.value : '#FFFFFF';
                             simImage.classList.add('p-2', 'rounded-2xl');
-                        } else {
+                        } else if (simImage) {
                             simImage.style.backgroundColor = 'transparent';
                             simImage.classList.remove('p-2', 'rounded-2xl');
                         }
                     }
 
-                    // Update Offline Simulator
-                    if (simOfflineContainer) {
-                        simOfflineContainer.style.backgroundColor = '#FFFFFF';
-                        simOfflineTitle.innerText = offlineTitleInput.value;
-                        simOfflineDesc.innerText = offlineDescInput.value;
-                        simOfflineBtn.innerText = offlineBtnTextInput.value;
-                        simOfflineBtn.style.backgroundColor = offlineColorInput.value;
-                        simOfflineIcon.style.color = offlineColorInput.value;
-                        simOfflineIcon.style.backgroundColor = offlineColorInput.value + '15'; // 15 = opacity
-
-                        const selectedOfflineIcon = document.querySelector('input[name="offlineIconType"]:checked')?.value || 'default';
-                        if (selectedOfflineIcon === 'default') {
-                            simOfflineSVG.classList.remove('hidden');
-                            simOfflineImage.classList.add('hidden');
-                        } else {
-                            const fileInput = document.getElementById('offlineImageFile');
-                            if (fileInput && fileInput.files.length > 0) {
-                                simOfflineImage.src = URL.createObjectURL(fileInput.files[0]);
-                                simOfflineImage.classList.remove('hidden');
-                                simOfflineSVG.classList.add('hidden');
-                            }
+                    // Offline view
+                    if (simOfflineView) {
+                        if (simOfflineTitle) simOfflineTitle.innerText = offlineTitleInput ? offlineTitleInput.value : 'Koneksi Terputus';
+                        if (simOfflineDesc) simOfflineDesc.innerText = offlineDescInput ? offlineDescInput.value : '';
+                        if (simOfflineBtn) {
+                            simOfflineBtn.innerText = offlineBtnTextInput ? offlineBtnTextInput.value : 'Coba Lagi';
+                            simOfflineBtn.style.backgroundColor = offlineColorInput ? offlineColorInput.value : '#F59E0B';
+                        }
+                        if (simOfflineIcon) {
+                            const color = offlineColorInput ? offlineColorInput.value : '#F59E0B';
+                            simOfflineIcon.style.color = color;
+                            simOfflineIcon.style.backgroundColor = color + '15';
                         }
                     }
-                } catch (e) {
-                    console.error("Simulator update failed:", e);
-                }
+                } catch (e) { console.error("Simulator update error:", e); }
             }
 
             function updateIconPreview() {
@@ -760,15 +739,16 @@
                     const previewImg = document.getElementById('iconPreviewImg');
                     const previewSVG = document.getElementById('iconPreviewSVG');
                     const previewText = document.getElementById('iconPreviewText');
+                    if (!previewImg || !previewSVG || !previewText) return;
 
                     if (selected === 'none') {
                         previewImg.classList.add('hidden');
                         previewSVG.classList.remove('hidden');
                         previewText.textContent = 'Standard Flutter';
                     } else if (selected === 'url') {
-                        const url = document.getElementById('appIconUrl').value.trim();
-                        if (url) {
-                            previewImg.src = url;
+                        const url = document.getElementById('appIconUrl');
+                        if (url && url.value.trim()) {
+                            previewImg.src = url.value.trim();
                             previewImg.classList.remove('hidden');
                             previewSVG.classList.add('hidden');
                             previewText.textContent = 'Remote URL Icon';
@@ -776,8 +756,7 @@
                     } else if (selected === 'upload') {
                         const fileInput = document.getElementById('appIconFile');
                         if (fileInput && fileInput.files.length > 0) {
-                            const url = URL.createObjectURL(fileInput.files[0]);
-                            previewImg.src = url;
+                            previewImg.src = URL.createObjectURL(fileInput.files[0]);
                             previewImg.classList.remove('hidden');
                             previewSVG.classList.add('hidden');
                             previewText.textContent = 'Custom Uploaded Icon';
@@ -786,29 +765,35 @@
                 } catch (e) { console.error("Icon Preview Error:", e); }
             }
 
-            async function fileToBase64(file) {
-                return new Promise((resolve, reject) => {
-                    const reader = new FileReader();
-                    reader.onload = () => resolve(reader.result);
-                    reader.onerror = reject;
-                    reader.readAsDataURL(file);
-                });
+            // --- Reset ---
+            function resetForm() {
+                if (heroForm) heroForm.reset();
+                if (appBuilder) appBuilder.classList.add('hidden');
+                if (landingPage) landingPage.classList.remove('hidden', 'opacity-0');
+                const step2 = document.getElementById('step2Section');
+                if (step2) step2.classList.add('hidden', 'opacity-0', 'translate-x-4');
+                if (customSplashSettings) customSplashSettings.classList.add('hidden');
+                if (customOfflineSettings) customOfflineSettings.classList.add('hidden');
+                if (successState) successState.classList.add('hidden');
+                showSection(formSection);
+                switchSimulatorView('splash');
+                updateSimulator();
+                if (checkInterval) clearInterval(checkInterval);
             }
+            window.resetForm = resetForm;
 
-            // --- LISTENERS ---
-
+            // --- Step 1 -> Step 2 ---
             if (heroForm) {
                 heroForm.addEventListener('submit', (e) => {
                     e.preventDefault();
-                    if (!heroAppName || !heroAppUrl) return;
                     if (!heroAppName.value.trim() || !heroAppUrl.value.trim()) return;
-
-                    console.log("Landing Page: Transitioning to Builder");
-                    if (landingPage) landingPage.classList.add('opacity-0', 'transition-opacity', 'duration-500');
-                    
+                    console.log("Going to Step 2");
+                    landingPage.classList.add('opacity-0');
+                    landingPage.style.transition = 'opacity 0.5s';
                     setTimeout(() => {
-                        if (landingPage) landingPage.classList.add('hidden');
-                        if (appBuilder) appBuilder.classList.remove('hidden');
+                        landingPage.classList.add('hidden');
+                        appBuilder.classList.remove('hidden');
+                        showSection(formSection);
                         const step2 = document.getElementById('step2Section');
                         if (step2) {
                             step2.classList.remove('hidden');
@@ -818,177 +803,141 @@
                 });
             }
 
+            // Back button
             if (btnBack) {
                 btnBack.addEventListener('click', () => {
-                    const step2 = document.getElementById('step2Section');
-                    if (step2) step2.classList.add('opacity-0', 'translate-x-4');
-                    setTimeout(() => {
-                        if (appBuilder) appBuilder.classList.add('hidden');
-                        if (landingPage) {
-                            landingPage.classList.remove('hidden');
-                            setTimeout(() => landingPage.classList.remove('opacity-0'), 10);
-                        }
-                    }, 300);
+                    appBuilder.classList.add('hidden');
+                    landingPage.classList.remove('hidden');
+                    setTimeout(() => landingPage.classList.remove('opacity-0'), 10);
                 });
             }
 
-            // Sync Simulator on Input
-            [splashBgColorInput, splashTextColorInput, splashProgressBarColorInput, splashLogoBgColorInput, splashLoadingTextInput, offlineTitleInput, offlineDescInput, offlineBtnTextInput, offlineColorInput].forEach(el => {
-                if(el) el.addEventListener('input', updateSimulator);
-            });
-
-            if(btnSwitchSimView) {
+            // Simulator switch button
+            if (btnSwitchSimView) {
                 btnSwitchSimView.addEventListener('click', () => {
                     switchSimulatorView(currentSimMode === 'splash' ? 'offline' : 'splash');
                 });
             }
 
-            if(useCustomSplashCheckbox) {
+            // Custom splash toggle
+            if (useCustomSplashCheckbox) {
                 useCustomSplashCheckbox.addEventListener('change', (e) => {
-                    if(customSplashSettings) customSplashSettings.classList.toggle('hidden', !e.target.checked);
-                    if(e.target.checked) switchSimulatorView('splash');
+                    if (customSplashSettings) customSplashSettings.classList.toggle('hidden', !e.target.checked);
+                    if (e.target.checked) switchSimulatorView('splash');
                     updateSimulator();
                 });
             }
-            if(splashUseLogoBgCheckbox) {
+
+            // Logo background toggle
+            if (splashUseLogoBgCheckbox) {
                 splashUseLogoBgCheckbox.addEventListener('change', (e) => {
-                    if(logoBgColorContainer) logoBgColorContainer.classList.toggle('hidden', !e.target.checked);
+                    if (logoBgColorContainer) logoBgColorContainer.classList.toggle('hidden', !e.target.checked);
                     updateSimulator();
                 });
             }
-            if(useCustomOfflineCheckbox) {
+
+            // Custom offline toggle
+            if (useCustomOfflineCheckbox) {
                 useCustomOfflineCheckbox.addEventListener('change', (e) => {
-                    if(customOfflineSettings) customOfflineSettings.classList.toggle('hidden', !e.target.checked);
-                    if(e.target.checked) switchSimulatorView('offline');
+                    if (customOfflineSettings) customOfflineSettings.classList.toggle('hidden', !e.target.checked);
+                    if (e.target.checked) switchSimulatorView('offline');
                     updateSimulator();
                 });
             }
 
-            document.querySelectorAll('input[name="offlineIconType"]').forEach(r => r.addEventListener('change', (e) => {
-                if(offlineUploadInput) offlineUploadInput.classList.toggle('hidden', e.target.value !== 'asset');
-                updateSimulator();
-            }));
-
-            const offlineImageFile = document.getElementById('offlineImageFile');
-            if(offlineImageFile) offlineImageFile.addEventListener('change', updateSimulator);
-
+            // Image type radios
             document.querySelectorAll('input[name="imageType"]').forEach(r => r.addEventListener('change', (e) => {
-                if(splashImageUrlDiv) splashImageUrlDiv.classList.toggle('hidden', e.target.value !== 'url');
-                if(splashImageUploadDiv) splashImageUploadDiv.classList.toggle('hidden', e.target.value !== 'upload');
-                
-                const colorPickerContainer = document.getElementById('colorPickerContainer');
-                if (colorPickerContainer) {
-                    if (e.target.value === 'spinner') {
-                        colorPickerContainer.classList.remove('opacity-40', 'pointer-events-none');
-                    } else {
-                        colorPickerContainer.classList.add('opacity-40', 'pointer-events-none');
-                    }
+                if (splashImageUrlDiv) splashImageUrlDiv.classList.toggle('hidden', e.target.value !== 'url');
+                if (splashImageUploadDiv) splashImageUploadDiv.classList.toggle('hidden', e.target.value !== 'upload');
+                const cpc = document.getElementById('colorPickerContainer');
+                if (cpc) {
+                    if (e.target.value === 'spinner') { cpc.classList.remove('opacity-40', 'pointer-events-none'); }
+                    else { cpc.classList.add('opacity-40', 'pointer-events-none'); }
                 }
                 updateSimulator();
             }));
 
-            document.querySelectorAll('input[name="iconType"]').forEach(r => {
-                r.addEventListener('change', (e) => {
-                    if(iconUrlInput) iconUrlInput.classList.toggle('hidden', e.target.value !== 'url');
-                    if(iconUploadInput) iconUploadInput.classList.toggle('hidden', e.target.value !== 'upload');
-                    updateIconPreview();
-                });
+            // Icon type radios
+            document.querySelectorAll('input[name="iconType"]').forEach(r => r.addEventListener('change', (e) => {
+                if (iconUrlInput) iconUrlInput.classList.toggle('hidden', e.target.value !== 'url');
+                if (iconUploadInput) iconUploadInput.classList.toggle('hidden', e.target.value !== 'upload');
+                updateIconPreview();
+            }));
+
+            // Sync simulator on input changes
+            [splashBgColorInput, splashTextColorInput, splashProgressBarColorInput, splashLogoBgColorInput, splashLoadingTextInput, offlineTitleInput, offlineDescInput, offlineBtnTextInput, offlineColorInput].forEach(el => {
+                if (el) el.addEventListener('input', updateSimulator);
             });
+            const splashImageUrlInput = document.getElementById('splashImageUrl');
+            const splashImageFile = document.getElementById('splashImageFile');
+            if (splashImageUrlInput) splashImageUrlInput.addEventListener('input', updateSimulator);
+            if (splashImageFile) splashImageFile.addEventListener('change', updateSimulator);
+            const appIconUrlEl = document.getElementById('appIconUrl');
+            const appIconFileEl = document.getElementById('appIconFile');
+            if (appIconUrlEl) appIconUrlEl.addEventListener('input', updateIconPreview);
+            if (appIconFileEl) appIconFileEl.addEventListener('change', updateIconPreview);
 
-            if(splashImageUrlInput) splashImageUrlInput.addEventListener('input', updateSimulator);
-            if(splashImageFile) splashImageFile.addEventListener('change', updateSimulator);
-            const appIconUrlInput = document.getElementById('appIconUrl');
-            const appIconFileInput = document.getElementById('appIconFile');
-            if(appIconUrlInput) appIconUrlInput.addEventListener('input', updateIconPreview);
-            if(appIconFileInput) appIconFileInput.addEventListener('change', updateIconPreview);
-
-            // --- BUILD PROCESS ---
-
+            // --- BUILD ---
             if (btnBuild) {
                 btnBuild.addEventListener('click', async () => {
-                    console.log("WebToAPK: Build Triggered");
+                    console.log("Build Triggered");
                     try {
                         const appName = heroAppName.value.trim();
                         let url = heroAppUrl.value.trim();
                         currentBuildAppName = appName;
-
-                        if (!appName || !url) {
-                            alert("Mohon isi Nama Aplikasi dan Link Website di halaman depan.");
-                            resetForm();
-                            return;
-                        }
-
+                        if (!appName || !url) { alert("Mohon isi Nama Aplikasi dan URL."); return; }
                         if (!url.startsWith('http')) url = 'https://' + url;
-                        
-                        const getRadioValue = (name) => {
-                            const checked = document.querySelector(`input[name="${name}"]:checked`);
-                            return checked ? checked.value : 'none';
-                        };
 
-                        const selectedImageType = getRadioValue('imageType');
-                        const selectedIconType = getRadioValue('iconType');
+                        const getRadio = (name) => { const c = document.querySelector(`input[name="${name}"]:checked`); return c ? c.value : 'none'; };
+                        const selectedImageType = getRadio('imageType');
+                        const selectedIconType = getRadio('iconType');
 
                         const payload = {
                             appName, url,
-                            useCustomSplash: useCustomSplashCheckbox.checked,
-                            splashBgColor: splashBgColorInput.value,
-                            splashTextColor: splashTextColorInput.value,
-                            splashLoadingText: splashLoadingTextInput.value || 'Memuat halaman...',
-                            splashProgressBarColor: splashProgressBarColorInput.value,
-                            splashUseLogoBg: splashUseLogoBgCheckbox.checked,
-                            splashLogoBgColor: splashLogoBgColorInput.value,
-                            hideBottomNav: document.getElementById('hideBottomNav').checked,
-                            
-                            // Splash Image
+                            useCustomSplash: useCustomSplashCheckbox ? useCustomSplashCheckbox.checked : false,
+                            splashBgColor: splashBgColorInput ? splashBgColorInput.value : '#FFFFFF',
+                            splashTextColor: splashTextColorInput ? splashTextColorInput.value : '#6C63FF',
+                            splashLoadingText: splashLoadingTextInput ? splashLoadingTextInput.value || 'Memuat halaman...' : 'Memuat halaman...',
+                            splashProgressBarColor: splashProgressBarColorInput ? splashProgressBarColorInput.value : '#6C63FF',
+                            splashUseLogoBg: splashUseLogoBgCheckbox ? splashUseLogoBgCheckbox.checked : false,
+                            splashLogoBgColor: splashLogoBgColorInput ? splashLogoBgColorInput.value : '#FFFFFF',
+                            hideBottomNav: document.getElementById('hideBottomNav') ? document.getElementById('hideBottomNav').checked : false,
                             splashImageType: selectedImageType === 'upload' ? 'asset' : selectedImageType,
                             splashImageData: '',
-                            
-                            // Background Image (Default to color for now, expandable later)
-                            splashBgImageType: 'color',
-                            splashBgImageData: '',
-                            
-                            // App Icon
+                            splashBgImageType: 'color', splashBgImageData: '',
                             appIconType: selectedIconType === 'upload' ? 'asset' : selectedIconType,
                             appIconData: '',
-
-                            // Offline Screen
-                            useCustomOffline: useCustomOfflineCheckbox.checked,
-                            offlineTitle: offlineTitleInput.value,
-                            offlineDesc: offlineDescInput.value,
-                            offlineBtnText: offlineBtnTextInput.value,
-                            offlineColor: offlineColorInput.value,
-                            offlineIconType: getRadioValue('offlineIconType') === 'asset' ? 'asset' : 'default',
-                            offlineIconData: ''
+                            useCustomOffline: useCustomOfflineCheckbox ? useCustomOfflineCheckbox.checked : false,
+                            offlineTitle: offlineTitleInput ? offlineTitleInput.value : 'Koneksi Terputus',
+                            offlineDesc: offlineDescInput ? offlineDescInput.value : '',
+                            offlineBtnText: offlineBtnTextInput ? offlineBtnTextInput.value : 'Coba Lagi',
+                            offlineColor: offlineColorInput ? offlineColorInput.value : '#F59E0B',
+                            offlineIconType: 'default', offlineIconData: ''
                         };
 
                         if (selectedImageType === 'url') {
-                            payload.splashImageData = document.getElementById('splashImageUrl').value.trim();
+                            const el = document.getElementById('splashImageUrl');
+                            if (el) payload.splashImageData = el.value.trim();
                         } else if (selectedImageType === 'upload') {
-                            const fileInput = document.getElementById('splashImageFile');
-                            if (fileInput && fileInput.files.length > 0) payload.splashImageData = await fileToBase64(fileInput.files[0]);
+                            const el = document.getElementById('splashImageFile');
+                            if (el && el.files.length > 0) payload.splashImageData = await fileToBase64(el.files[0]);
                         }
-
                         if (selectedIconType === 'url') {
-                            payload.appIconData = document.getElementById('appIconUrl').value.trim();
+                            const el = document.getElementById('appIconUrl');
+                            if (el) payload.appIconData = el.value.trim();
                         } else if (selectedIconType === 'upload') {
-                            const iconFileInput = document.getElementById('appIconFile');
-                            if (iconFileInput && iconFileInput.files.length > 0) payload.appIconData = await fileToBase64(iconFileInput.files[0]);
-                        }
-
-                        if (getRadioValue('offlineIconType') === 'asset') {
-                            const offlineFileInput = document.getElementById('offlineImageFile');
-                            if (offlineFileInput && offlineFileInput.files.length > 0) payload.offlineIconData = await fileToBase64(offlineFileInput.files[0]);
+                            const el = document.getElementById('appIconFile');
+                            if (el && el.files.length > 0) payload.appIconData = await fileToBase64(el.files[0]);
                         }
 
                         showSection(progressSection);
-                        progressBar.style.width = '5%';
+                        if (progressBar) progressBar.style.width = '5%';
 
                         const response = await fetch('/api/generate', {
                             method: 'POST',
                             headers: { 'Content-Type': 'application/json' },
                             body: JSON.stringify(payload)
                         });
-
                         const data = await response.json();
                         if (data.error) throw new Error(data.error);
 
@@ -997,52 +946,49 @@
                             try {
                                 const statusRes = await fetch(`/api/status/${jobId}`);
                                 const job = await statusRes.json();
-
-                                statusMessage.textContent = job.message;
-                                progressBar.style.width = `${job.progress}%`;
+                                if (statusMessage) statusMessage.textContent = job.message;
+                                if (progressBar) progressBar.style.width = `${job.progress}%`;
 
                                 if (job.status === 'completed') {
                                     clearInterval(checkInterval);
                                     showSection(resultSection);
-                                    if(successState) successState.classList.remove('hidden');
-                                    
+                                    if (successState) successState.classList.remove('hidden');
                                     const directBtn = document.getElementById('directDownloadBtn');
                                     if (directBtn) directBtn.href = job.downloadUrl;
-                                    
                                     const sendBtn = document.getElementById('sendAndDownloadBtn');
                                     if (sendBtn) {
                                         sendBtn.onclick = async () => {
                                             const email = document.getElementById('deliveryEmail').value.trim();
-                                            if (!email.includes('@')) { alert('Masukkan email valid!'); return; }
-                                            sendBtn.disabled = true;
-                                            sendBtn.innerHTML = 'Mengirim...';
-                                            const res = await fetch('/api/send-email', {
-                                                method: 'POST',
-                                                headers: { 'Content-Type': 'application/json' },
-                                                body: JSON.stringify({ email, downloadUrl: job.downloadUrl, appName: currentBuildAppName })
-                                            });
-                                            if (res.ok) { alert('Berhasil dikirim!'); window.location.href = job.downloadUrl; }
-                                            sendBtn.disabled = false;
-                                            sendBtn.innerHTML = 'Kirim ke Email & Download';
+                                            if (!email.includes('@')) { alert('Masukkan email yang valid!'); return; }
+                                            sendBtn.disabled = true; sendBtn.innerHTML = 'Mengirim...';
+                                            try {
+                                                await fetch('/api/send-email', {
+                                                    method: 'POST',
+                                                    headers: { 'Content-Type': 'application/json' },
+                                                    body: JSON.stringify({ email, downloadUrl: job.downloadUrl, appName: currentBuildAppName })
+                                                });
+                                                alert('Email terkirim!'); window.location.href = job.downloadUrl;
+                                            } catch(e) { alert('Gagal mengirim email: ' + e.message); }
+                                            sendBtn.disabled = false; sendBtn.innerHTML = '<span>Kirim</span>';
                                         };
                                     }
                                 } else if (job.status === 'failed') {
                                     clearInterval(checkInterval);
-                                    errorMessage.textContent = job.message + (job.errorLog ? ': ' + job.errorLog : '');
+                                    if (errorMessage) errorMessage.textContent = job.message || 'Build gagal.';
                                     showSection(errorSection);
                                 }
-                            } catch (e) { console.error("Polling Error:", e); }
-                        }, 2000);
+                            } catch (e) { console.error("Poll error:", e); }
+                        }, 3000);
 
                     } catch (err) {
                         console.error('Build Error:', err);
-                        errorMessage.textContent = 'Terjadi kesalahan: ' + err.message;
+                        if (errorMessage) errorMessage.textContent = 'Terjadi kesalahan: ' + err.message;
                         showSection(errorSection);
                     }
                 });
             }
 
-            // Init call
+            // Init
             updateSimulator();
             updateIconPreview();
         };
