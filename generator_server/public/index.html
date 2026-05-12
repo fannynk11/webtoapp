@@ -753,6 +753,23 @@
                             const color = offlineColorInput ? offlineColorInput.value : '#F59E0B';
                             simOfflineIcon.style.color = color;
                             simOfflineIcon.style.backgroundColor = color + '15';
+
+                            const selectedOfflineType = document.querySelector('input[name="offlineIconType"]:checked');
+                            const type = selectedOfflineType ? selectedOfflineType.value : 'default';
+                            const simOfflineImage = document.getElementById('simOfflineImage');
+                            const simOfflineSVG = document.getElementById('simOfflineSVG');
+                            
+                            if (type === 'default' && simOfflineSVG && simOfflineImage) {
+                                simOfflineSVG.classList.remove('hidden');
+                                simOfflineImage.classList.add('hidden');
+                            } else if (type === 'asset' && simOfflineSVG && simOfflineImage) {
+                                const fileInput = document.getElementById('offlineImageFile');
+                                if (fileInput && fileInput.files.length > 0) {
+                                    simOfflineImage.src = URL.createObjectURL(fileInput.files[0]);
+                                    simOfflineSVG.classList.add('hidden');
+                                    simOfflineImage.classList.remove('hidden');
+                                }
+                            }
                         }
                     }
                 } catch (e) { console.error("Simulator update error:", e); }
@@ -894,6 +911,7 @@
             const offlineUploadInput = document.getElementById('offlineUploadInput');
             document.querySelectorAll('input[name="offlineIconType"]').forEach(r => r.addEventListener('change', (e) => {
                 if (offlineUploadInput) offlineUploadInput.classList.toggle('hidden', e.target.value !== 'asset');
+                updateSimulator();
             }));
 
             // Sync simulator on input changes
@@ -902,8 +920,10 @@
             });
             const splashImageUrlInput = document.getElementById('splashImageUrl');
             const splashImageFile = document.getElementById('splashImageFile');
+            const offlineImageFile = document.getElementById('offlineImageFile');
             if (splashImageUrlInput) splashImageUrlInput.addEventListener('input', updateSimulator);
             if (splashImageFile) splashImageFile.addEventListener('change', updateSimulator);
+            if (offlineImageFile) offlineImageFile.addEventListener('change', updateSimulator);
             const appIconUrlEl = document.getElementById('appIconUrl');
             const appIconFileEl = document.getElementById('appIconFile');
             if (appIconUrlEl) appIconUrlEl.addEventListener('input', updateIconPreview);
