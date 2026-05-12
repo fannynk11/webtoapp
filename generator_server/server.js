@@ -33,6 +33,13 @@ const jobSchema = new mongoose.Schema({
     downloadUrl: String,
     errorLog: String,
     payload: Object,
+    // Image storage (Base64)
+    images: {
+        app_icon: String,
+        splash_logo: String,
+        splash_bg: String,
+        offline_icon: String
+    },
     createdAt: { type: Date, default: Date.now }
 });
 
@@ -156,6 +163,38 @@ app.get('/api/history', async (req, res) => {
     }
 });
 
+// API endpoint untuk serve gambar dari MongoDB
+app.get('/api/image/:jobId/:type', async (req, res) => {
+    try {
+        await connectDB();
+        const { jobId, type } = req.params;
+        const validTypes = ['app_icon', 'splash_logo', 'splash_bg', 'offline_icon'];
+        
+        if (!validTypes.includes(type)) {
+            return res.status(400).send('Invalid image type');
+        }
+        
+        const job = await Job.findOne({ jobId });
+        if (!job || !job.images || !job.images[type]) {
+            return res.status(404).send('Image not found');
+        }
+        
+        const base64Data = job.images[type];
+        // Remove data:image/xxx;base64, prefix if present
+        const base64Content = base64Data.includes(';base64,') 
+            ? base64Data.split(';base64,')[1] 
+            : base64Data;
+        
+        const buffer = Buffer.from(base64Content, 'base64');
+        res.set('Content-Type', 'image/png');
+        res.set('Cache-Control', 'public, max-age=86400');
+        res.send(buffer);
+    } catch (err) {
+        console.error('Image serve error:', err.message);
+        res.status(500).send('Error serving image');
+    }
+});
+
 // Helper untuk upload Base64 ke Transfer.sh agar tidak melebihi limit GitHub Inputs
 async function uploadToTemp(base64Data, filename) {
     if (!base64Data || !base64Data.startsWith('data:')) return base64Data;
@@ -184,18 +223,34 @@ async function processBuild(jobId, payload, host) {
         return;
     }
 
-    // Update message: Kita sedang upload gambar dulu
-    await Job.findOneAndUpdate({ jobId }, { message: 'Sedang memproses gambar...' });
-
-    // Cek dan upload gambar jika berupa Base64
-    const splashImageUrl = await uploadToTemp(payload.splashImageData, `logo_${jobId}.png`);
-    const splashBgUrl = await uploadToTemp(payload.splashBgImageData, `bg_${jobId}.png`);
-    const appIconUrl = await uploadToTemp(payload.appIconData, `icon_${jobId}.png`);
-    const offlineIconUrl = await uploadToTemp(payload.offlineIconData, `offline_${jobId}.png`);
-
     // Gunakan HTTPS jika di production (Vercel)
     const protocol = host.includes('localhost') ? 'http' : 'https';
     const serverUrl = `${protocol}://${host}`;
+
+    // Simpan gambar ke MongoDB
+    await Job.findOneAndUpdate({ jobId }, { 
+        message: 'Sedang memproses gambar...',
+        images: {
+            app_icon: payload.appIconData || '',
+            splash_logo: payload.splashImageData || '',
+            splash_bg: payload.splashBgImageData || '',
+            offline_icon: payload.offlineIconData || ''
+        }
+    });
+
+    // Buat URL untuk setiap gambar (GitHub akan download dari sini)
+    const appIconUrl = payload.appIconData 
+        ? (payload.appIconData.startsWith('http') ? payload.appIconData : `${serverUrl}/api/image/${jobId}/app_icon`)
+        : '';
+    const splashImageUrl = payload.splashImageData 
+        ? (payload.splashImageData.startsWith('http') ? payload.splashImageData : `${serverUrl}/api/image/${jobId}/splash_logo`)
+        : '';
+    const splashBgUrl = payload.splashBgImageData 
+        ? (payload.splashBgImageData.startsWith('http') ? payload.splashBgImageData : `${serverUrl}/api/image/${jobId}/splash_bg`)
+        : '';
+    const offlineIconUrl = payload.offlineIconData 
+        ? (payload.offlineIconData.startsWith('http') ? payload.offlineIconData : `${serverUrl}/api/image/${jobId}/offline_icon`)
+        : '';
 
     // Generate sanitized package name (slug)
     const packageSlug = payload.appName.toLowerCase().replace(/[^a-z0-9]/g, '').substring(0, 20) || 'app';

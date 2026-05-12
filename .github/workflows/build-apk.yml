@@ -127,50 +127,32 @@ jobs:
           echo "$EMPTY_PNG" | base64 -d > assets/splash_bg.png
           echo "$EMPTY_PNG" | base64 -d > assets/offline_icon.png
 
-          # Handle App Icon (Overwrite placeholder if provided)
+          # Handle App Icon (download from URL)
           APP_ICON_DATA="${{ github.event.inputs.app_icon_data }}"
           if [ -n "$APP_ICON_DATA" ]; then
-            if [[ "$APP_ICON_DATA" == http* ]]; then
-              curl -L "$APP_ICON_DATA" -o assets/app_icon.png
-            else
-              echo "$APP_ICON_DATA" > app_icon_base64.txt
-              cut -d',' -f2 app_icon_base64.txt | base64 -d > assets/app_icon.png
-            fi
+            curl -L "$APP_ICON_DATA" -o assets/app_icon.png
             # Generate icons
             flutter pub run flutter_launcher_icons
           fi
 
-          # Handle Splash Logo (Overwrite placeholder if provided)
+          # Handle Splash Logo (download from URL)
           SPLASH_IMAGE_DATA="${{ github.event.inputs.splash_image_data }}"
           if [ "${{ github.event.inputs.splash_image_type }}" == "asset" ] && [ -n "$SPLASH_IMAGE_DATA" ]; then
-            if [[ "$SPLASH_IMAGE_DATA" == http* ]]; then
-              curl -L "$SPLASH_IMAGE_DATA" -o assets/splash_logo.png
-            else
-              echo "$SPLASH_IMAGE_DATA" | cut -d',' -f2 | base64 -d > assets/splash_logo.png
-            fi
+            curl -L "$SPLASH_IMAGE_DATA" -o assets/splash_logo.png
             SPLASH_IMAGE_DATA="assets/splash_logo.png"
           fi
 
-          # Handle Splash Background (Overwrite placeholder if provided)
+          # Handle Splash Background (download from URL)
           SPLASH_BG_DATA="${{ github.event.inputs.splash_bg_image_data }}"
           if [ "${{ github.event.inputs.splash_bg_image_type }}" == "asset" ] && [ -n "$SPLASH_BG_DATA" ]; then
-            if [[ "$SPLASH_BG_DATA" == http* ]]; then
-              curl -L "$SPLASH_BG_DATA" -o assets/splash_bg.png
-            else
-              echo "$SPLASH_BG_DATA" | cut -d',' -f2 | base64 -d > assets/splash_bg.png
-            fi
+            curl -L "$SPLASH_BG_DATA" -o assets/splash_bg.png
             SPLASH_BG_DATA="assets/splash_bg.png"
           fi
 
-          # Handle Offline Icon (Overwrite placeholder if provided)
+          # Handle Offline Icon (download from URL)
           OFFLINE_ICON_DATA="${{ github.event.inputs.offline_icon_data }}"
           if [ "${{ github.event.inputs.offline_icon_type }}" == "asset" ] && [ -n "$OFFLINE_ICON_DATA" ]; then
-            if [[ "$OFFLINE_ICON_DATA" == http* ]]; then
-              curl -L "$OFFLINE_ICON_DATA" -o assets/offline_icon.png
-            else
-              echo "$OFFLINE_ICON_DATA" > offline_icon_base64.txt
-              cut -d',' -f2 offline_icon_base64.txt | base64 -d > assets/offline_icon.png
-            fi
+            curl -L "$OFFLINE_ICON_DATA" -o assets/offline_icon.png
             OFFLINE_ICON_DATA="assets/offline_icon.png"
           fi
 
