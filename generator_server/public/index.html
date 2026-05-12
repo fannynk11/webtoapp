@@ -978,13 +978,19 @@
                                             if (!email.includes('@')) { alert('Masukkan email yang valid!'); return; }
                                             sendBtn.disabled = true; sendBtn.innerHTML = 'Mengirim...';
                                             try {
-                                                await fetch('/api/send-email', {
+                                                const emailRes = await fetch('/api/send-email', {
                                                     method: 'POST',
                                                     headers: { 'Content-Type': 'application/json' },
                                                     body: JSON.stringify({ email, downloadUrl: job.downloadUrl, appName: currentBuildAppName })
                                                 });
-                                                alert('Email terkirim!'); window.location.href = job.downloadUrl;
-                                            } catch(e) { alert('Gagal mengirim email: ' + e.message); }
+                                                const emailData = await emailRes.json();
+                                                if (emailRes.ok && emailData.success) {
+                                                    alert('✅ Email berhasil terkirim! Cek inbox atau folder Spam Anda.');
+                                                    window.location.href = job.downloadUrl;
+                                                } else {
+                                                    alert('❌ Gagal mengirim email: ' + (emailData.error || 'Terjadi kesalahan pada server.'));
+                                                }
+                                            } catch(e) { alert('❌ Gagal mengirim email: ' + e.message); }
                                             sendBtn.disabled = false; sendBtn.innerHTML = '<span>Kirim</span>';
                                         };
                                     }
