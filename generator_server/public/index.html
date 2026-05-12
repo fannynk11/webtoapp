@@ -408,8 +408,18 @@
                                                 <input type="radio" name="offlineIconType" value="default" checked class="peer sr-only">
                                                 <span class="inline-block px-4 py-1.5 text-[10px] font-bold text-slate-500 rounded-lg peer-checked:bg-white peer-checked:text-amber-600 peer-checked:shadow-sm">DEFAULT</span>
                                             </label>
+                                            <label class="cursor-pointer">
+                                                <input type="radio" name="offlineIconType" value="asset" class="peer sr-only">
+                                                <span class="inline-block px-4 py-1.5 text-[10px] font-bold text-slate-500 rounded-lg peer-checked:bg-white peer-checked:text-amber-600 peer-checked:shadow-sm">UPLOAD LOGO</span>
+                                            </label>
                                         </div>
-                                      
+                                        <div id="offlineUploadInput" class="hidden animate-fade-in">
+                                            <div class="relative border-2 border-dashed border-slate-200 rounded-2xl p-6 text-center hover:bg-slate-50 hover:border-amber-400 transition-all group">
+                                                <input type="file" id="offlineImageFile" accept="image/*" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer">
+                                                <span class="text-sm font-bold text-slate-600">Unggah Ikon Offline</span>
+                                                <p class="text-[9px] text-slate-400 mt-1 uppercase font-bold tracking-tighter">Maks 2MB (PNG Recommended)</p>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -880,6 +890,12 @@
                 updateIconPreview();
             }));
 
+            // Offline Icon type radios
+            const offlineUploadInput = document.getElementById('offlineUploadInput');
+            document.querySelectorAll('input[name="offlineIconType"]').forEach(r => r.addEventListener('change', (e) => {
+                if (offlineUploadInput) offlineUploadInput.classList.toggle('hidden', e.target.value !== 'asset');
+            }));
+
             // Sync simulator on input changes
             [splashBgColorInput, splashTextColorInput, splashProgressBarColorInput, splashLogoBgColorInput, splashLoadingTextInput, offlineTitleInput, offlineDescInput, offlineBtnTextInput, offlineColorInput].forEach(el => {
                 if (el) el.addEventListener('input', updateSimulator);
@@ -908,6 +924,8 @@
                         const selectedImageType = getRadio('imageType');
                         const selectedIconType = getRadio('iconType');
 
+                        const selectedOfflineIconType = getRadio('offlineIconType');
+
                         const payload = {
                             appName, url,
                             useCustomSplash: useCustomSplashCheckbox ? useCustomSplashCheckbox.checked : false,
@@ -928,7 +946,7 @@
                             offlineDesc: offlineDescInput ? offlineDescInput.value : '',
                             offlineBtnText: offlineBtnTextInput ? offlineBtnTextInput.value : 'Coba Lagi',
                             offlineColor: offlineColorInput ? offlineColorInput.value : '#F59E0B',
-                            offlineIconType: 'default', offlineIconData: ''
+                            offlineIconType: selectedOfflineIconType, offlineIconData: ''
                         };
 
                         if (selectedImageType === 'url') {
@@ -944,6 +962,10 @@
                         } else if (selectedIconType === 'upload') {
                             const el = document.getElementById('appIconFile');
                             if (el && el.files.length > 0) payload.appIconData = await fileToBase64(el.files[0]);
+                        }
+                        if (selectedOfflineIconType === 'asset') {
+                            const el = document.getElementById('offlineImageFile');
+                            if (el && el.files.length > 0) payload.offlineIconData = await fileToBase64(el.files[0]);
                         }
 
                         showSection(progressSection);
